@@ -6,6 +6,15 @@
 
 ![flume-architecture-2.png](img/flume-architecture-2.png)
 
+---
+
+## Installation (apache-flume-1.7.0-bin.tar.gz)
+
+### Config Flume
+
+1. Under `conf` directory, create flume-env.sh file based on flume-env.sh.template file. 
+2. In flume-env.sh file, add JAVA_HOME class path: `export JAVA_HOME=/usr/lib/jvm/default-java`.
+
 --- 
 
 ## Flume Configuration File (example.conf)
