@@ -22,7 +22,7 @@ Kafka uses ZooKeeper so start ZooKeeper firstly.
 
 ### Config Kafka
 
-1. Under `kafka_2.11-0.9.0.0/config`, in server.properties file, uncomment `host.name=localhost`, modify `log.dirs=/tmp/kafka-logs` to `log.dirs=/usr/local/kafka_2.11-0.9.0.0/tmp`.
+1. Under `kafka_2.11-0.9.0.0/config`, in server.properties file, uncomment `host.name=localhost`, modify `log.dirs=/tmp/kafka-logs` to `log.dirs=/usr/local/kafka_2.11-0.9.0.0/tmp`, as the former directory will be clear every time when the server starts.
 2. Start Kafka. Under `kafka_2.11-0.9.0.0`, command line: `bin/kafka-server-start.sh config/server.properties`.
 
 ---
@@ -39,11 +39,20 @@ Useful config ($KAFKA_HOME/config/server.properties):
 
 Step: 
 
-1. Create a topic: In terminal A, `bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test`. 
-2. Check the topic: `bin/kafka-topics.sh --list --zookeeper localhost:2181`. Then "test" will be displayed. 
-3. Send some messages: In terminal B, `bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test`. 
-4. Consume messages: In terminal C, `bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning`. **Note here:** `--from beginning` means consuming messages including all already sent in terminal B. Use it if you want all messages from the beginning; otherwise do not use it. 
+1. Create a topic: In terminal A, `bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic hello_topic`. 
+2. Check the topic: `bin/kafka-topics.sh --list --zookeeper localhost:2181`. Then "hello_topic" will be displayed. 
+3. Produce messages: In terminal B, `bin/kafka-console-producer.sh --broker-list localhost:9092 --topic hello_topic`. 
+4. Consume messages: In terminal C, `bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic hello_topic --from-beginning`. **Note here:** `--from beginning` means consuming messages including all already sent in terminal B. Use it if you want all messages from the beginning; otherwise do not use it. 
 5. Type something in terminal B, they will be displayed in terminal C. 
-6. Check all topics info: `bin/kafka-topics.sh --describe --zookeeper localhost:2181`.
-7. Check a specific topic info: `bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test`.
 
+> Check all topics info: `bin/kafka-topics.sh --describe --zookeeper localhost:2181`.
+
+> Check a specific topic (here it is hello_topic) info: `bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic hello_topic`.
+
+--- 
+
+## How to use single node multiple brokers
+
+Refer to Kafka website (http://kafka.apache.org/quickstart#quickstart_multibroker). 
+
+--- 
