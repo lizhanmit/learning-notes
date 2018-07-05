@@ -37,7 +37,7 @@ Useful config ($KAFKA_HOME/config/server.properties):
 - log.dirs
 - zookeeper.connect 
 
-Step: 
+Steps: 
 
 1. Create a topic: In terminal A, `bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic hello_topic`. 
 2. Check the topic: `bin/kafka-topics.sh --list --zookeeper localhost:2181`. Then "hello_topic" will be displayed. 
