@@ -21,7 +21,7 @@
 
 The key to use Flume is to **write configuration file**.
 
-Step:
+Steps:
 
  1. Configure source.
  2. Configure channel.
@@ -74,8 +74,8 @@ Listen to netcat and then display in console.
 
 How to use: 
 
-1. In a terminal A, start up the agent. 
-2. In an another terminal B, `telnet localhost 44444`.
+1. In terminal A, start the agent. 
+2. In terminal B, `telnet localhost 44444`.
 3. In terminal B type something, then they will be displayed in terminal A.
 
 --- 
@@ -86,15 +86,14 @@ How to use:
 - channel: memory 
 - sink: logger 
 
-Listen to a file and then display to console. Here, the file is data.log.
+Listen to a file (data.log) and then display to console.
 
 > If you would like to listen to a file (check if there are an changes to this file), set source type as **exec**.
 
 How to use: 
 
-1. In a terminal A, start up the agent. 
-2. In an another terminal B, add something into data.log file. `echo hello >> data.log`.
-3. Then "hello" will be displayed in terminal A. 
+1. In terminal A, start the agent. 
+2. In terminal B, add "hello" into data.log file. `echo hello >> data.log`. Then "hello" will be displayed in terminal A. 
 
 --- 
 
@@ -115,11 +114,11 @@ machine B:
 - sink: logger 
 
 
-Listen to a file on machine A. Then send to machine B. Then display on console. Here, the file is data.log.
+Listen to a file (data.log) on machine A. Then send to machine B. Then display on console.
 
 How to use: 
 
-1. In a terminal 1, start up machine B agent. 
+1. In terminal 1, start machine B agent firstly. 
 
 ```
 flume-ng agent \
@@ -129,7 +128,7 @@ flume-ng agent \
 -Dflume.root.logger=INFO,console
 ```
 
-2. In an another terminal 2, start up machine A agent. 
+2. In terminal 2, start machine A agent secondly. 
 
 ```
 flume-ng agent \
@@ -139,7 +138,7 @@ flume-ng agent \
 -Dflume.root.logger=INFO,console
 ```
 
-3. In terminal 3,  add something into data.log file. `echo hi >> data.log`. Then "hi" will be displayed in terminal 1. 
+3. In terminal 3,  add "hello" into data.log file. `echo hello >> data.log`. Then "hello" will be displayed in terminal 1. 
 
 
 
