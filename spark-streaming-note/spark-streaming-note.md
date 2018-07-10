@@ -1,10 +1,14 @@
 # Spark Streaming Note
 
+---
+
 ## Spark Streaming Working Principle 
 
 ![spark-streaming-working-principle](img/spark-streaming-working-principle.png)
 
 ![spark-streaming-working-principle-2](img/spark-streaming-working-principle-2.png)
+
+---
 
 ## How to use spark-submit to run spark application script （for real projects）
 
@@ -30,6 +34,8 @@ spark-submit --master local[2] \
 (b,2)
 (c,1)
 ``` 
+
+---
 
 ## How to use spark-shell to run spark application script （for testing）
 
