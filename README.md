@@ -1,6 +1,7 @@
 # IT learning notes
 
 - [Data Structure and Algorithm](https://github.com/lizhanmit/learning-notes/blob/master/Data%20Structure%20and%20Algorithm/Data_Structure_and_Algorithm.md)
+- [Design Pattern](https://github.com/lizhanmit/design-pattern)
 - [Flume](https://github.com/lizhanmit/learning-notes/blob/master/flume-note/flume-note.md)
 - [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
 - [Flume and Kafka Integration](https://github.com/lizhanmit/learning-notes/blob/master/flume-kafka-integration-note/flume-kafka-integration-note.md)
@@ -21,5 +22,5 @@
   - [Integrate Spark Streaming and Kafka to do word count in direct approach.](https://github.com/lizhanmit/sparktrain#kafkadirectwordcountscala)
     - [local mode](https://github.com/lizhanmit/sparktrain#local-mode-1)
     - [server mode](https://github.com/lizhanmit/sparktrain#server-mode-in-real-projects-2)
-  - []()
+  - [Web Log Streaming Workflow](https://github.com/lizhanmit/sparktrain#web-log-streaming-workflow)
   - []()
