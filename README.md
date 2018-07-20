@@ -1,7 +1,7 @@
 # IT learning notes
 
-- [Data Structure and Algorithm](https://github.com/lizhanmit/learning-notes/blob/master/Data%20Structure%20and%20Algorithm/Data_Structure_and_Algorithm.md)
-- [Design Pattern](https://github.com/lizhanmit/design-pattern)
+## Data Engineering
+
 - [Flume](https://github.com/lizhanmit/learning-notes/blob/master/flume-note/flume-note.md)
 - [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
 - [Flume and Kafka Integration](https://github.com/lizhanmit/learning-notes/blob/master/flume-kafka-integration-note/flume-kafka-integration-note.md)
@@ -24,3 +24,12 @@
     - [server mode](https://github.com/lizhanmit/sparktrain#server-mode-in-real-projects-2)
   - [Web Log Streaming Workflow](https://github.com/lizhanmit/sparktrain#web-log-streaming-workflow)
   - []()
+
+- [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
+- [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
+
+---
+
+- [Data Structure and Algorithm](https://github.com/lizhanmit/learning-notes/blob/master/Data%20Structure%20and%20Algorithm/Data_Structure_and_Algorithm.md)
+- [Design Pattern](https://github.com/lizhanmit/design-pattern)
+- [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
