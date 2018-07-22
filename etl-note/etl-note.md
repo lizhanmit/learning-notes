@@ -1,5 +1,7 @@
 # ETL Note 
 
+[TOC]
+
 Tutorial: [Microsoft: DAT217xImplementing ETL with SQL Server Integration Services](https://courses.edx.org/courses/course-v1:Microsoft+DAT217x+2T2018/course/)
 
 Download [code](https://github.com/MicrosoftLearning/Implementing-ETL).
@@ -217,6 +219,30 @@ Merge Into DimCustomers as TargetTable
 
 - Delete: When re-fill up the table, the key will not restart from one. It just keeps going. 
 - Truncate: The key will be reset. **Note:** you cannot truncate a table with foreign key constraint. You need to drop the constraint first. 
+
+### Transformations
+
+- Renaming columns for legibility
+- Splitting and merging columns
+- Converting data types for consistency
+- Reformatting data to make it more readable
+- Combining data from multiple tables
+- Redefining nullable values for enhanced reporting
+- Creating date lookup tables
+- Connecting foreign key to surrogate key
+
+#### Handling Nulls
+
+It is **best practice** to interpret null values as something meaningful.
+
+- In fact tables
+  - Measured values are null: It is often best to keep the null values. If you substitute values such as a zero for null, the calculations may become incorrect.
+  - Dimensional keys are null: It is best to create an artificial key value that can further describe the meaning of the null. This value is can be added to the dimension table itself or stored in a dedicated lookup table, as shown here: 
+
+![null-lookup-table.jpg](img/null-lookup-table.jpg)
+
+- In dimension tables
+  - Not recommending to leave null values
 
 ---
 
