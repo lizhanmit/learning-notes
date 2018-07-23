@@ -206,9 +206,11 @@ Merge Into DimCustomers as TargetTable
 	; -- The merge statement demands a semicolon at the end!
 ```
 
-### Tracking Changes over Time
+### Slow Changing Dimension (SCD) 
 
-- Slow Changing Dimension (SCD) Type 1: "No One Really Cares." Just overwrite the existing data and forget it.
+Tracking changes over time.
+
+- SCD Type 1: "No One Really Cares." Just overwrite the existing data and forget it.
 - SCD Type 3: "What was it last time?" Tracks the previous value using separate columns.
 - SCD Type 2: "I want them all!" Tracks an infinite number of versions by just adding a Version column to the table and forcing people to do only inserts instead of updates or deletes. For example, add ChangeStartDate, ChangeEndDate, and IsCurrent columns in the target table.
   - When inserting the data, set ChangeStartDate as GetDate(), IsCurrent as 'y'. 
@@ -302,17 +304,71 @@ End -- Procedure Code
 go
 ```
 
+#### ETL Automation 
 
+Set Up Automation Steps: 
 
-
+1. Create ETL scripts. 
+2. Create a SQL Server Agent job.
+   1. SQL Server Agent -> Jobs -> New Job.
+   2. Job that was created -> Start Job at Step...
 
 ---
 
+##  ETL Processing with SSIS
+
+### SSIS Connection
+
+Connection Types:
+
+- File connection manager
+- OLE DB connection manager 
+  - more generic
+  - most versatile and easy to use
+  - but not as fast as an ADO.NET connection manager in some cases
+- ADO.NET  connection manager
+  - good for connecting Microsoft Technology like SQL Server 
+
+### Control Flow 
+
+![ssis-control-flow-sample.png](img/ssis-control-flow-sample.png)
+
+Steps of Creating a Control Flow:
+
+1. Visually design process. 
+   1. Add sequence containers to the control flow surface.
+   2. Connect sequence containers.
+   3. Add SSIS tasks in each sequence container.
+   4. Connect the precedence constraint arrows. 
+2. Configure the process. 
+
+### Execute SQL Tasks
+
+The Execute SQL Tasks can be used for the following:
+
+- Drop foreign key constraints.
+- Re-create fact and dimension tables.
+- Modify database tables and views by creating, altering, or dropping them.
+- Truncate a table's data.
+- Run stored procedures.
+- Save returned rowset objects into a variable.
+
+**Note:** If you use stored procedures for Execute SQL Tasks, when configuring it, make sure set "SQL Statement" as the name of the stored procedure only without ";" or spaces, and set "IsQueryStoredProcedure" as "True". Otherwise, there will be errors. 
+
+#### Reset the Database to a Preload State  
+
+Two methods:
+
+- Run a SQL script that drops and re-creates the database. 
+- Restore a SQL backup of the database. 
 
 
 
 
- ## SQL Knowledge Review 
+
+
+
+ ## SQL Knowledge Refresher 
 
 Newer databases use nVarchar instead of varchar.
 
@@ -386,6 +442,12 @@ Why you should use views and stored procedures?
 ### MS SQL Server Build-in Functions
 
 <https://www.w3schools.com/sql/sql_ref_sqlserver.asp>
+
+---
+
+### Backing-up or Restoring a Database with SQL Code
+
+![backing-up-or-restoring-a-database-with-sql-code.png](img/backing-up-or-restoring-a-database-with-sql-code.png)
 
 ---
 
