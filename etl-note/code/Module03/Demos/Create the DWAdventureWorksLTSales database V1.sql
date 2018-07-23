@@ -4,15 +4,27 @@
 *                                                            *
 *************************************************************/
 
--- ( Transformations Demo )--
+--****************** [DWAdventureWorksLT2012v1] *********************--
+-- This file will drop and create the DWAdventureWorksLT2012v1
+-- database, with all its objects. 
+--********************************************************************--
 
-'Demo Setup Code '
----------------------------------------------------------------------------------------------------------------------
---  Create a Null Lookup table
-USE TempDB;
+USE [master];
+If Exists (Select Name from SysDatabases Where Name = 'DWAdventureWorksLT2012v1')
+  Begin
+   Alter database DWAdventureWorksLT2012v1 set single_user with rollback immediate;
+   Drop database DWAdventureWorksLT2012v1;
+  End
 go
-If (object_id('ETLNullStatuses') is not null) Drop Table ETLNullStatuses;
+CREATE DATABASE DWAdventureWorksLT2012v1;
 go
+USE DWAdventureWorksLT2012v1;
+go
+
+--********************************************************************--
+-- Create the Tables
+--********************************************************************--
+--  Create a Null Lookup table:
 CREATE -- Lookup Null Statuses
 TABLE ETLNullStatuses	
 ( NullStatusID int Not Null  
@@ -25,7 +37,7 @@ go
 
 --  Fill Null Lookup Table
 INSERT -- Lookup data
-INTO [TempDB].[dbo].[ETLNullStatuses]
+INTO [DWAdventureWorksLT2012v1].[dbo].[ETLNullStatuses]
 ( NullStatusID
 , NullStatusDateKey
 , NullStatusName
@@ -39,14 +51,8 @@ VALUES
 	, (-5,'0001-01-04','Not Defined', 'A value could be entered, but the source data has not yet defined it')
 ;
 go
--- SELECT * FROM  [TempDB].[dbo].[ETLNullStatuses]
 
--- Create Lookup Tables and Date Dimension
-USE TempDB;
-go
-If (object_id('DimDates') is not null) Drop Table DimDates;
-go
-
+-- Create Date Dimension Lookup Table:
 CREATE -- Dates Dimension  
 TABLE DimDates	
 ( CalendarDateKey int Not Null CONSTRAINT [pkDimDates] PRIMARY KEY
@@ -64,6 +70,7 @@ go
 
 -- Fill DimDates Lookup Table
 -- Step a: Declare variables use in processing
+SET NOCOUNT ON;
 Declare @StartDate date; 
 Declare @EndDate date;
 
@@ -79,7 +86,7 @@ Declare @DateInProcess datetime = @StartDate;
 While @DateInProcess <= @EndDate
 	Begin
 	--Add a row into the date dimension table for this date
-		Insert Into [TempDB].[dbo].[DimDates] 
+		Insert Into [DWAdventureWorksLT2012v1].[dbo].[DimDates] 
 		( [CalendarDateKey]
 		, [CalendarDateName]
 		, [CalendarYearMonthID]
@@ -106,10 +113,10 @@ While @DateInProcess <= @EndDate
 		-- Add a day and loop again
 		Set @DateInProcess = DateAdd(d, 1, @DateInProcess);
 	End
+SET NOCOUNT ON;
 go
 
-If (object_id('DimProducts') is not null) Drop Table DimProducts;
-go
+-- Create Other Dimension Tables:
 CREATE 
 TABLE [dbo].[DimProducts]
 ( ProductKey int NOT NULL Primary Key IDENTITY(1, 1)
@@ -139,6 +146,7 @@ TABLE DimCustomers
 );
 go
 
+-- Create Fact Tables:
 If (object_id('FactSales') is not null) Drop Table FactSales;
 go
 CREATE TABLE [dbo].[FactSales]
@@ -151,19 +159,44 @@ CREATE TABLE [dbo].[FactSales]
 , [OrderQty] [smallint] NOT NULL
 , [UnitPrice] [money] NOT NULL
 , [UnitPriceDiscount] [money] NOT NULL
-CONSTRAINT [pk FactSales] PRIMARY KEY
-( [SalesOrderID]
-, [SalesOrderDetailID]
-, [OrderDateKey]
-, [ShipDateKey] 
-, [CustomerKey]
-, [ProductKey]
-) 
+	CONSTRAINT [pk FactSales] PRIMARY KEY
+	( [SalesOrderID]
+	, [SalesOrderDetailID]
+	, [OrderDateKey]
+	, [ShipDateKey] 
+	, [CustomerKey]
+	, [ProductKey]
+	) 
 );
 go
 
-If (object_id('vETLDimProducts') is not null) Drop Table vETLDimProducts;
+--********************************************************************--
+-- Create the Foreign Key CONSTRAINTs
+--********************************************************************--
+ALTER TABLE dbo.FactSales ADD CONSTRAINT
+	fkFactSalesToDimProducts FOREIGN KEY (ProductKey) 
+	REFERENCES dbo.DimProducts	(ProductKey);
 go
+
+ALTER TABLE dbo.FactSales ADD CONSTRAINT 
+	fkFactSalesToDimCustomers FOREIGN KEY (CustomerKey) 
+	REFERENCES dbo.DimCustomers (CustomerKey);
+go
+
+ALTER TABLE dbo.FactSales ADD CONSTRAINT
+	fkFactSalesOrderDateToDimDates FOREIGN KEY (OrderDateKey) 
+	REFERENCES dbo.DimDates(CalendarDateKey);
+go
+
+ALTER TABLE dbo.FactSales ADD CONSTRAINT
+	fkFactSalesShipDateDimDates FOREIGN KEY (ShipDateKey)
+	REFERENCES dbo.DimDates (CalendarDateKey);
+go
+
+
+--********************************************************************--
+-- Create the ETL Views
+--********************************************************************--
 Create View vETLDimProducts
 AS
 	SELECT 
@@ -186,13 +219,11 @@ AS
 	  ON T1.ParentProductCategoryID = T2.ProductCategoryID 
 	JOIN [AdventureWorksLT2012].[SalesLT].[Product] as T3
 	  ON T1.ProductCategoryID = T3.ProductCategoryID
-	Left JOIN [TempDB].[dbo].[ETLNullStatuses] as T4
+	Left JOIN [DWAdventureWorksLT2012v1].[dbo].[ETLNullStatuses] as T4
 	 ON  IsNull( T3.SellEndDate ,'9999-12-31') = T4.NullStatusDateKey
 	;
 go
 
-If (object_id('vETLDimCustomers') is not null) Drop Table vETLDimCustomers;
-go
 CREATE VIEW vETLDimCustomers
 AS
 	SELECT 
@@ -204,8 +235,6 @@ AS
 	;
 go
 
-If (object_id('vETLFactSales') is not null) Drop Table vETLFactSales;
-go
 CREATE VIEW vETLFactSales
 AS
 	SELECT 
@@ -221,60 +250,23 @@ AS
 	FROM  [AdventureWorksLT2012].SalesLT.SalesOrderDetail as T1
 	JOIN [AdventureWorksLT2012].SalesLT.SalesOrderHeader as T2
 	  ON T1.SalesOrderID = T2.SalesOrderID
-	JOIN Tempdb.dbo.DimProducts as T3
+	JOIN DWAdventureWorksLT2012v1.dbo.DimProducts as T3
 	 ON T1.ProductID = T3.ProductID
-	JOIN TempDB.dbo.DimCustomers as T4
+	JOIN DWAdventureWorksLT2012v1.dbo.DimCustomers as T4
 	 ON T2.CustomerID = T4.CustomerID
-	JOIN TempDB.dbo. DimDates as T5
+	JOIN DWAdventureWorksLT2012v1.dbo. DimDates as T5
 	 ON Cast(T2.ShipDate as date) = Cast(T5.CalendarDate as date)
-	JOIN TempDB.dbo. DimDates as T6
+	JOIN DWAdventureWorksLT2012v1.dbo. DimDates as T6
 	 ON Cast(T2.OrderDate as date) = Cast(T6.CalendarDate as date)
 	;
 go
 
 
-USE TempDB;
-go
-
 --********************************************************************--
--- Create an ETL Procedure Template
+-- Create the ETL Stored Procedures
 --********************************************************************--
-CREATE -- Procedure Template
-PROCEDURE pETLProcedureTemplate
-AS
-	/**************************************************************
-	Desc: <Desc Goes Here>
-	ChangeLog: When, Who, What
-	20160101,RRoot,Created Procedure  
-	**************************************************************/
-Begin -- Procedure Code
- Declare 
-   @RC int = 0;
- Begin Try 
-  Begin Transaction; 
-  -- ETL Code  -------------------------------------------------------------------
 
-   Select 3/1 -- Test;
-  
-  -- ETL Code  -------------------------------------------------------------------
-  Commit Transaction;
-  Set @RC = 100; -- Success
- End Try
- Begin Catch
-  Rollback Tran;
-  Set @RC = -100; -- Failure
- End Catch
- Return @RC;
-End -- Procedure Code
-;
-go
-
---Declare @ReturnCode int
---Execute @ReturnCode = pETLProcedureTemplate 
---Select @ReturnCode
---go
-
- -- DimProducts ETL processing code --
+-- DimProducts ETL processing code --
 CREATE  
 PROCEDURE pETLDimProducts
 AS
@@ -312,7 +304,7 @@ Begin -- Procedure Code
 	, [ProductCategoryID] 
 	, [ProductCategoryName] 
 	, [ParentProductCategoryName]
-	FROM TempDB.dbo.vETLDimProducts
+	FROM DWAdventureWorksLT2012v1.dbo.vETLDimProducts
 	;
    -- ETL Code  -------------------------------------------------------------------
   Commit Transaction;
@@ -342,7 +334,7 @@ Begin -- Procedure Code
  Begin Try 
   Begin Transaction; 
   -- ETL Code  -------------------------------------------------------------------
-	INSERT INTO [TempDB].[dbo].[DimCustomers]
+	INSERT INTO [DWAdventureWorksLT2012v1].[dbo].[DimCustomers]
 	( [CustomerID]
 	, [ContactFullName]
 	, [CompanyName]
@@ -353,7 +345,7 @@ Begin -- Procedure Code
 	, [ContactFullName]
 	, [CompanyName]
 	, [SalesPersonAlias]
-	FROM Tempdb.dbo.vETLDimCustomers
+	FROM DWAdventureWorksLT2012v1.dbo.vETLDimCustomers
 	;  
   -- ETL Code  -------------------------------------------------------------------
   Commit Transaction;
@@ -367,7 +359,6 @@ Begin -- Procedure Code
 End -- Procedure Code
 ;
 go
-
 
 -- FactSales ETL processing code -- 
 CREATE
@@ -405,8 +396,8 @@ Begin -- Procedure Code
 	, OrderQty
 	, UnitPrice
 	, UnitPriceDiscount
-	FROM TempDB.dbo.vETLFactSales
-	;  
+	FROM DWAdventureWorksLT2012v1.dbo.vETLFactSales
+	; 
   -- ETL Code  -------------------------------------------------------------------
   Commit Transaction;
   Set @RC = 100; -- Success
@@ -418,75 +409,6 @@ Begin -- Procedure Code
  Return @RC;
 End -- Procedure Code
 ;
-go
+go 
 
-Declare @ReturnCode int
-Execute @ReturnCode = pETLDimProducts
-Select @ReturnCode
-go
-
-Declare @ReturnCode int
-Execute @ReturnCode = pETLDimCustomers
-Select @ReturnCode
-go
-
-Declare @ReturnCode int
-Execute @ReturnCode = pETLFactSales
-Select @ReturnCode
-go
-
-Select * from DimCustomers
-Select * from DimProducts
-Select * from DimDates
-Select * from FactSales
-go
-
-'Creating ETL Scripts'
----------------------------------------------------------------------------------------------------------------------
-
---********************************************************************--
--- ETL Pre-Load Tasks
---********************************************************************--
--- 1) Drop Foreign Keys -- NA
--- 2) Clear Flush and Fill Tables
-Truncate Table FactSales;
-Truncate Table DimProducts;
-Truncate Table DimCustomers;
-
---********************************************************************--
--- ETL Dimension Load Tasks
---********************************************************************--
--- 3) Load Flush and Fill Dimension Tables
-Declare @ReturnCode int;
-Execute @ReturnCode = pETLDimProducts;
-Select [pETLDimProducts Status] = @ReturnCode;
-
-Execute @ReturnCode = pETLDimCustomers;
-Select [pETLDimCustomers Status] =  @ReturnCode;
-go
-
--- 4) Load Incremental Loading Dimension Tables -- NA
-
---********************************************************************--
--- ETL Fact Load Tasks
---********************************************************************--
--- 5) Load Flush and Fill Fact Tables
-
-Declare @ReturnCode int;
-Execute @ReturnCode = pETLFactSales;
-Select  [pETLFactSales Status] =  @ReturnCode;
-go
-
--- 6) Load Incremental Loading Fact Tables -- NA
-
---********************************************************************--
--- ETL Post-Load Tasks
---********************************************************************--
--- 7) Replace Foreign Keys -- NA
-
-
-Select * from DimCustomers
-Select * from DimProducts
-Select * from DimDates
-Select * from FactSales
-go
+Select 'Version 1 of the database was created';

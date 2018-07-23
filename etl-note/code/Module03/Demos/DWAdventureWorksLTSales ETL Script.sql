@@ -6,7 +6,7 @@
 
 -- ( Transformations Demo )--
 
-'Demo Setup Code '
+-- 'Demo Setup Code '
 ---------------------------------------------------------------------------------------------------------------------
 --  Create a Null Lookup table
 USE TempDB;
@@ -470,20 +470,19 @@ go
 --********************************************************************--
 -- ETL Fact Load Tasks
 --********************************************************************--
--- 5) Load Flush and Fill Fact Tables
+-- 5) Load Flush and Fill Dimension Tables
 
 Declare @ReturnCode int;
 Execute @ReturnCode = pETLFactSales;
 Select  [pETLFactSales Status] =  @ReturnCode;
 go
 
--- 6) Load Incremental Loading Fact Tables -- NA
+-- 6) Load Incremental Loading Dimension Tables -- NA
 
 --********************************************************************--
 -- ETL Post-Load Tasks
 --********************************************************************--
 -- 7) Replace Foreign Keys -- NA
-
 
 Select * from DimCustomers
 Select * from DimProducts
