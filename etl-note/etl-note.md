@@ -41,8 +41,6 @@ original source database (AdventureWorksLT2012) -> reporting database (DWAdventu
 
 ![batch-run-status-table.png](img/batch-run-status-table.png)
 
----
-
 **Transforming data from tables**
 
 ![example-table.png](img/example-table.png)
@@ -62,8 +60,6 @@ SELECT
   End
 FROM [pubs].[dbo].[titles];
 ```
-
----
 
 **Loading transformed data into a new data structure**
 
@@ -93,8 +89,6 @@ INSERT INTO [TempDB].[dbo].[DimTitles]
  FROM [pubs].[dbo].[titles];
 Go
 ```
-
----
 
 To complete the ETL process you create and test ETL queries for each reporting table. These reporting tables are then collected into reporting databases called data warehouses or data marts.
 
@@ -206,6 +200,8 @@ Merge Into DimCustomers as TargetTable
 	; -- The merge statement demands a semicolon at the end!
 ```
 
+---
+
 ### Slow Changing Dimension (SCD) 
 
 Tracking changes over time.
@@ -217,10 +213,14 @@ Tracking changes over time.
   - When deleting the data, set ChangeEndDate as GetDate(), IsCurrent as 'n'. 
   - When updating the data, set IsCurrent as 'n'. Then insert the new data separately, and set ChangeStartDate as GetDate(), IsCurrent as 'y'. 
 
+---
+
 ### Delete vs. Truncate (faster) 
 
 - Delete: When re-fill up the table, the key will not restart from one. It just keeps going. 
 - Truncate: The key will be reset. **Note:** you cannot truncate a table with foreign key constraint. You need to drop the constraint first. 
+
+---
 
 ### Transformations
 
@@ -256,7 +256,7 @@ Views are useful for many ETL processing tasks such as the following:
 - Processing nulls
 - Performing data conversions
 
-ETL Steps (with views):
+ETL steps (with views):
 
 1. Create dimension tables. 
 2. Create views from source tables. 
@@ -306,7 +306,7 @@ go
 
 #### ETL Automation 
 
-Set Up Automation Steps: 
+Set up automation steps: 
 
 1. Create ETL scripts. 
 2. Create a SQL Server Agent job.
@@ -319,7 +319,7 @@ Set Up Automation Steps:
 
 ### SSIS Connection
 
-Connection Types:
+Connection types:
 
 - File connection manager
 - OLE DB connection manager 
@@ -329,11 +329,13 @@ Connection Types:
 - ADO.NET  connection manager
   - good for connecting Microsoft Technology like SQL Server 
 
-### Control Flow 
+---
+
+### Control Flows 
 
 ![ssis-control-flow-sample.png](img/ssis-control-flow-sample.png)
 
-Steps of Creating a Control Flow:
+Steps of creating a control flow:
 
 1. Visually design process. 
    1. Add sequence containers to the control flow surface.
@@ -341,6 +343,8 @@ Steps of Creating a Control Flow:
    3. Add SSIS tasks in each sequence container.
    4. Connect the precedence constraint arrows. 
 2. Configure the process. 
+
+---
 
 ### Execute SQL Tasks
 
@@ -355,6 +359,8 @@ The Execute SQL Tasks can be used for the following:
 
 **Note:** If you use stored procedures for Execute SQL Tasks, when configuring it, make sure set "SQL Statement" as the name of the stored procedure only without ";" or spaces, and set "IsQueryStoredProcedure" as "True". Otherwise, there will be errors. 
 
+---
+
 #### Reset the Database to a Preload State  
 
 Two methods:
@@ -362,11 +368,36 @@ Two methods:
 - Run a SQL script that drops and re-creates the database. 
 - Restore a SQL backup of the database. 
 
+---
 
+### Data Flows
 
+Data access modes:
 
+- Table or view  
+- Table name or view name variable 
+- SQL command (recommend)
+- SQL command from a variable (recommend)
 
+---
 
+#### Data Flow Paths
+
+**Note:** Be sure to connect the data flow path before editing the destination. 
+
+---
+
+#### Data Destinations
+
+- OLE DB destination: most commonly used. 
+
+- ADO.NET destination: better performance than OLE DB destinations. 
+
+- SQL Server destination: best performance for Microsoft SQL Server database. When using this option, be sure to transform all of the data types appropriately, to avoid incurring data type conversion errors. 
+
+   
+
+---
 
  ## SQL Knowledge Refresher 
 
