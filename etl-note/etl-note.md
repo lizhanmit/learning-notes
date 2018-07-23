@@ -102,10 +102,10 @@ It is a **best practice** for professionals to **use views**, **stored procedure
 
 ---
 
-### Steps of Creating ETL Processing Using SSMS
+### Steps of Creating ETL Processing Using SSMS (code level)
 
-1. Create a view from the table. 
-2. Create procedure from the view. Begin.
+1. Create views from the source tables. 
+2. Create the procedure from views. Begin.
 3. Declare variables, including return code, event name, event status, and event error info. 
 4. Try-catch block. 
    1. Begin transaction. 
@@ -115,7 +115,7 @@ It is a **best practice** for professionals to **use views**, **stored procedure
    5. In Catch, roll back transaction, set event status, event error info, and return code. 
 5. Log, including event name, event status, and event error info. 
 6. Return return code.
-7. End procedure. 
+7. End the procedure. 
 
 ```sql
 CREATE -- Fill Dim Customers Procedure
@@ -243,6 +243,68 @@ It is **best practice** to interpret null values as something meaningful.
 
 - In dimension tables
   - Not recommending to leave null values
+
+#### ETL Views 
+
+Views are useful for many ETL processing tasks such as the following:
+
+- Transforming column names
+- Using column aliases
+- Combining data from multiple tables
+- Processing nulls
+- Performing data conversions
+
+ETL Steps (with views):
+
+1. Create dimension tables. 
+2. Create views from source tables. 
+3. Insert values from views to dimension tables using stored procedures.
+
+#### ETL Stored Procedures 
+
+ETL Procedure Template
+
+```sql
+USE TempDB;
+go
+
+--********************************************************************--
+-- Create an ETL Procedure Template
+--********************************************************************--
+CREATE -- Procedure Template
+PROCEDURE pETLProcedureTemplate
+AS
+	/**************************************************************
+	Desc: <Desc Goes Here>
+	ChangeLog: When, Who, What
+	20160101,RRoot,Created Procedure  
+	**************************************************************/
+Begin -- Procedure Code
+ Declare 
+   @RC int = 0;
+ Begin Try 
+  Begin Transaction; 
+  -- ETL Code  -------------------------------------------------------------------
+
+   Select 3/1 -- Test;
+  
+  -- ETL Code  -------------------------------------------------------------------
+  Commit Transaction;
+  Set @RC = 100; -- Success
+ End Try
+ Begin Catch
+  Rollback Tran;
+  Set @RC = -100; -- Failure
+ End Catch
+ Return @RC;
+End -- Procedure Code
+;
+go
+```
+
+
+
+
 
 ---
 
