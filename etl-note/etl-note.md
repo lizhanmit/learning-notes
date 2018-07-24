@@ -164,6 +164,13 @@ End -- Procedure Code
 ;
 go
 ```
+---
+### SQL/Python Code vs. SSIS
+
+|      | *Pros*                         | *Cons*                                    |
+| ---- | ------------------------------ | ----------------------------------------- |
+| Code | more efficient                 | losing the visual workflow of ETL process |
+| SSIS | visual workflow of ETL process | cost in performance                       |
 
 ---
 
@@ -224,14 +231,14 @@ Tracking changes over time.
 
 ### Transformations
 
-- Renaming columns for legibility
-- Splitting and merging columns
-- Converting data types for consistency
-- Reformatting data to make it more readable
-- Combining data from multiple tables
-- Redefining nullable values for enhanced reporting
-- Creating date lookup tables
-- Connecting foreign key to surrogate key
+- Renaming columns for legibility.
+- Splitting and merging columns.
+- Converting data types for consistency.
+- Reformatting data to make it more readable.
+- Combining data from multiple tables.
+- Redefining nullable values for enhanced reporting.
+- Creating date lookup tables.
+- Connecting foreign key to surrogate key.
 
 #### Handling Nulls
 
@@ -250,11 +257,11 @@ It is **best practice** to interpret null values as something meaningful.
 
 Views are useful for many ETL processing tasks such as the following:
 
-- Transforming column names
-- Using column aliases
-- Combining data from multiple tables
-- Processing nulls
-- Performing data conversions
+- Transforming column names.
+- Using column aliases.
+- Combining data from multiple tables.
+- Processing nulls.
+- Performing data conversions.
 
 ETL steps (with views):
 
@@ -308,7 +315,7 @@ go
 
 Set up automation steps: 
 
-1. Create ETL scripts. 
+1. In SQL Server Management Studio, create ETL scripts. 
 2. Create a SQL Server Agent job.
    1. SQL Server Agent -> Jobs -> New Job.
    2. Job that was created -> Start Job at Step...
@@ -359,8 +366,6 @@ The Execute SQL Tasks can be used for the following:
 
 **Note:** If you use stored procedures for Execute SQL Tasks, when configuring it, make sure set "SQL Statement" as the name of the stored procedure only without ";" or spaces, and set "IsQueryStoredProcedure" as "True". Otherwise, there will be errors. 
 
----
-
 #### Reset the Database to a Preload State  
 
 Two methods:
@@ -372,30 +377,91 @@ Two methods:
 
 ### Data Flows
 
-Data access modes:
+#### Data Sources
+
+Connection Manager Page -> Data access modes:
 
 - Table or view  
 - Table name or view name variable 
 - SQL command (recommend)
 - SQL command from a variable (recommend)
 
----
+**Note:** We recommend clicking the **Columns page** to be sure the internal XML code has been registered. This may be necessary, even if you do not need to make additional configurations. 
 
 #### Data Flow Paths
 
 **Note:** Be sure to connect the data flow path before editing the destination. 
 
----
-
 #### Data Destinations
 
 - OLE DB destination: most commonly used. 
-
 - ADO.NET destination: better performance than OLE DB destinations. 
-
 - SQL Server destination: best performance for Microsoft SQL Server database. When using this option, be sure to transform all of the data types appropriately, to avoid incurring data type conversion errors. 
 
-   
+Connection Manager Page -> Data access modes:
+
+- Table or view
+- Table or view – fast load (used most often, easy to use)
+- Table name or view name variable
+- Table name or view name variable fast load
+- SQL command
+
+**Note:** We recommend clicking the **Mappings page** to enforce the XML code in the package to be properly written. Do this even when no additional configurations are necessary. 
+
+#### Error Output Page
+
+**Note:** We recommend using this only as a backup, by handling errors before this state of the data flow where possible.
+
+#### Data Flow Transformations
+
+Data flow transformations types: 
+
+- Sort transformation
+- Data Conversion transformation
+- Aggregate transformation
+- Derived Column transformation
+- Lookup transformation
+- Union All transformation and Merge transformation
+- Merge Join transformation
+
+**Note:** When possible, we recommend performing these transformations in the Data Flow’s data sources .
+
+---
+
+### Performance
+
+#### Increase Performance 
+
+- Avoid pulling all the data from the source if you only need a part of it.
+- Use Sequence containers to process data in parallel.
+- Avoid transforming large amounts of data directly from a file. (**Often it is faster to import data into a temporary (staging) table and then use SQL transformation code to complete your ETL process.**)
+- Avoid using SSIS Events to track progress.
+- Consider removing indexes on the destination tables before loading it, and re-create the indexes after loading completes. 
+- Avoid implicit conversion. Instead, convert data outside of SSIS’s own expression language runtime environment.
+- Use the SQL Server Destination to improve ETL performance.
+
+#### Performance Comparison 
+
+- Pure SQL Execute SQL Task - best
+- Hybrid SQL Data Flow Task - better
+- Pure SSIS Data Flow Task - good
+
+#### Measure Performance 
+
+SQL Server Management Studio -> Tools -> SQL Server Profiler (monitors traffic between a client application and the database engine) -> 
+
+- General page -> select "Use the template". 
+- Event Selection page -> select events you would like to trace. 
+
+---
+
+### Performing an ETL Process Using Staging Tables
+
+Steps:
+
+1. Import external data directly into the staging tables without any transformations.
+2. Create a select statement that performs the transformations, encapsulate that code into a SQL View. 
+3. Create an insert stored procedure to perform the actual ETL process.  
 
 ---
 
@@ -473,6 +539,22 @@ Why you should use views and stored procedures?
 ### MS SQL Server Build-in Functions
 
 <https://www.w3schools.com/sql/sql_ref_sqlserver.asp>
+
+---
+
+### Differences between Stored Procedures and Functions
+
+- Stored Procedures are pre-compile objects which are compiled for first time and its compiled format is saved which executes (compiled code) whenever it is called. But Function is compiled and executed every time when it is called.  
+- unction must return a value but in Stored Procedure it is optional (Procedure can return zero or n values).
+- Functions can have only input parameters for it whereas Procedures can have input/output parameters.
+- Functions can be called from Procedure whereas Procedures cannot be called from Function.
+- Procedure allows SELECT as well as DML(INSERT/UPDATE/DELETE) statement in it whereas Function allows only SELECT statement in it.
+- Procedures can not be utilized in a SELECT statement whereas Function can be embedded in a SELECT statement.
+- Stored Procedures cannot be used in the SQL statements anywhere in the WHERE/HAVING/SELECT section whereas Function can be.
+- Functions that return tables can be treated as another rowset. This can be used in JOINs with other tables.
+- Inline Function can be though of as views that take parameters and can be used in JOINs and other Rowset operations.
+- Exception can be handled by try-catch block in a Procedure whereas try-catch block cannot be used in a Function.
+- We can go for Transaction Management in Procedure whereas we can't go in Function.
 
 ---
 
