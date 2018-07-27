@@ -30,6 +30,7 @@
 
 ---
 
-- [Data Structure and Algorithm](https://github.com/lizhanmit/learning-notes/blob/master/Data%20Structure%20and%20Algorithm/Data_Structure_and_Algorithm.md)
+- [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
+- [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
 - [Design Pattern](https://github.com/lizhanmit/design-pattern)
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
