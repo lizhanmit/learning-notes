@@ -1,4 +1,4 @@
-# Java Data Structures
+# Java Data Structures Note
 (https://www.youtube.com/playlist?list=PLYh1CuSH7Yp0bCTyDxsFl4xOgJUWCgVx1)
 
 ---
