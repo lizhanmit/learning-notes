@@ -224,8 +224,8 @@ Tracking changes over time.
 
 ### Delete vs. Truncate (faster) 
 
-- Delete: When re-fill up the table, the key will not restart from one. It just keeps going. 
-- Truncate: The key will be reset. **Note:** you cannot truncate a table with foreign key constraint. You need to drop the constraint first. 
+- Delete: When re-fill up the table, the key will not restart from one. It just keeps going. Can rollback. 
+- Truncate: The key will be reset. **Note:** you cannot truncate a table with foreign key constraint. You need to drop the constraint first. Cannot rollback. 
 
 ---
 
