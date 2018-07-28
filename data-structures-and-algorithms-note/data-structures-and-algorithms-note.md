@@ -133,11 +133,125 @@ Operations:
 
 ![hash-table-complexity.png](img/hash-table-complexity.png)
 
+---
 
+### Graph 
 
+A graph is a pair of sets (V, E). 
 
+Vertices - represent them using an array. 
 
+Edges - represent them using a two-dimensional array. 
 
+#### Depth First Search (DFS)  
+
+Use stack to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
+
+1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Push it in a stack.
+2. If no adjacent vertex is found, pop up a vertex from the stack. (It will pop up all the vertices from the stack, which do not have adjacent vertices.)
+
+3. Repeat Rule 1 and Rule 2 until the stack is empty.
+
+![graph-depth-first-search.png](img/graph-depth-first-search.png)
+
+#### Breadth First Search (BFS) - queue 
+
+Use a queue to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
+
+1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Insert it in a queue.
+2. If no adjacent vertex is found, remove the first vertex from the queue.
+
+3. Repeat Rule 1 and Rule 2 until the queue is empty.
+
+![graph-breadth-first-search.png](img/graph-breadth-first-search.png)
+
+### Tree 
+
+![binary-tree.jpg](img/binary-tree.jpg)
+
+**In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. 
+
+![tree-in-order-traversal.jpg](img/tree-in-order-traversal.jpg)
+
+**Pre-order Traversal**: the root node is visited first, then the left subtree and finally the right subtree. 
+
+![tree-pre-order-traversal.jpg](img/tree-pre-order-traversal.jpg)
+
+**Post-order Traversal**: first we traverse the left subtree, then the right subtree and finally the root node.
+
+![tree-post-order-traversal.jpg](img/tree-post-order-traversal.jpg)
+
+#### Binary Search Tree (BST)
+
+- A node's left child must have a value less than or equal to its parent's value.
+- A node's right child must have a value greater than its parent value.
+- Each node has a key and an associated value. 
+- Binary search tree is not binary tree.
+
+![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
+
+#### AVL Tree
+
+- Height balancing binary search tree.
+
+- Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1.
+- If the difference in the height of left and right sub-trees is more than 1, the tree is unbalanced. 
+
+Rotation techniques to balance the tree: 
+
+- Left rotation
+- Right rotation
+- Left-Right rotation
+- Right-Left rotation
+
+#### Spanning Tree
+
+A complete undirected graph can have maximum 
+$$
+n^{n-2}
+$$
+number of spanning trees, where n is the number of nodes.  
+
+- Removing one edge from the spanning tree will make the graph disconnected, i.e. the spanning tree is **minimally connected**.
+- Adding one edge to the spanning tree will create a circuit or loop, i.e. the spanning tree is **maximally acyclic**.
+- Used to find a minimum path to connect all nodes in a graph. 
+
+Common application of spanning trees: 
+
+- Civil Network Planning
+- Computer Network Routing Protocol
+- Cluster Analysis
+
+##### Minimum Spanning Tree (MST)
+
+In a weighted graph, a minimum spanning tree is a spanning tree that has minimum weight than all other spanning trees of the same graph. In real-world situations, this weight can be measured as distance, congestion, traffic load or any arbitrary value denoted to the edges. 
+
+Minimum Spanning Tree algorithms: 
+
+- Kruskal's Algorithm
+- Prim's Algorithm
+
+#### Heap
+
+Heap is a special case of balanced binary tree data structure.
+
+##### Max Heap
+
+The value of the root node is greater than or equal to either of its children.
+
+Max Heap Construction 
+
+![max-heap-constructure.gif](img/max-heap-constructure.gif)
+
+Max Heap Deletion
+
+![max-heap-deletion.gif](img/max-heap-deletion.gif)
+
+##### Min Heap
+
+The value of the root node is less than or equal to either of its children.
+
+---
 
 ## Algorithms 
 
@@ -260,6 +374,29 @@ Work better finding one match if there is no duplicates in the array.
 4. 一趟loop完后，拿到min。这时将min和a[0]交换。
 
 找min，一趟loop完后再做交换。
+
+#### Shell Sort 
+
+1. Initialise the value of interval h. (h = h * 3 + 1) (O(n^(3/2)) by Knuth, 1973: 1, 4, 13, 40, 121, ...)
+2. Divide the list into smaller sub-list of equal interval h.
+3. Sort these sub-lists using insertion sort. 
+4. Reduce h, divide sub-lists into smaller one. Sort. 
+5. Repeat step 4 until h is 1. Final sort. 
+
+![img/shell-sort.jpg](img/shell-sort.jpg)
+
+![img/shell-sort-2.jpg](img/shell-sort-2.jpg)
+
+#### Quick Sort
+
+1. Randomly choose a value in the array as pivot. 
+2. Compare the a[0] and pivot, a[n] and pivot. If a[0] > pivot, a[n] < pivot, swap a[0] and a[n].
+3. Compare a[1] and pivot, a[n-1] and pivot. If a[1] < pivot, a[n-1] < pivot, compare a[2] and pivot. If a[2] > pivot, swap a[2] and a[n-1].
+4. When all elements <= pivot are at the left and all elements >= pivot are at the right (这里只是将array以pivot为基准分成大的小的两组，不一定是pivot左边的都小于pivot，右边的都大于pivot), split them as two sub-lists. Then do the above steps recursively until the sub-list cannot be split again.  
+
+[Good explanation](https://www.youtube.com/watch?v=SLauY6PpjW4&list=PLX6IKgS15Ue02WDPRCmYKuZicQHit9kFt&t=0s&index=20)
+
+
 
 #### Sorting Algorithms Complexity Table
 
