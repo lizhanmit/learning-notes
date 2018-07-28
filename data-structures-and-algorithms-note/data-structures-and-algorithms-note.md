@@ -113,6 +113,28 @@ Operations:
       return false;
     ```
 
+---
+
+### Hash Table
+
+- Use an array as a storage medium.
+- Use hash technique to generate an index where an element is to be inserted or is to be located from.
+- Insertion and search operations are very fast.
+
+![hash-function.jpg](img/hash-function.jpg)
+
+1. There are key-value pair data. 
+2. Use hash function to get the hash code from the key of the data. Then convert the hash code to the index of the array where to store data. 
+3. The hash code may be repeated, which is called collision. Ways to solve collision: 
+   - Linear probing: search the next empty location in the array to store the data. 
+   - Chaining: for data with the same hash code, store them in linked list. So, the whole data structure will be array of linked list. 
+
+![hash-table.png](img/hash-table.png)
+
+![hash-table-complexity.png](img/hash-table-complexity.png)
+
+
+
 
 
 
@@ -146,10 +168,6 @@ Asymptotic Notations:
 #### Big O Complexity Chart
 
 ![big-o-complexity-chart.png](img/big-o-complexity-chart.png)
-
-#### Sorting Algorithms Complexity Table
-
-![array-sorting-algorithms-complexity.png](img/array-sorting-algorithms-complexity.png)
 
 #### Big O Cheat Sheet
 
@@ -203,6 +221,48 @@ Problems solved using dynamic programming approach:
 
 ### Searching Algorithms 
 
-- Linear Search - work better finding all matched values in an array. 
-- Binary Search - work better finding one match if there is no duplicates in the array. The array must be sorted in advance. 
+#### Linear Search  
 
+Ο(n) 
+
+Work better finding all matched values in an array.
+
+#### Binary Search 
+
+Ο(log n)
+
+Work better finding one match if there is no duplicates in the array. 
+
+**The array must be sorted in advance.** 
+
+---
+
+### Sorting Algorithms
+
+- In-place Sorting vs. Not-in-place Sorting
+- Stable vs. Not Stable Sorting
+- Adaptive vs. Non-Adaptive Sorting 
+  - Adaptive: if the source list has some element already sorted, it will try not to re-order them.
+  - Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
+
+#### Insertion Sort 
+
+1. a[2]跟a[1]比，if a[2] < a[1]，a[1]的值赋给a[2]。
+2. a[2]跟a[0]比，if a[2] < a[0]，a[0]的值赋给a[1]。a[2]的值赋给a[0]。
+
+把小的值向后覆盖掉大的值。最终把最小值赋给第一个值。
+
+#### Selection Sort
+
+1. Mark a[0] as min。
+2. a[0]跟a[1]比，if a[0] > a[1]，这时不要交换a[0]和a[1]。而是mark a[1] as min。
+3. a[1]跟a[2]比，if a[1] > a[2]，mark a[2] as min。
+4. 一趟loop完后，拿到min。这时将min和a[0]交换。
+
+找min，一趟loop完后再做交换。
+
+#### Sorting Algorithms Complexity Table
+
+![array-sorting-algorithms-complexity.png](img/array-sorting-algorithms-complexity.png)
+
+![array-sorting-algorithms-complexity-2.png](img/array-sorting-algorithms-complexity-2.png)
