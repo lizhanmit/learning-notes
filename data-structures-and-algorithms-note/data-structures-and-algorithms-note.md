@@ -4,13 +4,15 @@
 
 ### Linked List
 
+A list of data items connected with links. 
+
 Types of linked list: 
 
 - Simple Linked List 
 - Doubly Linked List 
 - Circular Linked List
 
-When to Use a Linked List:
+When to use a linked list:
 
 - You do not need random access to any specific elements.
 - You need to do constant insertions and deletions.
@@ -45,9 +47,19 @@ When to Use a Linked List:
 
 ### Stack 
 
+An Abstract Data Type (ADT) used to store and retrieve values in Last In First Out method.
+
 flexible size
 
+time factor - O(n)
+
 ![stack.jpg](img/stack.jpg)
+
+When to use stack: 
+
+- recursive function calls
+- expression parsing
+- depth first traversal of graphs
 
 Operations:
 
@@ -79,9 +91,16 @@ Operations:
 
 ### Queue
 
+An Abstract Data Type (ADT) used to store and retrieve values in First In First Out method.
+
 flexible size
 
 ![queue.jpg](img/queue.jpg)
+
+When to use queue: 
+
+- priority queues
+- breadth first traversal of graphs 
 
 Operations:
 
@@ -117,6 +136,8 @@ Operations:
 
 ### Hash Table
 
+Hashing is a technique to convert a range of key values into a range of indexes of an array.
+
 - Use an array as a storage medium.
 - Use hash technique to generate an index where an element is to be inserted or is to be located from.
 - Insertion and search operations are very fast.
@@ -137,6 +158,8 @@ Operations:
 
 ### Graph 
 
+A pictorial representation of a set of objects where some pairs of objects are connected by links. Objects are represented by points termed as vertices, and the links that connect the vertices are called edges.
+
 A graph is a pair of sets (V, E). 
 
 Vertices - represent them using an array. 
@@ -145,7 +168,7 @@ Edges - represent them using a two-dimensional array.
 
 #### Depth First Search (DFS)  
 
-Use stack to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
+Traverse a graph in a depthward motion. Use stack to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
 
 1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Push it in a stack.
 2. If no adjacent vertex is found, pop up a vertex from the stack. (It will pop up all the vertices from the stack, which do not have adjacent vertices.)
@@ -156,7 +179,7 @@ Use stack to remember to get the next vertex to start a search, when a dead end 
 
 #### Breadth First Search (BFS) - queue 
 
-Use a queue to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
+Traverse a graph in a breadthward motion. Use a queue to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
 
 1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Insert it in a queue.
 2. If no adjacent vertex is found, remove the first vertex from the queue.
@@ -166,6 +189,8 @@ Use a queue to remember to get the next vertex to start a search, when a dead en
 ![graph-breadth-first-search.png](img/graph-breadth-first-search.png)
 
 ### Tree 
+
+A tree is a minimally connected graph having no loops and circuits.
 
 ![binary-tree.jpg](img/binary-tree.jpg)
 
@@ -181,12 +206,22 @@ Use a queue to remember to get the next vertex to start a search, when a dead en
 
 ![tree-post-order-traversal.jpg](img/tree-post-order-traversal.jpg)
 
+如何记忆：pre, in, post 是指root 的被访问顺序。
+
+- pre: 先root -> left -> right
+- in: left -> 中间root -> right
+- post: left -> right -> 最后root 
+
+#### Binary Tree 
+
+A binary tree has a special condition that each node can have two children at maximum.
+
 #### Binary Search Tree (BST)
 
 - A node's left child must have a value less than or equal to its parent's value.
-- A node's right child must have a value greater than its parent value.
+- A node's right child must have a value greater than its parent's value.
 - Each node has a key and an associated value. 
-- Binary search tree is not binary tree.
+- Binary search tree is a special binary tree.
 
 ![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
 
@@ -205,6 +240,8 @@ Rotation techniques to balance the tree:
 - Right-Left rotation
 
 #### Spanning Tree
+
+A spanning tree is a subset of Graph G, which has all the vertices covered with minimum possible number of edges.
 
 A complete undirected graph can have maximum 
 $$
@@ -233,23 +270,23 @@ Minimum Spanning Tree algorithms:
 
 #### Heap
 
-Heap is a special case of balanced binary tree data structure.
+Heap is a special case of balanced binary tree data structure where root-node key is compared with its children and arranged accordingly.
 
 ##### Max Heap
 
-The value of the root node is greater than or equal to either of its children.
+The value of the parent node is greater than or equal to either of its children.
 
-Max Heap Construction 
+**Max Heap Construction** 
 
 ![max-heap-constructure.gif](img/max-heap-constructure.gif)
 
-Max Heap Deletion
+**Max Heap Deletion**
 
 ![max-heap-deletion.gif](img/max-heap-deletion.gif)
 
 ##### Min Heap
 
-The value of the root node is less than or equal to either of its children.
+The value of the parent node is less than or equal to either of its children.
 
 ---
 
@@ -277,7 +314,7 @@ Asymptotic Notations:
 
 - Omega Notation **Ω(n)** - measures the **best case** time complexity or the best amount of time. 
 - Big O Notation **Ο(n)** - measures the **worst case** time complexity or the longest amount of time. 
-- Theta Notation **θ(n)** - express both the lower bound and the upper bound of an algorithm's running time. 
+- Theta Notation **θ(n)** - **average case**, express both the lower bound and the upper bound of an algorithm's running time. 
 
 #### Big O Complexity Chart
 
@@ -287,7 +324,9 @@ Asymptotic Notations:
 
 ![big-o-cheat-sheet.jpg](img/big-o-cheat-sheet.jpg)
 
-#### Greedy Algorithms
+#### Approaches to Develop Algorithms
+
+##### Greedy Algorithms
 
 localized optimum solution
 
@@ -302,7 +341,7 @@ Most networking algorithms use the greedy approach:
 - Knapsack Problem
 - Job Scheduling Problem
 
-#### Divide and Conquer
+##### Divide and Conquer
 
 The algorithms based on divide-and-conquer programming approach:
 
@@ -312,7 +351,7 @@ The algorithms based on divide-and-conquer programming approach:
 - Strassen's Matrix Multiplication
 - Closest pair (points)
 
-#### Dynamic Programming
+##### Dynamic Programming
 
 overall optimization
 
@@ -333,15 +372,31 @@ Problems solved using dynamic programming approach:
 
 ---
 
+### Expression Parsing 
+
+- Infix Notation - human readable
+- Prefix (Polish) Notation - operator is ahead
+- Postfix (Reverse-Polish) Notation - operator is after
+
+![expression-parsing.png](img/expression-parsing.png)
+
+---
+
 ### Searching Algorithms 
 
 #### Linear Search  
 
-Ο(n) 
+Find an item in a sequentially arranged data type. Compare expected data item with each of data items in list or array. 
+
+average - Ο(n) 
+
+worst - O(n^2)
 
 Work better finding all matched values in an array.
 
 #### Binary Search 
+
+Select the middle which splits the entire list into two parts. Compare the target value to the mid of the list.
 
 Ο(log n)
 
@@ -359,7 +414,19 @@ Work better finding one match if there is no duplicates in the array.
   - Adaptive: if the source list has some element already sorted, it will try not to re-order them.
   - Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
 
+#### Bubble Sort 
+
+A comparison-based algorithm in which each pair of adjacent elements is compared and elements are swapped if they are not in order. 
+
+O(n^2) - not suitable for large set of data.
+
 #### Insertion Sort 
+
+Divide the list into two sub-list: sorted and unsorted. Then it takes one element at a time and finds an appropriate location in sorted sub-list and insert it.
+
+worst - O(n^2)
+
+stable
 
 1. a[2]跟a[1]比，if a[2] < a[1]，a[1]的值赋给a[2]。
 2. a[2]跟a[0]比，if a[2] < a[0]，a[0]的值赋给a[1]。a[2]的值赋给a[0]。
@@ -368,26 +435,46 @@ Work better finding one match if there is no duplicates in the array.
 
 #### Selection Sort
 
+Divide the list into two sub-lists: sorted and unsorted. Then it selects the minimum element from unsorted sub-list and places it into the sorted list. This iterates unless all the elements from unsorted sub-list are placed into sorted sub-list.
+
+worst - O(n^2)
+
+not stable
+
 1. Mark a[0] as min。
 2. a[0]跟a[1]比，if a[0] > a[1]，这时不要交换a[0]和a[1]。而是mark a[1] as min。
 3. a[1]跟a[2]比，if a[1] > a[2]，mark a[2] as min。
-4. 一趟loop完后，拿到min。这时将min和a[0]交换。
+4. 一趟loop完后，拿到min。这时将min和a[0]交换。再从a[1]开始重复这个过程。
 
 找min，一趟loop完后再做交换。
 
+#### Merge Sort 
+
+Divide and conquer approach. Keep on dividing the list into smaller sub-list until all sub-list has only one element. Then it merges them in a sorted way until all sub-lists are sorted. 
+
+O(n log n)
+
+space - O(n)
+
 #### Shell Sort 
 
-1. Initialise the value of interval h. (h = h * 3 + 1) (O(n^(3/2)) by Knuth, 1973: 1, 4, 13, 40, 121, ...)
+A variant of insertion sort. Divide the list into smaller sub-list based on some gap variables. Sort each sub-list using insertion sort. 
+
+best - O(n log n)
+
+1. Initialize the value of interval h. (h = h * 3 + 1) (O(n^(3/2)) by Knuth, 1973: 1, 4, 13, 40, 121, ...)
 2. Divide the list into smaller sub-list of equal interval h.
 3. Sort these sub-lists using insertion sort. 
 4. Reduce h, divide sub-lists into smaller one. Sort. 
-5. Repeat step 4 until h is 1. Final sort. 
+5. Repeat step 4 until h is 1. Final insertion sort. 
 
 ![img/shell-sort.jpg](img/shell-sort.jpg)
 
 ![img/shell-sort-2.jpg](img/shell-sort-2.jpg)
 
 #### Quick Sort
+
+Divide and conquer approach. Divide the list in smaller "partitions" using "pivot". The values which are smaller than the pivot are arranged in the left partition and greater values are arranged in the right partition. Each partition is recursively sorted using quick sort.
 
 1. Randomly choose a value in the array as pivot. 
 2. Compare the a[0] and pivot, a[n] and pivot. If a[0] > pivot, a[n] < pivot, swap a[0] and a[n].
@@ -396,10 +483,107 @@ Work better finding one match if there is no duplicates in the array.
 
 [Good explanation](https://www.youtube.com/watch?v=SLauY6PpjW4&list=PLX6IKgS15Ue02WDPRCmYKuZicQHit9kFt&t=0s&index=20)
 
-
+---
 
 #### Sorting Algorithms Complexity Table
 
 ![array-sorting-algorithms-complexity.png](img/array-sorting-algorithms-complexity.png)
 
 ![array-sorting-algorithms-complexity-2.png](img/array-sorting-algorithms-complexity-2.png)
+
+---
+
+### Recursion 
+
+A recursive function is one which calls itself, directly or calls a function that in turn calls it.
+
+Properties: 
+
+- Base criteria: where function stops calling itself recursively.
+- Progressive approach: where function tries to meet the base criteria in each iteration. 
+
+Many programming languages implement recursion by means of stacks. 
+
+![recursion.jpg](img/recursion.jpg)
+
+**Advantages**:
+
+- It makes a program more readable.
+- More efficient than iterations because of latest enhanced CPU systems.
+
+**Disadvantages**:
+
+- Space complexity of recursive function may go higher than that of a function with iteration, because the system needs to store activation record each time a recursive call is made. 
+
+#### Tower of Hanoi
+
+![tower-of-hanoi.jpg](img/tower-of-hanoi.jpg)
+
+Tower of Hanoi puzzle with n disks can be solved in minimum 
+$$
+2^n-1
+$$
+steps. 
+
+Algorithm ideas: 
+
+- Divide the stack of disks in two parts:
+  - n^th disk 
+  - all other n-1 disks 
+- The ultimate aim is to move disk n^th from source to destination and then put all other n-1 disks onto it.
+
+Steps:
+
+1. Move n-1 disks from source to aux.
+2. Move n^th disk from source to destination.
+3. Move n-1 disks from aux to destination.
+
+#### Fibonacci Series
+
+$$
+F_n = F_{n-1} + F_{n-2}
+$$
+
+```c
+int fibbonacci(int n) {
+   if(n == 0) {
+      return 0;
+   } else if(n == 1) {
+      return 1;
+   } else {
+      return (fibbonacci(n-1) + fibbonacci(n-2));
+   }
+}
+```
+
+#### Factorial (n!)
+
+```c
+int factorial(int n) {
+   //base case
+   if(n == 0) {
+      return 1;
+   } else {
+      return n * factorial(n-1);
+   }
+}
+```
+
+---
+
+## Interview Questions
+
+Q1: What is data structure?
+
+- Data structure is a structural & systematic way to of defining, storing & retrieving of data. A data structure may contain different type of data items.
+
+Q2: What is algorithm?
+
+- Algorithm is a step by step procedure, which defines a set of instructions to be executed in a certain order to get the desired output.
+
+Q3: Insertion sort vs. selection sort
+
+- Both maintain two sub-lists, sorted and unsorted.
+- Both take one element at a time and place it into sorted sub-list.
+- Insertion sort works on the current element in hand and places it in the sorted list at appropriate location maintaining the properties of insertion sort.
+- Selection sort searches the minimum from the unsorted sub-list and replaces it with the current element in hand.
