@@ -136,23 +136,41 @@ Operations:
 
 ### Hash Table
 
-Hashing is a technique to convert a range of key values into a range of indexes of an array.
-
-- Use an array as a storage medium.
+- Based on arrays.
 - Use hash technique to generate an index where an element is to be inserted or is to be located from.
 - Insertion and search operations are very fast.
+- Hard to order. 
+- Do not need to search through the array when finding a value. 
+
+Hashing is a technique to convert a key into an index of an array. 
 
 ![hash-function.jpg](img/hash-function.jpg)
 
 1. There are key-value pair data. 
-2. Use hash function to get the hash code from the key of the data. Then convert the hash code to the index of the array where to store data. 
-3. The hash code may be repeated, which is called collision. Ways to solve collision: 
+2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array. 
+3. The index may be repeated, which is called collision. Ways to solve collision: 
    - Linear probing: search the next empty location in the array to store the data. 
-   - Chaining: for data with the same hash code, store them in linked list. So, the whole data structure will be array of linked list. 
+   - Chaining: store data with the same hash code in linked list. So, the whole data structure will be array of linked list. 
+     - Problem 1: The linked list may be very long. It will take time to find data with the same index. 
+     - Problem 2: If much data is stored in the linked list instead of array, the remaining of the array will be wasted.
+4. Load factor = number of data inserted into the array / size of the array. Lower load factor indicates lower possibility of collision. 
+5. Rule of thumb: once load factor >= 0.7, resize the array to double size. 
 
 ![hash-table.png](img/hash-table.png)
 
 ![hash-table-complexity.png](img/hash-table-complexity.png)
+
+Applications:
+
+- Phone directory: Name is the key and phone number is the value. 
+- Domain Name System (DNS): Domain name is the key and IP address is the value. 
+- Vote: Check if voters have voted already. 
+- Cache on web server. Cache web pages. URL is the key and web page is the value. 
+
+Implementation: 
+
+- Java: Map. 
+- Python: Dictionary.
 
 ---
 
@@ -177,7 +195,14 @@ Traverse a graph in a depthward motion. Use stack to remember to get the next ve
 
 ![graph-depth-first-search.png](img/graph-depth-first-search.png)
 
-#### Breadth First Search (BFS) - queue 
+Applications: 
+
+- Produce the minimum spanning tree and all pair shortest path tree for an unweighted graph.
+- Cycle detection in a graph (both undirected and directed).
+- Path finding. 
+- Solving puzzles with only one solution, such as mazes. DFS can be adapted to find all solutions to a maze by only including nodes on the current path in the visited set.
+
+#### Breadth First Search (BFS)  
 
 Traverse a graph in a breadthward motion. Use a queue to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
 
@@ -188,21 +213,34 @@ Traverse a graph in a breadthward motion. Use a queue to remember to get the nex
 
 ![graph-breadth-first-search.png](img/graph-breadth-first-search.png)
 
+Applications: 
+
+- Peer to Peer networks: In Peer to Peer networks like BitTorrent, BFS is used to find all neighbor nodes. 
+- Crawlers in search engines: Crawlers build index using BFS. The idea is to start from source page and follow all links from source and keep doing same. DFS can also be used for crawlers, but the advantage with BFS is, depth or levels of the built tree can be limited.
+- Social networking websites: In social networks, we can find people within a given distance "k" from a person using Breadth First Search till "k" levels.
+- GPS navigation systems: BFS is used to find all neighboring locations.
+- Broadcasting in network: In networks, a broadcasted packet follows BFS to reach all nodes.
+- Garbage collection: BFS is used in copying garbage collection using Cheney’s algorithm. BFS is preferred over DFS because of better locality of reference.
+- Cycle detection in undirected graph.
+- Path finding.
+
 ### Tree 
 
 A tree is a minimally connected graph having no loops and circuits.
 
 ![binary-tree.jpg](img/binary-tree.jpg)
 
-**In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. 
+Three types of traversal: 
+
+- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. Prefer this one, as nodes can be printed in order for binary search tree. 
 
 ![tree-in-order-traversal.jpg](img/tree-in-order-traversal.jpg)
 
-**Pre-order Traversal**: the root node is visited first, then the left subtree and finally the right subtree. 
+- **Pre-order Traversal**: the root node is visited first, then the left subtree and finally the right subtree. 
 
 ![tree-pre-order-traversal.jpg](img/tree-pre-order-traversal.jpg)
 
-**Post-order Traversal**: first we traverse the left subtree, then the right subtree and finally the root node.
+- **Post-order Traversal**: first we traverse the left subtree, then the right subtree and finally the root node.
 
 ![tree-post-order-traversal.jpg](img/tree-post-order-traversal.jpg)
 
@@ -225,12 +263,15 @@ A binary tree has a special condition that each node can have two children at ma
 
 ![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
 
+Why do we want trees to be balanced?
+
+![balanced-vs-unbalanced-tree.png](img/balanced-vs-unbalanced-tree.png)
+
 #### AVL Tree
 
 - Height balancing binary search tree.
 
-- Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1.
-- If the difference in the height of left and right sub-trees is more than 1, the tree is unbalanced. 
+- Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1. Otherwise, the tree is unbalanced. 
 
 Rotation techniques to balance the tree: 
 
