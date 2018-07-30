@@ -2,6 +2,41 @@
 
 ## Data Structures 
 
+### Array
+
+If arrays are fixed length, when an array is full, a typical implementation is to double in size. Each doubling takes O(n) time. Amortized insertion time is still O(1).
+
+```java
+  ArrayList<String> merge(String[] words, String[] more) {
+    ArrayList<String> sentence = new ArrayList<String>();
+    for (String w : words) {
+      sentence.add(w);
+    }
+    for (String w : more) {
+      sentence.add(w);
+    }
+    return sentence;
+  }
+```
+
+---
+
+### StringBuilder
+
+When you concatenate a listing of strings, if you use String type to store the final string, complexity is O(n^2). However, you can use StringBuilder to create a resizable array. 
+
+```java
+String joinWords(String[] words) {
+    StringBuilder sentence = new StringBuilder();
+    for (String w : words) {
+        sentence.append(w);
+    }
+    return sentence.toString();
+}
+```
+
+---
+
 ### Linked List
 
 A list of data items connected with links. 
@@ -61,7 +96,7 @@ When to use stack:
 - expression parsing
 - depth first traversal of graphs
 
-Operations:
+Basic operations:
 
 - push(): 
   - Firstly check if the stack is full. 
@@ -102,7 +137,7 @@ When to use queue:
 - priority queues
 - breadth first traversal of graphs 
 
-Operations:
+Basic operations:
 
 - enqueue():
   - Firstly check if the queue is full. 
@@ -136,7 +171,7 @@ Operations:
 
 ### Hash Table
 
-- Based on arrays.
+- One common implementation: based on arrays.
 - Use hash technique to generate an index where an element is to be inserted or is to be located from.
 - Insertion and search operations are very fast.
 - Hard to order. 
@@ -144,17 +179,39 @@ Operations:
 
 Hashing is a technique to convert a key into an index of an array. 
 
+两种说法：（都对）
+
+- key 进 hash function，直接得到 index of array。
+- key 进 hash code function，得到 hash code，再转成 index。可能用 index = hash code % size of array。
+
 ![hash-function.jpg](img/hash-function.jpg)
 
 1. There are key-value pair data. 
 2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array. 
 3. The index may be repeated, which is called collision. Ways to solve collision: 
-   - Linear probing: search the next empty location in the array to store the data. 
-   - Chaining: store data with the same hash code in linked list. So, the whole data structure will be array of linked list. 
-     - Problem 1: The linked list may be very long. It will take time to find data with the same index. 
-     - Problem 2: If much data is stored in the linked list instead of array, the remaining of the array will be wasted.
-4. Load factor = number of data inserted into the array / size of the array. Lower load factor indicates lower possibility of collision. 
-5. Rule of thumb: once load factor >= 0.7, resize the array to double size. 
+   - Chaining with linked lists: store data with the same hash code in linked lists. So, the whole data structure will be array of linked lists. 
+     - **the most common** approach 
+     - worst lookup time O(n)
+     - If the number of collisions is small, it is efficient. 
+     - :-1: The linked list may be very long. It will take time to find data with the same index. 
+     - :-1: If much data is stored in the linked list instead of array, the remaining of the array will be wasted.
+   - Chaining with balanced binary search trees: store collisions in a binary search tree. 
+     - rare approach 
+     - worst  lookup time O(log n)
+     - for extremely non-uniform distribution 
+     - 👍 Potentially using less space, since no longer allocate a large array.
+     - 👍 Can iterate through the keys in order.
+   - Linear probing: search the next empty location in the array to store the data. Probe distance is 1 or another fixed value.
+     - If the number of collisions is small, it is efficient. 
+     - 👎 Size of array is limited. 
+     - 👎 Data may be stored one next to one another, which causes clustering.  
+   - Quadratic probing: increase the probe distance quadratically. 
+   - Double hashing: use a second hash function to determine the probe distance.
+
+
+Load factor = number of data inserted into the array / size of the array. Lower load factor indicates lower possibility of collision. 
+
+Rule of thumb: once load factor >= 0.7, resize the array to double size. 
 
 ![hash-table.png](img/hash-table.png)
 
@@ -167,7 +224,7 @@ Applications:
 - Vote: Check if voters have voted already. 
 - Cache on web server. Cache web pages. URL is the key and web page is the value. 
 
-Implementation: 
+Implementation in programming languages: 
 
 - Java: Map. 
 - Python: Dictionary.
@@ -459,7 +516,8 @@ Work better finding one match if there is no duplicates in the array.
 
 A comparison-based algorithm in which each pair of adjacent elements is compared and elements are swapped if they are not in order. 
 
-O(n^2) - not suitable for large set of data.
+- time - O(n^2) - not suitable for large set of data. :-1:
+- space - O(1) 
 
 #### Insertion Sort 
 
