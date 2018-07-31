@@ -368,7 +368,7 @@ Minimum Spanning Tree algorithms:
 
 #### Heap
 
-Heap is a special case of balanced binary tree data structure where root-node key is compared with its children and arranged accordingly.
+Heap is a special case of balanced binary tree data structure where root-node key is compared with its children are arranged accordingly.
 
 ##### Max Heap
 
@@ -650,7 +650,7 @@ int fibbonacci(int n) {
    } else if(n == 1) {
       return 1;
    } else {
-      return (fibbonacci(n-1) + fibbonacci(n-2));
+      return (fibonacci(n-1) + fibonacci(n-2));
    }
 }
 ```
