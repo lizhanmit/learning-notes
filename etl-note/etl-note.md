@@ -14,6 +14,18 @@ original source database (AdventureWorksLT2012) -> reporting database (DWAdventu
 
 ### ETL Overview 
 
+ETL:  Extract, Transform and Load. 
+
+ETL is process to extract data, mostly from different types of systems, transform it into a structure that’s more appropriate for reporting and analysis and finally loading it into the database. 
+
+Three tiers / layers in ETL:  
+
+- source layer 
+
+- integration layer where data is stored after transformation 
+
+- dimension layer where actual presentation layer stands 
+
 ![etl-1.png](img/etl-1.png)
 
 ![etl-2.png](img/etl-2.png)
@@ -22,24 +34,64 @@ original source database (AdventureWorksLT2012) -> reporting database (DWAdventu
 
 ![etl-workflow.png](img/etl-workflow.png)
 
+**Fact Tables vs. Dimension Tables**  
+
+- Facts correspond to events. For example, a retail organization might have fact tables related to customer purchases, customer service telephone calls, and product returns. 
+- Dimensions correspond to objects such as people, items, or other. 
 
 **ETL Challenges** 
 
+- Data warehouse loading should take place at night.  
+- Proper time slot decision because multiple applications on the server.
 - incremental load
 - data duplication 
 - takes hours for load to complete 
 
 **Data Extraction** 
 
+- In production environment, data is extracted within the mainframe system and sent as files. These files are then cleansed and loaded.  
+- Jobs are scheduled to deliver the files to a particular directory in a particular server (on which the ETL tool is installed) .  
 - ETL jobs are scheduled during off peak hours. 
-- ETL process can be made file dependent or time dependent. 
+- ETL process can be made file dependent or time dependent, i.e. the ETL process can kick off as soon as the  complete set of files arrives in the directory or they can kick off at a pre-determined time.
 - Two ways of reading data from source systems: 
     - Read everything for every run.
     - Read only the incremental changes. (more efficient)
 
+**Transformation**
+
+- Data type conversion.  
+
+- Columns joining or splitting.  
+
+- Calculations or aggregations.  
+
+- Apply business rules.  
+
+- Decoding.  
+
+**Loading**
+
 *Create a separate table where we store the status of all the run in order to avoid data loss due to run failure.* 
 
 ![batch-run-status-table.png](img/batch-run-status-table.png)
+
+Data formats in ETL system:  
+
+- Flat files  
+- XML datasets  
+- Independent DBMS tables  
+- Normalized ER schemas  
+- Dimensional data tables  
+
+Popular ETL tools:  
+
+- Oracle Warehouse Builder (OWB) 
+- SAP Data Services
+- IBM Infosphere Information Server. (IBM Infosphere DataStage) 
+- SAS Data Management
+- PowerCenter Informatica 
+- SQL Server Integration Services (SSIS) 
+- Talend  
 
 **Transforming data from tables**
 
@@ -191,7 +243,7 @@ Merge Into DimCustomers as TargetTable
 					INSERT 
 					Values ( SourceTable.CustomerID
 					            , SourceTable.CustomerName
-					            , SourceTable.CustomerEmail )
+					            , SourceTable.CustomerEmail ) 
 			When Matched -- When the IDs of the row currently being looked match 
 			          -- but the Name does not match...
 			         AND ( SourceTable.CustomerName <> TargetTable.CustomerName
@@ -246,12 +298,12 @@ It is **best practice** to interpret null values as something meaningful.
 
 - In fact tables
   - Measured values are null: It is often best to keep the null values. If you substitute values such as a zero for null, the calculations may become incorrect.
-  - Dimensional keys are null: It is best to create an artificial key value that can further describe the meaning of the null. This value is can be added to the dimension table itself or stored in a dedicated lookup table, as shown here: 
+  - Dimensional keys are null: It is best to create an artificial key value that can further describe the meaning of the null. This value can be added to the dimension table itself or stored in a dedicated lookup table, as shown here: 
 
 ![null-lookup-table.jpg](img/null-lookup-table.jpg)
 
 - In dimension tables
-  - Not recommending to leave null values
+  - Not recommending to leave null values.
 
 #### ETL Views 
 
@@ -467,11 +519,87 @@ Steps:
 
  ## SQL Knowledge Refresher 
 
-Newer databases use nVarchar instead of varchar.
-
 Making data types and character lengths more consistent can assist other developers using this code.
 
+### Normalization 
+
+Database normalization is the process of removing repeated information. 
+
+---
+
+### N'
+
+It declares the string as nVarchar data type, rather than varchar. (NCHAR, NVARCHAR or NTEXT value)
+
+```sql
+EXEC HumanResources.uspGetEmployeesTest2 @LastName = N'Ackerman', @FirstName = N'Pilar'
+;  
+GO 
+```
+
 ------
+
+### nVarchar vs. varchar
+
+|              | *nVarchar*                             | *varchar*                 |
+| ------------ | -------------------------------------- | ------------------------- |
+| Data Type    | Store UNICODE data, multilingual data. | Store ASCII data.         |
+| Memory Usage | Use 2 bytes per character.             | Use 1 byte per character. |
+
+Newer databases use nVarchar instead of varchar.
+
+---
+
+### Select Rows with Null Values 
+
+```sql
+SELECT column_names
+FROM table_name
+WHERE column_name IS NULL;
+
+SELECT column_names
+FROM table_name
+WHERE column_name IS NOT NULL;
+```
+
+---
+
+### CREATE TABLE IF NOT EXISTS
+
+```mysql
+-- mysql code
+CREATE TABLE IF NOT EXISTS table_name
+(
+  task_id INT(11) NOT NULL AUTO_INCREMENT,
+  subject VARCHAR(45) DEFAULT NULL,
+  start_date DATE DEFAULT NULL,
+  end_date DATE DEFAULT NULL,
+  description VARCHAR(200) DEFAULT NULL,
+  PRIMARY KEY (task_id)
+) ENGINE=InnoDB
+```
+
+---
+
+### IF OBJECT_ID('...') IS NOT NULL
+
+```sql
+IF OBJECT_ID ( 'HumanResources.uspGetEmployees', 'P' ) IS NOT NULL   
+    DROP PROCEDURE HumanResources.uspGetEmployees;  
+GO  
+CREATE PROCEDURE HumanResources.uspGetEmployees   
+    @LastName nvarchar(50),   
+    @FirstName nvarchar(50)   
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT FirstName, LastName, JobTitle, Department  
+    FROM HumanResources.vEmployeeDepartment  
+    WHERE FirstName = @FirstName AND LastName = @LastName;  
+GO
+```
+
+---
 
 ### Views
 
@@ -545,16 +673,16 @@ Why you should use views and stored procedures?
 ### Differences between Stored Procedures and Functions
 
 - Stored Procedures are pre-compile objects which are compiled for first time and its compiled format is saved which executes (compiled code) whenever it is called. But Function is compiled and executed every time when it is called.  
-- unction must return a value but in Stored Procedure it is optional (Procedure can return zero or n values).
+- Function must return a value but in Stored Procedure it is optional (Procedure can return zero or null values).
 - Functions can have only input parameters for it whereas Procedures can have input/output parameters.
 - Functions can be called from Procedure whereas Procedures cannot be called from Function.
 - Procedure allows SELECT as well as DML(INSERT/UPDATE/DELETE) statement in it whereas Function allows only SELECT statement in it.
 - Procedures can not be utilized in a SELECT statement whereas Function can be embedded in a SELECT statement.
 - Stored Procedures cannot be used in the SQL statements anywhere in the WHERE/HAVING/SELECT section whereas Function can be.
 - Functions that return tables can be treated as another rowset. This can be used in JOINs with other tables.
-- Inline Function can be though of as views that take parameters and can be used in JOINs and other Rowset operations.
+- Inline Function can be thought of as views that take parameters and can be used in JOINs and other Rowset operations.
 - Exception can be handled by try-catch block in a Procedure whereas try-catch block cannot be used in a Function.
-- We can go for Transaction Management in Procedure whereas we can't go in Function.
+- We can go for Transaction Management in Procedure whereas we cannot go in Function.
 
 ---
 
@@ -566,6 +694,121 @@ Why you should use views and stored procedures?
 
 ### Data Warehouse 
 
+A data warehouse is a subject-oriented, integrated, time-variant, and nonvolatile collection of data in support of management's decision-making process.  
+
+Data warehouse (DWH) is not loaded every time when new data is added into transaction database. 
+
+![data-warehouse-architecture.png](img/data-warehouse-architecture.png)
+
+#### Surrogate Key
+
+Advantages:
+
+- Natural key may be long, and not suitable for Indexing. 
+- A single Integer surrogate key is able to save a substantial amount of storage space.
+- Improve join performance, since joining two Integer columns works faster. 
+- Fastening data retrieval and lookup in the ETL performance.
+
+Disadvantages:
+
+- Over usage of SKs lead to the problem of disassociation. 
+- The generation and attachment of SK creates unnecessary ETL burden.
+
 It is a **best practice** to create new **artificial surrogate key** values in the data warehouse tables, in addition to the original ID columns used to connect tables in the source database. 
 
 ![a-typical-set-of-fact-and-dimension-tables.png](img/a-typical-set-of-fact-and-dimension-tables.png)
+
+#### OLTP vs. OLAP
+
+**OLTP**
+
+- OLTP (Online transaction processing) is where information systems facilitate and manage transaction-oriented applications, typically for data entry and retrieval transaction processing.  
+- OLTP system is not used for querying purposes. It is only used for recording a transaction. 
+- In OLTP database there is detailed and current data, and schema used to store transactional databases is the entity model (usually 3NF).
+
+**OLAP**
+
+- OLAP (Online analytical processing) is a technology that organizes large business databases and supports complex analysis. It can be used to perform complex analytical queries without negatively affecting transactional systems. 
+
+- OLAP is characterized by relatively low volume of transactions. Queries are often very complex and involve aggregations. 
+
+![oltp-vs-olap.png](img/oltp-vs-olap.png)
+
+#### Data Mart 
+
+Small version of data warehouse which deals with a single subject, focuses on one area.  
+
+![data-warehouse-vs-data-mart.png](img/data-warehouse-vs-data-mart.png)
+
+![types-of-data-mart.png](img/types-of-data-mart.png)
+
+#### Snowflake vs. Star Schema
+
+The snowflake schema is similar to the star schema. However, in the snowflake schema, dimensions are normalized into multiple related tables, whereas the star schema's dimensions are denormalized with each dimension represented by a single table. 
+
+![snowflake-vs-star-schema.png](img/snowflake-vs-star-schema.png)
+
+---
+
+### SQL Programming
+
+Employee table: 
+
+| rowId | empNo | empName | sex  | dob  | salary | deptId |
+| ----- | ----- | ------- | ---- | ---- | ------ | ------ |
+|       |       |         |      |      |        |        |
+
+```sql
+-- Return employee record with max salary. 
+select * from employee where salary = (select max(salary) from employee)
+
+-- Find the second highest salary of Employee. 
+select max(salary) from Employee where salary not in (select max(salary) from Employee); 
+
+-- Find max salary from each department.  
+select deptId, max(salary) as maxSalary from Employee group by deptId; 
+
+-- Find the number of employees according to gender whose dob is between __ to __. 
+select sex, count(*) as numOfEmp from Employee where dob between '2018-02-01'and '2018-07-01'group by sex; 
+
+-- Find name of employees whose name starts with 'M'.
+select empName from Employee where empName like 'M%' 
+
+-- Find all employee records containing the word "Mike".
+select empName from Employee where Upper(empName) like 'MIKE';
+
+-- Find duplicate rows in a database. Then delete them.
+select rowId from Employee a where rowId = (select max(rowId) from Employee b where a.empNo = b.empNo); 
+
+delete from Employee where rowId not in (select rowId from Employee a where rowId = (select max(rowId) from Employee b where a.empNo = b.empNo)); 
+
+-- Display the current date. 
+select GETDATE(); 
+select CONVERT(date, GETDATE()); 
+select year(GETDATE()); 
+
+-- Check if date is in the given format or not.
+select ISDATE('07/30/2018') AS "MM/DD/YY"; 
+
+-- Find the year from date. 
+select year(GETDATE()) as Year; 
+```
+
+Employee and Department table:
+
+```sql
+-- Return employee name, highest salary and department name. 
+select e.empName, e.salary, d.deptName from Employee e inner join Department d on (e.deptId = d.deptId) where salary in (select max(salary) from employee)
+
+-- Return employee name, highest salary and department name for each department. 
+select e.empName, e.salary, d.deptName from Employee e inner join Department d on (e.deptId = d.deptId) where salary in (select max(salary) from employee group by deptId)
+```
+
+Create a new, empty table using the schema of another.  
+
+```sql
+SELECT * INTO newtable 
+FROM oldtable 
+WHERE 1 = 0; -- As this is false, data from oldtable will not be inserted into newtable. Only schema will be transferred.
+```
+
