@@ -2,7 +2,7 @@
 
 ## Programming
 
-### Basic 
+### Basics 
 
 Check if MySQL server is running or not: `ps -ef | grep mysqld`
 
