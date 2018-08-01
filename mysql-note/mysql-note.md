@@ -197,6 +197,23 @@ The `DELIMITER` statement changes the standard delimiter which is semicolon (�
 
 ---
 
+### Variables
+
+```mysql
+-- Set a variable. 
+SET @var_name = value; 
+-- same as
+SELECT @var_name := value;
+
+
+-- Assign the query result to a variable. 
+SET @var_name = (SELECT COUNT(*) FROM mytable);
+-- same as 
+SELECT COUNT(*) FROM mytable INTO @var_name;
+```
+
+---
+
 ### Index
 
 ```mysql
