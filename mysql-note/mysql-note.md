@@ -1,5 +1,9 @@
 # MySQL Note
 
+[TOC]
+
+---
+
 ## Programming
 
 ### Basics 
@@ -16,7 +20,7 @@ Start MySQL shell: `mysql -u root -p `
 
 Know how this table was created: `show create table <table_name>;`
 
-**Show**: 
+#### Show
 
 ```mysql
 show database; 
@@ -24,21 +28,23 @@ show database;
 show tables; 
 ```
 
-**Create**: 
+#### Create
 
 ```mysql
+-- Create a database.
 create database <database_name>; 
 
+-- Create a table.
 create table employee if not exists (
    empId INT NOT NULL AUTO_INCREMENT, -- if you want to start from 100, write '... AUTO_INCREMENT = 100'
    empName VARCHAR(50) NOT NULL,
    salary DECIMAL NOT NULL,
    deptId INT NOT NULL,
    PRIMARY KEY (empId)
-);
+) ENGINE=InnoDB;
 ```
 
-**Alter**:
+#### Alter
 
 ```mysql
 -- Add a new column. 
@@ -69,7 +75,7 @@ alter table employee rename to emp;
 
 If you want to reposition a column, drop it first then add it. 
 
-**Drop**: 
+#### Drop
 
 ```mysql
 drop database <database_name>;
@@ -77,13 +83,15 @@ drop database <database_name>;
 drop table <table_name>;
 ```
 
-**Insert into**:
+#### Insert Into
 
 ```mysql
 insert into employee (empId, empName, salary, deptId) values (1, 'Zhang', 100, 3);
 ```
 
-**Select ... from**: 
+#### Select ... From 
+
+##### Limit & Offset
 
 ```mysql
 -- Return 10 rows from the 3rd row (excluding 3rd). 
@@ -91,16 +99,94 @@ insert into employee (empId, empName, salary, deptId) values (1, 'Zhang', 100, 3
 select * from employee limit 10 offset 3; 
 -- same as 
 select * from employee limit 3, 10; 
+```
 
+##### Join 
 
+```mysql
 -- Join two tables.
 select * from employee e join department d on e.deptId = d.deptId;
 -- same as (for inner join or self join)
 select * from employee e, department d where e.deptId = d.deptId;
+```
+
+##### Order By
+
+```mysql
+-- Order by empName in ascending order, salary in descending order. 
+select * from employee order by empName asc, salary desc; 
+-- Order by empName and salary in descending order. 
+select * from employee order by empName desc, salary desc; 
+```
+
+##### Case ... When ... Then ... Else
+
+```mysql
+SELECT OrderID, Quantity,
+CASE
+    WHEN Quantity > 30 THEN "The quantity is greater than 30"
+    WHEN Quantity = 30 THEN "The quantity is 30"
+    ELSE "The quantity is something else"
+END
+FROM OrderDetails;
 
 
+
+DELIMITER $$
+ 
+CREATE PROCEDURE GetCustomerShipping(
+ in  p_customerNumber int(11), 
+ out p_shiping        varchar(50))
+BEGIN
+    DECLARE customerCountry varchar(50);
+ 
+    SELECT country INTO customerCountry
+         FROM customers
+         WHERE customerNumber = p_customerNumber;
+ 
+    CASE customerCountry
+         WHEN  'USA' THEN
+            SET p_shiping = '2-day Shipping';
+         WHEN 'Canada' THEN
+            SET p_shiping = '3-day Shipping';
+         ELSE
+            SET p_shiping = '5-day Shipping';
+    END CASE;
+ 
+END$$
+DELIMITER ;
+```
+
+#### Update ... Set
+
+```mysql
+update employee set salary = 600 where empName='Li';
+```
+
+#### Delete From
+
+```mysql
+delete from employee where empId = 1;
+```
+
+#### Select Into 
+
+```mysql 
+-- Copy data from one table into a new table. 
+SELECT <column 1>, <column 2>
+INTO <new_table_name> 
+FROM <old_table_name>
+WHERE condition;
+```
+---
+
+### Build-in Functions 
+
+#### Regexp
+
+```mysql
 -- REGEXP 
--- empName containing 'an'
+-- empName containing 'an'.
 select * from employee where empName regexp 'an';
 -- same as 
 select * from employee where empName like '%an%';
@@ -109,18 +195,28 @@ select * from employee where empName like '%an%';
 -- any single character: . 
 -- 0 or more characters: *
 -- 1 or more characters: + 
+
+-- empName starting with vowels (a,e,i,o,u).
+select * from employee where empName regexp '^[aeiou]';
+-- empName having with vowels (a,e,i,o,u) at both their first and last characters.
+select * from employee where empName regexp '^[aeiou]' and empName regexp '[aeiou]$';
+-- empName not starting with vowels (a,e,i,o,u).
+select * from employee where empName not regexp '^[aeiou]';
 ```
 
-**Update ... set**:
+#### Right(str, len) 
 
 ```mysql
-update employee set salary = 600 where empName='Li';
+-- Select last 5 characters of columnname. 
+SELECT RIGHT(columnname, 5) as yourvalue FROM tablename
+-- same as substring 
+SELECT substring(columnname, -5) as yourvalue FROM tablename
 ```
 
-**Delete from**:
+#### Concat()
 
 ```mysql
-delete from employee where empId = 1;
+SELECT CONCAT('w3resource','.','com');
 ```
 
 ---
