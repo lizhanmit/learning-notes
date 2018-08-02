@@ -16,7 +16,7 @@ original source database (AdventureWorksLT2012) -> reporting database (DWAdventu
 
 ETL:  Extract, Transform and Load. 
 
-ETL is process to extract data, mostly from different types of systems, transform it into a structure that’s more appropriate for reporting and analysis and finally loading it into the database. 
+ETL is process to extract data, mostly from different types of systems, transform it into a structure that is more appropriate for reporting and analysis and finally loading it into the database. 
 
 Three tiers / layers in ETL:  
 
@@ -97,7 +97,7 @@ Popular ETL tools: 
 
 ![example-table.png](img/example-table.png)
 
-```sql
+```mssql
 -- Converting Data Using Cast
 SELECT 
   [TitleId] = [title_id] 
@@ -115,7 +115,7 @@ FROM [pubs].[dbo].[titles];
 
 **Loading transformed data into a new data structure**
 
-```sql
+```mssql
 Use TempDB;
 Go
 -- Create a reporting table 
@@ -163,7 +163,7 @@ It is a **best practice** for professionals to **use views**, **stored procedure
 6. Return return code.
 7. End the procedure. 
 
-```sql
+```mssql
 CREATE -- Fill Dim Customers Procedure
 PROCEDURE pETLFillDimCustomers
 AS
@@ -234,7 +234,7 @@ go
 - Incremental loading process (using views, stored procedures, and UDFs/user defined functions)
   - SQL Merge - most efficient method 
 
-```sql
+```mssql
 Merge Into DimCustomers as TargetTable
         Using Customers as SourceTable
 	      On TargetTable.CustomerID = SourceTable.CustomerID
@@ -325,7 +325,7 @@ ETL steps (with views):
 
 ETL Procedure Template
 
-```sql
+```mssql
 USE TempDB;
 go
 
@@ -531,7 +531,7 @@ Database normalization is the process of removing repeated information.
 
 It declares the string as nVarchar data type, rather than varchar. (NCHAR, NVARCHAR or NTEXT value)
 
-```sql
+```mssql
 EXEC HumanResources.uspGetEmployeesTest2 @LastName = N'Ackerman', @FirstName = N'Pilar'
 ;  
 GO 
@@ -552,7 +552,7 @@ Newer databases use nVarchar instead of varchar.
 
 ### Select Rows with Null Values 
 
-```sql
+```mssql
 SELECT column_names
 FROM table_name
 WHERE column_name IS NULL;
@@ -576,14 +576,14 @@ CREATE TABLE IF NOT EXISTS table_name
   end_date DATE DEFAULT NULL,
   description VARCHAR(200) DEFAULT NULL,
   PRIMARY KEY (task_id)
-) ENGINE=InnoDB
+) ENGINE=InnoDB;
 ```
 
 ---
 
 ### IF OBJECT_ID('...') IS NOT NULL
 
-```sql
+```mssql
 IF OBJECT_ID ( 'HumanResources.uspGetEmployees', 'P' ) IS NOT NULL   
     DROP PROCEDURE HumanResources.uspGetEmployees;  
 GO  
@@ -605,7 +605,7 @@ GO
 
 SQL Views are essentially a named select statement stored in a database. 
 
-```sql
+```mssql
 -- Listing 1-6. Creating an ETL View
 Use TempDB;
 go
@@ -638,7 +638,7 @@ go
 
 ### Stored Procedures
 
-```sql
+```mssql
 -- Listing 1-10. Creating an ETL Procedure
 CREATE PROCEDURE pETLInsDataToDimTitles
 AS
@@ -722,15 +722,21 @@ It is a **best practice** to create new **artificial surrogate key** values in t
 
 **OLTP**
 
-- OLTP (Online transaction processing) is where information systems facilitate and manage transaction-oriented applications, typically for data entry and retrieval transaction processing.  
-- OLTP system is not used for querying purposes. It is only used for recording a transaction. 
+- OLTP (Online Transaction Processing) is where information systems facilitate and manage transaction-oriented applications, typically for data entry and retrieval transaction processing rather than for the purpose of business intelligence or reporting.  
 - In OLTP database there is detailed and current data, and schema used to store transactional databases is the entity model (usually 3NF).
 
 **OLAP**
 
-- OLAP (Online analytical processing) is a technology that organizes large business databases and supports complex analysis. It can be used to perform complex analytical queries without negatively affecting transactional systems. 
-
+- OLAP (Online Analytical Processing) is a technology that organizes large business databases and supports complex analysis. It can be used to perform ad hoc multi-dimensional analytical queries without negatively affecting transactional systems. 
 - OLAP is characterized by relatively low volume of transactions. Queries are often very complex and involve aggregations. 
+- Consist of three basic analytical operations: 
+  - Consolidation (**roll-up**) - aggregation of data that can be accumulated and computed in one or more dimensions. For example, all sales offices are rolled up to the sales department or sales division to anticipate sales trends.
+  - **Drill-down** - navigate through the details. For instance, users can view the sales by individual products that make up a region's sales. 
+  - **Slicing and dicing** - users can take out (slicing) a specific set of data of the OLAP cube and view (dicing) the slices from different viewpoints.
+- Core of OLAP: **multidimensional** cube. 
+- View selection problem: The problem of deciding which aggregations (views) to calculate. 
+  - Because usually there are many aggregations that can be calculated, often only a predetermined number are fully calculated; the remainder are solved on demand. 
+  - The objective of view selection is typically to minimize the average time to answer OLAP queries. 
 
 ![oltp-vs-olap.png](img/oltp-vs-olap.png)
 
@@ -758,7 +764,7 @@ Employee table:
 | ----- | ----- | ------- | ---- | ---- | ------ | ------ |
 |       |       |         |      |      |        |        |
 
-```sql
+```mssql
 -- Return employee record with max salary. 
 select * from employee where salary = (select max(salary) from employee)
 
@@ -796,7 +802,7 @@ select year(GETDATE()) as Year;
 
 Employee and Department table:
 
-```sql
+```mssql
 -- Return employee name, highest salary and department name. 
 select e.empName, e.salary, d.deptName from Employee e inner join Department d on (e.deptId = d.deptId) where salary in (select max(salary) from employee)
 
@@ -806,9 +812,21 @@ select e.empName, e.salary, d.deptName from Employee e inner join Department d o
 
 Create a new, empty table using the schema of another.  
 
-```sql
+```mssql
 SELECT * INTO newtable 
 FROM oldtable 
 WHERE 1 = 0; -- As this is false, data from oldtable will not be inserted into newtable. Only schema will be transferred.
+```
+
+**Having Clause**
+
+The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions. 
+
+```mssql
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
 ```
 
