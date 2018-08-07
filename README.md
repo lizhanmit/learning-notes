@@ -23,10 +23,19 @@
     - [local mode](https://github.com/lizhanmit/sparktrain#local-mode-1)
     - [server mode](https://github.com/lizhanmit/sparktrain#server-mode-in-real-projects-2)
   - [Web Log Streaming Workflow](https://github.com/lizhanmit/sparktrain#web-log-streaming-workflow)
-  - []()
-
+  - [Spark Streaming Real Project](https://github.com/lizhanmit/sparktrain#spark-streaming-real-project)
+  - [Web Log Generator](https://github.com/lizhanmit/sparktrain#web-log-generator)
+  - [Web Log ==> Flume](https://github.com/lizhanmit/sparktrain#web-log--flume)
+  - [Web Log ==> Flume ==> Kafka](https://github.com/lizhanmit/sparktrain#web-log--flume--kafka)
+  - [Web Log ==> Flume ==> Kafka ==> Spark Streaming](https://github.com/lizhanmit/sparktrain#web-log--flume--kafka--spark-streaming)
+  - [Web Log ==> Flume ==> Kafka ==> Spark Streaming ==> Data Cleansing](https://github.com/lizhanmit/sparktrain#web-log--flume--kafka--spark-streaming--data-cleansing)
+  - [Do Statistics about Page View (PV)](https://github.com/lizhanmit/sparktrain#do-statistics-about-page-view-pv) 
+    - [Page View](https://github.com/lizhanmit/sparktrain#page-view)
+    - [Page View Contributed by Search Engines](https://github.com/lizhanmit/sparktrain#page-view-contributed-by-search-engines)
+  - [Data Visualization](https://github.com/lizhanmit/sparktrain#data-visualization)
 - [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
 - [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
+- [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
 
 ---
 
