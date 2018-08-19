@@ -43,6 +43,7 @@ my_list.append(1)
 
 print(my_list)  # output: [1,2,3]
 
+# iterate the list
 for x in my_list:
     print(x)
     
@@ -60,6 +61,9 @@ my_list.count(my_element)
 
 # check if a specific element is in a list
 if my_element in my_list:
+    
+# sort the list 
+sorted(name_of_list)
 ```
 
 ---
@@ -75,7 +79,6 @@ for name, number in phonebook.items():
 del phonebook["John"]
 # the same as 
 phonebook.pop("John")
-
 ```
 
 ---
@@ -112,4 +115,65 @@ print(x is z) # Prints out True
 The "else" clause is a part of the loop. When the loop condition of "for" or "while" statement fails then code part in "else" is executed. If **break** statement is executed inside for loop then the "else" part is skipped. 
 
 ---
+
+## Modules and Packages
+
+```python
+# extending module load path
+PYTHONPATH=/foo python game.py
+# the same as 
+sys.path.append("/foo")
+
+# look for which functions are implemented in each module by using the "dir" function, it will return a list of function names
+dir(name_of_module)
+
+#  read about the function more using the "help" function
+help(name_of_module.name_of_function)
+```
+
+---
+
+## NumPy
+
+- ndarray
+- Given two lists, use NumPy to do element-wise calculations. 
+- Do not need to iterate the list. You can operate all elements based on array.
+
+```python
+# import module
+import numpy as np
+
+# transfer a list to a numpy array 
+array_name = np.array(list_name)
+
+# subsetting 
+# get elements that are greater than 10 
+subset_array_name = array_name[array_name > 10]
+```
+
+---
+
+## Pandas 
+
+- DataFrame 
+- Store and manipulate tabular data in rows of observations and columns of variables.
+
+```python
+# import module 
+import pandas as pd
+
+country_dict = {"country": ["Brazil", "Russia", "India", "China", "South Africa"],
+       "capital": ["Brasilia", "Moscow", "New Dehli", "Beijing", "Pretoria"],
+       "area": [8.516, 17.10, 3.286, 9.597, 1.221],
+       "population": [200.4, 143.5, 1252, 1357, 52.98] }
+# transfer a dictionary to a data frame
+country_data_frame = pd.DataFrame(country_dict)
+
+# change default numerial index to customized index 
+country_data_frame.index = ["BR", "RU", "IN", "CH", "SA"]
+
+
+# transfer a .csv file to a data frame 
+data_frame_name = pd.read_csv('file_name.csv')
+```
 
