@@ -302,6 +302,61 @@ print(p_func(4))
 
 ---
 
+## Closures 
+
+- A Closure is a function object that remembers values in enclosing scopes even if they are not present in memory.
+
+- Closures can avoid use of global variables and provides some form of data hiding.
+
+```python
+def multiplier_of(n):
+    def multiplier(number):
+        return number*n
+    return multiplier
+
+multiplywith5 = multiplier_of(5)
+print(multiplywith5(9))
+```
+
+---
+
+## Decorators
+
+- Decorators allow you to make simple modifications to callable objects like functions, methods, or classes.
+- By using decorators, you can reuse a function and do some modifications based on it instead of modifying the original function. Or you can apply a function to other functions, such as do logging, input validation and output formatting. 
+- decorator 本身是一个函数，应用到另一个函数上。这个函数被当作参数传到decorator中。
+
+```python
+# define the decorator 
+def type_check(correct_type):
+    def check(old_function):
+        def new_function(arg):
+            if (isinstance(arg, correct_type)):
+                return old_function(arg)
+            else:
+                print("Bad Type")
+        return new_function
+    return check
+
+# use the decorator
+@type_check(int)
+def times2(num):
+    return num*2
+
+print(times2(2))
+times2('Not A Number')
+
+# use the decorator
+@type_check(str)
+def first_letter(word):
+    return word[0]
+
+print(first_letter('Hello World'))
+first_letter(['Not', 'A', 'String'])
+```
+
+---
+
 ## Modules and Packages
 
 ```python
