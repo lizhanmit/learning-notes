@@ -44,3 +44,6 @@
 - [Design Pattern](https://github.com/lizhanmit/design-pattern)
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
+- [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
+- [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
+
