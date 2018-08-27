@@ -396,6 +396,12 @@ Remove the definition of a function from the shell: `unset .f function_name`
 
 ---
 
+### Manpage Help
+
+Get help documentation of a command: `man <command>`
+
+---
+
 ## File Management
 
 All data in Unix is organized into files.
@@ -411,6 +417,13 @@ All data in Unix is organized into files.
 `.`: 1 character except "\n"
 
 ### Files Operation
+
+Create an empty file: 
+
+- `echo -n > filename`
+- `> filename`
+- `touch filename`
+- `vi filename`
 
 List all files including hidden files: `ls -a`
 
