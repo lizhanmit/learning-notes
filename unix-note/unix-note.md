@@ -529,6 +529,12 @@ The characters that the shell displays as your command prompt are stored in the 
 
 Set command prompt to show user name, machine name and working directory: `PS1="[\u@\h \w]\$"`
 
+### PATH Variable
+
+Check PATH variable: `echo $PATH`
+
+Modify PATH variable: `export PATH=$PATH:<new_path>`
+
 ---
 
 ## Pipes and Filters
@@ -637,3 +643,10 @@ Print a specific environment variable: `printenv <env_variable_name>`
 Displays all system processes: `top`. Use **Ctrl + C** to exit. 
 
 Lists logged-in users: `who`
+
+---
+
+## Ubuntu 
+
+Display hidden files in File Explorer: Ctrl + h. 
+
