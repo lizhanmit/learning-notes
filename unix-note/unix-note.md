@@ -429,7 +429,7 @@ List all files including hidden files: `ls -a`
 
 List all files (including hidden files) in long listing format: `ls -al`
 
-When using cat to see the content of a file, display line numbers: `cat -b filename`
+When using `cat` to see the content of a file, display line numbers: `cat -b filename`
 
 Count the total number of lines, words, and size in a file: `wc filename`
 
@@ -450,6 +450,16 @@ Delete a file: `rm filename`
 Delete multiple files: `rm filename1 filename2 filename3`
 
 Delete a file with prompt: `rm -i filename`
+
+Compare two files: `cmp filename1 filename2`
+
+Find differences between two files: `diff filename1 filename2`
+
+compress a file using gzip: `gzip filename`
+
+Uncompress a file using gunzip: `gunzip filename`
+
+Display the content of a compressed file: `zcat filename`
 
 ## Directory Management
 
@@ -616,3 +626,14 @@ Get the information about a specific user available on the remote machine: `fing
 
 ---
 
+## Misc 
+
+Changes user password: `passwd`
+
+Print all environment variables: `printenv`
+
+Print a specific environment variable: `printenv <env_variable_name>`
+
+Displays all system processes: `top`. Use **Ctrl + C** to exit. 
+
+Lists logged-in users: `who`
