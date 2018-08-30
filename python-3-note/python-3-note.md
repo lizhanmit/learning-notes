@@ -1,5 +1,61 @@
 # Python 3 Note
 
+## Install Python3.6 on Linux 
+
+Steps: 
+
+1. In terminal, install the pre-requisites. 
+```shell   
+sudo apt-get update
+
+sudo apt-get install build-essential libpq-dev libssl-dev openssl libffi-dev zlib1g-dev
+
+sudo apt-get install python3-pip python3-dev
+```
+
+2. Use PPA (Personal Package Archives) to install Python3.6. 
+
+```shell
+sudo add-apt-repository ppa:jonathonf/python-3.6
+
+sudo apt-get update
+
+sudo apt-get install python3.6
+```
+
+3. Verify Python3 version. `python3.6 -V`
+4. Make Python3.6 as the default when type `python3`. 
+
+```shell
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.<old_version>
+
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6.<new_version>
+
+sudo update-alternatives --config python3
+```
+
+5. Verify Python3 version. `python3 -V`
+6. Install virtual environment. `sudo apt-get install python3.6-venv`
+7. Verify virtual environment.
+
+```shell
+mkdir test_py_venv
+
+cd test_py_venv
+
+python3 -m venv my_venv
+
+source my_venv/bin/activate 
+
+# Now you should be in your virtual environment.
+
+# exit the virtual environment
+deactivate
+```
+8. Upgrade pip3. `pip3 install --upgrade pip`
+
+---
+
 ## String Formatting
 
 - Any object which is not a string can be formatted using the %s operator.
