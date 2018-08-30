@@ -1,5 +1,19 @@
 # Unix Note
 
+## apt (advanced package tool)
+
+Make sure updated versions of software packages are available:`sudo apt-get update`. **Run this command before installing any package.**
+
+Install a new package: `sudo apt-get install <packagename>`
+
+Uninstall a package while keeping config files: `sudo apt-get remove <packagename>`
+
+Uninstall a package without keeping config files: `sudo apt-get remove --purge <packagename>`
+
+Search a package: `apt-cache search <packagename>`
+
+---
+
 ## vi
 
 Create a file or open a file: `vi <filename>`
@@ -455,9 +469,24 @@ Compare two files: `cmp filename1 filename2`
 
 Find differences between two files: `diff filename1 filename2`
 
-compress a file using gzip: `gzip filename`
+`tar `
 
-Uncompress a file using gunzip: `gunzip filename`
+- `-c`: package without compression
+- `-x`: extract  
+- `-z`: compress
+- `-f`: specify the package name
+
+Compress a **.gz** file using gzip: `gzip filename`
+
+Uncompress a **.gz** file using gunzip: `gunzip filename`
+
+Package a **.tar** file: `tar -cvf packagename filename`
+
+Unpackage a **.tar** file: `tar -xvf filename`
+
+Compress a **.tar.gz** file: `tar -zcvf packagename filename`
+
+Uncompress a **.tar.gz** file: `tar -zxvf filename`
 
 Display the content of a compressed file: `zcat filename`
 
@@ -643,6 +672,8 @@ Print a specific environment variable: `printenv <env_variable_name>`
 Displays all system processes: `top`. Use **Ctrl + C** to exit. 
 
 Lists logged-in users: `who`
+
+Upgrade pip3: `pip3 install --upgrade pip`
 
 ---
 
