@@ -126,6 +126,10 @@ Constructor constructor1 = String.class.getConstructor(StringBuffer.class);
 String str1 = (String)constructor1.newInstance(new StringBuffer("abc"));
 System.out.println(str1.charAt(2));  // output should be "c"
 
+// or you could use Generic, then you do not need to use cast
+// Constructor<String> constructor1 = String.class.getConstructor(StringBuffer.class);
+// String str1 = constructor1.newInstance(new StringBuffer("abc"));
+
 
 // if you only use non-param constructor, do not need to create a constructor, but use internal default constructor instead 
 String str2 = (String)Class.forName("java.lang.String").newInstance();
@@ -357,7 +361,7 @@ introduced in JDK 1.5
 
 Using an annotation is essentially invoking a class.
 
-![apply-annotation-structure.png](F:/ITProjects/learning-notes/java-advanced-note/img/apply-annotation-structure.png)
+![apply-annotation-structure.png](img/apply-annotation-structure.png)
 
 ```java
 @AnnotationDemo(color = "red", arrayAttr= {4,5}, annotationAttr=@MetaAnnotationDemo("I am the new value attr."))
@@ -424,4 +428,33 @@ public @interface MetaAnnotationDemo {
 - @Target(ElementType.TYPE) - can only be used for types (classes, interfaces, enums).
 
 ### Generic
+
+introduced in JDK 1.5 
+
+Generic exerts the effect while compiling process. Thus, after compile, there is no generic in runtime. 
+
+#### Wildcard: `<?>`
+
+`<?>`: represents any type of collection. 
+
+`<? extends *>`: represents the type of collection extends * type.
+
+- E.g. `List<? extends Number> list = new ArrayList<Integer>();`
+
+`<? super *>`: represents the type of collection is the super class of * type.
+
+- E.g. `List<? super Integer> list = new ArrayList<Number>();`
+
+```java
+// a function that can print any type of collection 
+public static void printCollection(Collection<?> collection) {
+    // collection.add("aaa");  // error
+    // collection = new HashSet<Date>();  // no error
+    
+    System.out.println(collection.size());
+    for (Object obj : collection) {
+        System.out.println(obj);
+    }
+}
+```
 
