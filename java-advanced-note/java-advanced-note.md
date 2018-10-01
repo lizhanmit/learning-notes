@@ -458,3 +458,82 @@ public static void printCollection(Collection<?> collection) {
 }
 ```
 
+#### Customized Generic 
+
+`<T>` represents customized type. 
+
+- It can only be object or reference type but cannot be basic type. 
+- You may find `<E>` in some places. It is the same as `<T>`.
+
+##### Generic Methods
+
+```java
+// a function that can swap two elements in a customized type array 
+public static <T> void swap(T[] arr, int i, int j) {  // <T> here is the declaration of T
+    T tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+}
+
+
+// a function that can convert object type input to any other type output
+public static <T> T autoConvert(Object obj) {
+    return (T)obj;
+}
+
+
+// a function that can fill an array with the same element which can be any type  
+public static <T> void fillArray(T[] arr, Object obj) {
+    for (int i = 0; i < arr.length; i++) {
+        arr[i] = obj;
+    }
+}
+
+
+// a function that can print any type of collection 
+public static <T> void printCollection(Collection<T> collection, T obj2) {
+    // collection.add(obj2);  // no error
+    
+    System.out.println(collection.size());
+    for (Object obj : collection) {
+        System.out.println(obj);
+    }
+}
+```
+
+##### Generic Classes 
+
+```java
+// a DAO that can be used for any type of data
+public class GenericDao<T> {  // declare <T> at class level
+    public void add(T t) {
+        
+    }
+    
+    public T findById(int id) {
+        return null;
+    }
+    
+    public void delete(T t) {
+        
+    }
+    
+    public void delete(int id) {
+        
+    }
+    
+    public void update(T t) {
+        
+    }
+    
+    public Set<T> findByConditions(String condition) {
+        return null;
+    }
+    
+    // for static methods, you need to declare <T> at method level, you cannot rely on <T> at class level
+    public static <T> void update(T t) {
+        
+    }
+}
+```
+
