@@ -1,6 +1,19 @@
 # Java Advanced Note
 
-### Variable Arguments (VarArgs)
+## StringBuilder & StringBuffer 
+
+StringBuilder and StringBuffer essentially do the same thing. 
+
+StringBuilder 
+
+- More efficient
+- Cannot be used for multithreading
+
+StringBuffer
+
+- Multithreading
+
+## Variable Arguments (VarArgs)
 
 introduced in JDK 1.5 
 
@@ -15,7 +28,9 @@ public static int add(int x, int ...args) { // ...args refers to variable parame
 }
 ```
 
-### 自动装箱、拆箱
+---
+
+## 自动装箱、拆箱
 
 ```java
 Integer x = 1; 
@@ -27,7 +42,9 @@ Integer y = 200;
 System.out.println(x == y); // false
 ```
 
-### Enum 
+---
+
+## Enum 
 
 introduced in JDK 1.5 
 
@@ -85,7 +102,7 @@ If there is only one member in the enum, this can be used as an implementation o
 
 ---
 
-### Reflection（反射）
+## Reflection（反射）
 
 Why to use reflection: 
 
@@ -118,7 +135,7 @@ System.out.println(int[].class.isPrimitive());  // false
 System.out.println(int[].class.isArray());  // true 
 ```
 
-#### Constructor 类
+### Constructor 类
 
 ```java
 // create an object by using Constructor Class with reflection
@@ -135,7 +152,7 @@ System.out.println(str1.charAt(2));  // output should be "c"
 String str2 = (String)Class.forName("java.lang.String").newInstance();
 ```
 
-#### Field 类
+### Field 类
 
 ```java
 public class Main() {
@@ -192,7 +209,7 @@ public class ReflectionPoint() {
 }
 ```
 
-#### Method 类
+### Method 类
 
 ```java
 public static void main(String[] args) {
@@ -207,7 +224,7 @@ public static void main(String[] args) {
 
 If the 1st parameter of `invoke()` is `null`, then the method is a static method. 
 
-#### Array 类
+### Array 类
 
 ```java
 public static void main(String[] args) {
@@ -233,7 +250,7 @@ public static void printObject(Object obj) {
 }
 ```
 
-#### Manage Config File
+### Manage Config File
 
 Create config.properties file.  Write `className=java.util.ArrayList` in it.
 
@@ -260,7 +277,7 @@ public class Main() {
 }
 ```
 
-#### Introspection & JavaBean
+### Introspection & JavaBean
 
 Get and set properties:
 
@@ -321,7 +338,7 @@ public class ReflectPoint() {
 }
 ```
 
-#### BeanUtils & JavaBean
+### BeanUtils & JavaBean
 
 Use BeanUtils tool package to get and set properties of JavaBean.
 
@@ -355,7 +372,9 @@ public static void main(String[] args) {
 
 ```
 
-### Annotation 
+---
+
+## Annotation 
 
 introduced in JDK 1.5 
 
@@ -400,7 +419,7 @@ public @interface MetaAnnotationDemo {
 }
 ```
 
-#### Build-in Annotations
+### Build-in Annotations
 
 @SuppressWarnings("deprecation") 
 
@@ -414,7 +433,7 @@ public @interface MetaAnnotationDemo {
 
 - Use it when you do not want others to use the method anymore but you do not want to influence the previous program.
 
-#### Meta Annotation 
+### Meta Annotation 
 
 @Retention() - determine retention of the annotation. 
 
@@ -427,13 +446,17 @@ public @interface MetaAnnotationDemo {
 - @Target(ElementType.METHOD) - can only be used for methods.
 - @Target(ElementType.TYPE) - can only be used for types (classes, interfaces, enums).
 
-### Generic
+---
+
+## Generic
 
 introduced in JDK 1.5 
 
-Generic exerts the effect while compiling process. Thus, after compile, there is no generic in runtime. 
+- 去类型化：Generic exerts the effect while compiling process. Thus, after compile, there is no generic in runtime. 
 
-#### Wildcard: `<?>`
+- 可以通过reflection得到带有泛型的参数的类型。（高难度知识点）
+
+### Wildcard: `<?>`
 
 `<?>`: represents any type of collection. 
 
@@ -458,14 +481,14 @@ public static void printCollection(Collection<?> collection) {
 }
 ```
 
-#### Customized Generic 
+### Customized Generic 
 
 `<T>` represents customized type. 
 
 - It can only be object or reference type but cannot be basic type. 
 - You may find `<E>` in some places. It is the same as `<T>`.
 
-##### Generic Methods
+#### Generic Methods
 
 ```java
 // a function that can swap two elements in a customized type array 
@@ -501,7 +524,7 @@ public static <T> void printCollection(Collection<T> collection, T obj2) {
 }
 ```
 
-##### Generic Classes 
+#### Generic Classes 
 
 ```java
 // a DAO that can be used for any type of data
@@ -536,4 +559,73 @@ public class GenericDao<T> {  // declare <T> at class level
     }
 }
 ```
+
+---
+
+## Class Loader 
+
+Source code is complied to binary class files, which are loaded by class loaders. 
+
+There are many class loaders in JVM. 
+
+Three system default class loaders: 
+
+- BootStrap: The first class loader. (Special. It is not a class.) 
+- ExtClassLoader 
+  - Ext refers to extend.
+- AppClassLoader 
+
+```java
+public class ClassLoaderDemo {
+
+	public static void main(String[] args) {
+		System.out.println(ClassLoaderDemo.class.getClassLoader().getClass().getName());  // sun.misc.Launcher$AppClassLoader
+		System.out.println(System.class.getClassLoader());  // null
+	}
+}
+```
+
+### Delegation Mechanism
+
+![class-loader-relationship.png](img/class-loader-relationship.png)
+
+When loading a class, the current class loader will delegate to parent class loader until BootStrap before searching the class file. 
+
+For instance, AppClassLoader will delegate to ExtClassLoader, then delegate to BootStrap. If BootStrap find the class file, load it. If not, BootStrap will ask ExtClassLoader to find and try to load it. Then AppClassLoader. If AppClassLoader cannot find the class file, throw exception. 
+
+It will only be delegated to AppClassLoader as it was launched by AppClassLoader. So, it will not be delegated to MyClassLoader further. 
+
+### Customized Class Loader 
+
+When you create a class loader yourself, override `findClass()` rather than `loadClass()`.
+
+**Classes with package name cannot invoke classes without package name.**
+
+---
+
+## Proxy & AOP
+
+### Proxy
+
+![proxy.png](img/proxy.png)
+
+Client program called Target class originally. Now create a Proxy class and let Client program call this class. 
+
+Methods in Proxy class have the same name as methods in Target class.
+
+If using factory pattern and config file to do management, you are able to decide applying Target class or Proxy class in the config file. For example, you can apply Proxy class when you need the log function.
+
+### AOP
+
+![aop.png](img/aop.png)
+
+### Dynamic Proxy Class
+
+If you create proxy function for every interface in the system, it will be too troublesome. It is better to use dynamic proxy class which can be generated by JVM in runtime. 
+
+A dynamic proxy class must implement one or more interface. 
+
+If you want to apply dynamic proxy class for a class which does not have interface, you can use CGLIB library. CGLIB will dynamically create a subclass of the target class which can be used as proxy. 
+
+![dynamic-proxy-principle.png](img/dynamic-proxy-principle.png)
 
