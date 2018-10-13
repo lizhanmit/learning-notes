@@ -187,6 +187,9 @@ b.union(a)
 dict_name["element_key"]
 
 # iterate over dictionaries
+for name in phonebook:
+    print("Phone number of %s is %d" %(name, phonebook[name]))
+# or 
 for name, number in phonebook.items():
     print("Phone number of %s is %d" % (name, number))
 
@@ -409,6 +412,18 @@ def first_letter(word):
 
 print(first_letter('Hello World'))
 first_letter(['Not', 'A', 'String'])
+```
+
+---
+
+## OOP
+
+### Inheritance
+
+```python
+class ElectricCar(Car):
+    def __init__(self, number_of_wheels, seating_capacity, maximum_velocity):
+        Car.__init__(self, number_of_wheels, seating_capacity, maximum_velocity)
 ```
 
 ---
