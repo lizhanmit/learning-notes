@@ -13,6 +13,8 @@ StringBuffer
 
 - Multithreading
 
+**Generally we use StringBuilder** as long as we do not need multithreading.
+
 ## Variable Arguments (VarArgs)
 
 introduced in JDK 1.5 
@@ -613,7 +615,7 @@ Client program called Target class originally. Now create a Proxy class and let 
 
 Methods in Proxy class have the same name as methods in Target class.
 
-If using factory pattern and config file to do management, you are able to decide applying Target class or Proxy class in the config file. For example, you can apply Proxy class when you need the log function.
+If using factory pattern and config file to do management, you are able to decide to apply Target class or Proxy class in the config file. For example, you can apply Proxy class when you need the log function.
 
 ### AOP
 
@@ -628,4 +630,182 @@ A dynamic proxy class must implement one or more interface.
 If you want to apply dynamic proxy class for a class which does not have interface, you can use CGLIB library. CGLIB will dynamically create a subclass of the target class which can be used as proxy. 
 
 ![dynamic-proxy-principle.png](img/dynamic-proxy-principle.png)
+
+```java
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class ProxyDemo {
+
+	public static void main(String[] args) throws Exception {
+		/*
+		 * create a dynamic proxy class
+		 * check its method list 
+		 */
+		Class proxyCls = Proxy.getProxyClass(Collection.class.getClassLoader(), Collection.class);
+		System.out.println(proxyCls.getName());
+		
+		System.out.println("------ begin constructor list ------");
+		Constructor[] constructors = proxyCls.getConstructors();
+		for (Constructor constructor : constructors) {
+			String name = constructor.getName();
+			StringBuilder sBuilder = new StringBuilder(name);
+			sBuilder.append("("); 
+			
+			Class[] paramClses = constructor.getParameterTypes();
+			for (Class paramCls : paramClses) {
+				sBuilder.append(paramCls.getName()).append(",");
+			}
+			if (paramClses != null && paramClses.length != 0) {
+				sBuilder.deleteCharAt(sBuilder.length() - 1);  // delete the last "," 
+			}
+			
+			sBuilder.append(")"); 
+			System.out.println(sBuilder.toString());
+		}
+		
+		
+		System.out.println("------ begin method list ------");
+		Method[] methods = proxyCls.getMethods();
+		for (Method method : methods) {
+			String name = method.getName();
+			StringBuilder sBuilder = new StringBuilder(name);
+			sBuilder.append("("); 
+			
+			Class[] paramClses = method.getParameterTypes();
+			for (Class paramCls : paramClses) {
+				sBuilder.append(paramCls.getName()).append(",");
+			}
+			if (paramClses != null && paramClses.length != 0) {
+				sBuilder.deleteCharAt(sBuilder.length() - 1);  // delete the last "," 
+			}
+			
+			sBuilder.append(")"); 
+			System.out.println(sBuilder.toString());
+		}
+		
+		
+		/*
+		 * create instances of proxy class
+		 */
+		System.out.println("------ begin creating instances of proxy class ------");
+		Constructor constructor = proxyCls.getConstructor(InvocationHandler.class);
+		class MyInvocationHandler1 implements InvocationHandler {
+
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				return null;
+			}
+		}
+		
+		Collection proxy1 = (Collection) constructor.newInstance(new MyInvocationHandler1());
+		System.out.println(proxy1.toString());  // null
+		proxy1.clear();  // no exception as this method return void
+		//proxy1.size();  // NullPointerException as this method has return value
+	
+	
+		/*
+		 * create instances of proxy class using anonymous inner class
+		 */
+		Collection proxy2 = (Collection) constructor.newInstance(new InvocationHandler() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				return null;
+			}
+		});
+	
+		
+		/*
+		 * or use a simpler way to create the instance of Proxy from Proxy directly
+		 * hard code invoke() method
+		 */
+		Collection proxy3 = (Collection) Proxy.newProxyInstance(
+				Collection.class.getClassLoader(), 
+				new Class[] {Collection.class}, 
+				new InvocationHandler() {
+					ArrayList target = new ArrayList();
+					
+					@Override
+					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+						long beginTime = System.currentTimeMillis();
+						Object retVal = method.invoke(target, args);
+						long endTime = System.currentTimeMillis();
+						System.out.println(method.getName() + " running duration: " + (endTime - beginTime));
+						return retVal;
+					}
+				});
+		
+		
+		/*
+		 * do not hard code invoke() method 
+		 * when you want to create a proxy, just pass a target and an advice
+		 */
+		ArrayList target = new ArrayList();
+		Collection proxy4 = (Collection) getProxy(target, new MyAdvice());
+		
+		proxy4.add("aaa");  // this method will further call the above invoke() method 
+		proxy4.add("bbb");
+		/*
+		 * output should be:
+		 * ------ beforeMethod() ------
+		 * ------ afterMethod() ------
+		 * add method: running duration: 0
+		 */
+		proxy4.add("ccc");
+		System.out.println(proxy4.size());  // 3
+		
+	}
+
+	private static Object getProxy(Object target, AdviceInterface advice) {
+		Object proxy0 = Proxy.newProxyInstance(
+				target.getClass().getClassLoader(), 
+				target.getClass().getInterfaces(), 
+				new InvocationHandler() {
+					
+					@Override
+					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+						advice.beforeMethod(method);
+						Object retVal = method.invoke(target, args);
+						advice.afterMethod(method);
+						return retVal;
+					}
+				});
+		return proxy0;
+	}
+}
+
+
+import java.lang.reflect.Method;
+
+public interface AdviceInterface {
+
+	void beforeMethod(Method method);
+	void afterMethod(Method method);
+}
+
+
+import java.lang.reflect.Method;
+
+public class MyAdvice implements AdviceInterface {
+
+	long beginTime;
+	
+	@Override
+	public void beforeMethod(Method method) {
+		System.out.println("------ beforeMethod() ------");
+		beginTime = System.currentTimeMillis();
+	}
+
+	@Override
+	public void afterMethod(Method method) {
+		System.out.println("------ afterMethod() ------");
+		long endTime = System.currentTimeMillis();
+		System.out.println(method.getName() + " method: running duration: " + (endTime - beginTime));
+	}
+}
+```
 
