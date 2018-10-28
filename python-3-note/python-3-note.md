@@ -65,6 +65,8 @@ deactivate
 name = "John"
 age = 23
 print("%s is %d years old." % (name, age))
+# or 
+print("{} is {} years old.".format(name, age))
 ```
 
 ---
@@ -95,7 +97,9 @@ if my_string.endswith(sub_string):
 my_list = []
 
 my_list = [1,2,3]
-my_list.append(1)
+my_list.append(4)  # [1,2,3,4]
+my_list.extend([5,6])  # [1,2,3,4.5,6]
+
 
 print(my_list)  # output: [1,2,3]
 
@@ -120,6 +124,15 @@ if my_element in my_list:
     
 # sort the list 
 sorted(name_of_list)
+
+# zip()
+x = [1, 1, 1]
+y = [2, 2, 2]
+list(zip(x, y))  # [(1, 2), (1, 2), (1, 2)]
+[x + y for x, y in zip(x, y)]  # [3, 3, 3]
+
+# transfer a list containing only characters to a string 
+''.join(['a', 'b', 'c'])  # 'abc'
 ```
 
 ---
@@ -418,12 +431,182 @@ first_letter(['Not', 'A', 'String'])
 
 ## OOP
 
+### Private Attributes 
+
+When defining a private attribute in a class, the convention is add `__` in front of the attribute name. `__<priavte_attr_name>`.
+
+### Class Variables 
+
+All instances of a class share the same class variable `<class_name>.<variable_name>`. 
+
+### Class Methods 
+
+Class methods can be used to create alternative constructors. 
+
+They should be invoked by using class name `<class_name>.<class_method_name>()`.
+
+**When to use**: 
+
+- When you want to access the class rather than the instance, define this method as a class method.
+
+When defining a class method, you need to add `@classmethod` decorator at the top of the method, and the first argument of the method is `cls`.
+
+### Static Methods 
+
+**When to use**: 
+
+- If you do not need to access the instance or class in a method, define this method as a static method. 
+
+When defining a static method, you need to add `@staticmethod` decorator at the top of the method, and do not need to pass `self` or `cls` as argument.
+
+They should be invoked by using class name `<class_name>.<static_method_name>()`.
+
 ### Inheritance
 
 ```python
 class ElectricCar(Car):
     def __init__(self, number_of_wheels, seating_capacity, maximum_velocity):
         Car.__init__(self, number_of_wheels, seating_capacity, maximum_velocity)
+        
+    #  or (better)
+    def __init__(self, number_of_wheels, seating_capacity, maximum_velocity):
+        super().__init__(number_of_wheels, seating_capacity, maximum_velocity)
+```
+
+### Magic Methods 
+
+`__<magic_method_name>__` reads as "dunder <magic_method_name>". 
+
+#### `__repr(self)__`
+
+Like `toString()` method in Java. 
+
+Best practice: override this method with statement that is used to create this object. 
+
+#### `__str(self)__`
+
+Similar to `__repr(self)__`. But it is meant to be more readable for end users. 
+
+When using `print(<object>)`, if both `__repr(self)__` and `__str(self)__` are overridden, `str(self)` will be invoked. 
+
+Generally, we only override `__repr(self)__`.
+
+### Decorators
+
+#### `@property` 
+
+Use `@property` at the top of a method to make it can be used as a property / attribute of the class when being invoked.  
+
+```python
+class Employee:
+
+    # class variable
+    raise_amount = 1.04
+
+    # constructor
+    def __init__(self, first_name, last_name, pay):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.pay = pay
+        self.email = self.first_name.lower() + '.' + self.last_name.lower() + '@company.com'
+
+    # regular method
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
+    # class method
+    @classmethod
+    def from_string(cls, emp_str):
+        first_name, last_name, pay = emp_str.split('-')
+        return cls(first_name, last_name, pay)
+
+    # static method
+    @staticmethod
+    def is_workday(day):
+        if day.weekday() == 5 or day.weekday() == 6:
+            return False
+        return True
+
+    def __repr__(self):
+        return 'Employee({}, {}, {})'.format(self.first_name, self.last_name, self.pay)
+
+    def __str__(self):
+        return '{} - {}'.format(self.full_name(), self.email)
+
+class Developer(Employee):
+
+    raise_amount = 1.10
+
+    def __init__(self, first_name, last_name, pay, prog_lang):
+        super().__init__(first_name, last_name, pay)
+        self.prog_lang = prog_lang
+
+
+class Manager(Employee):
+    def __init__(self, first_name, last_name, pay, employees=None):
+        super().__init__(first_name, last_name, pay)
+        if employees is None:
+            self.employees = []
+        else:
+            self.employees = employees
+
+    def add_emp(self, emp):
+        if emp not in self.employees:
+            self.employees.append(emp)
+
+    def remove_emp(self, emp):
+        if emp in self.employees:
+            self.employees.remove(emp)
+
+    def print_emps(self):
+        for emp in self.employees:
+            print('--> ', emp.full_name())
+
+
+
+# main function
+if __name__ == '__main__':
+    emp_1 = Employee('San', 'Zhang', 10000)
+    print(emp_1.email)
+    print(emp_1.full_name())
+    print(emp_1.raise_amount)  # 1.04
+    print(Employee.raise_amount)  # 1.04
+    emp_1.raise_amount = 1.05  # this line only modifies "raise_amount" of the instance emp_1, it will not influence the value of the class variable
+    print(emp_1.raise_amount)  # 1.05
+    print(Employee.raise_amount)  # 1.04, not be modified
+
+    print('------')
+    emp_str_1 = 'Si-Li-20000'
+    new_emp_1 = Employee.from_string(emp_str_1)  # class method should be invoked by using class name
+    print(new_emp_1.email)
+
+    print('------')
+    import datetime
+    my_date1 = datetime.date(2018, 10, 28)
+    print(Employee.is_workday(my_date1))  # static method should be invoked by using class name
+    my_date2 = datetime.date(2018, 10, 29)
+    print(Employee.is_workday(my_date2))
+
+    print('------')
+    dev_1 = Developer('Wu', 'Wang', 30000, 'Python')
+    print(dev_1.prog_lang)
+    dev_2 = Developer('Liu', 'Zhao', 40000, 'Java')
+
+    print('------')
+    mgr_1 = Manager('Qi', 'Zhou', 100000, [dev_1])
+    print(mgr_1.email)
+    print(mgr_1.raise_amount)
+    mgr_1.print_emps()
+    mgr_1.add_emp(dev_2)
+    mgr_1.print_emps()
+
+    print(isinstance(mgr_1, Employee))
+    print(issubclass(Manager, Employee))
+
+    print('------ magic methods ------')
+    print(repr(emp_1))
+    print(str(emp_1))
+    print(emp_1)  # will invoke __str()__ method here if both __repr()__ and __str()__ are overridden
 ```
 
 ---
