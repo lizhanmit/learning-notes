@@ -1,6 +1,10 @@
 # Kafka Note
 
+## Kafka Architecture 
+
 ![kafka-as-data-exchange-hub.png](img/kafka-as-data-exchange-hub.png)
+
+![pipeline-architecture-example.png](img/pipeline-architecture-example.png)
 
 ![kafka-architecture.png](img/kafka-architecture.png)
 
@@ -8,7 +12,7 @@
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
 
---- 
+---
 
 ## Installation (kafka_2.11-0.9.0.0.tgz)
 
@@ -49,10 +53,10 @@ Steps:
 
 > Check a specific topic (here it is hello_topic) info: `bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic hello_topic`.
 
---- 
+---
 
 ## How to use single node multiple brokers
 
 Refer to Kafka website (http://kafka.apache.org/quickstart#quickstart_multibroker). 
 
---- 
+---
