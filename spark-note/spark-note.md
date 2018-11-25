@@ -10,6 +10,8 @@ A RDD can be divided into multiple Stages.
 
 A Stage includes multiple Tasks. 
 
+![spark-workflow.png](img/spark-workflow.png)
+
 ![spark-architecture.png](img/spark-architecture.png)
 
 ![img/spark-hdfs-architecture.png](img/spark-hdfs-architecture.png)
@@ -77,6 +79,11 @@ Create a new stage when it comes across wide dependencies.
 
 ![stage-division-according-to-dependencies.png](img/stage-division-according-to-dependencies.png)
 
+Optimize for dependencies:  
+
+- Do as many narrow dependencies together before hitting a wide dependency.  
+- Try to group wide dependency transformations together, possibly inside a single function and do it once.  
+
 #### RDD Running Process 
 
 ![rdd-running-process.png](img/rdd-running-process.png)
@@ -86,19 +93,6 @@ Create a new stage when it comes across wide dependencies.
 ![rdd-running-process-3.png](img/rdd-running-process-3.png)
 
 ![spark-transformations-dag.png](img/spark-transformations-dag.png)
-
----
-
-### API 
-
-![transformation-api.png](img/transformation-api.png)
-
-![action-api.png](img/action-api.png)
-
-The difference between `foreach()` and `map()`: 
-
-- `foreach()`: return void or no return value.
-- `map()`: return dataset object. 
 
 ---
 
@@ -157,7 +151,47 @@ When to cache data:
 
 ### Shuffle 
 
+- Shuffle moves data across work nodes, which is costly. 
 
+- Use minimal shuffle as possible and do them in late stages for better performance.  
+- **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
+  - `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which will result in big overhead and transmission delay.
+
+No shuffle transformations:  
+
+- Map 
+- Filter  
+- FlatMap 
+- MapPartitions  
+
+Shuffle transformations:  
+
+- Distinct  
+- GroupByKey  
+- ReduceByKey 
+- Join  
+
+---
+
+### Lazy Evaluation 
+
+Taking advantage of lazy evaluation:  
+
+- Do as many transformations as possible before hitting an action.  
+- Avoid debugging statements with shuffle, e.g. printing counts.  
+
+---
+
+### API 
+
+![transformation-api.png](img/transformation-api.png)
+
+![action-api.png](img/action-api.png)
+
+The difference between `foreach()` and `map()`: 
+
+- `foreach()`: return void or no return value.
+- `map()`: return dataset object. 
 
 ---
 
@@ -177,9 +211,47 @@ When to cache data:
 - Create a new key for RDD: `<rdd_var>.keyBy(<func>)`
   - E.g. `<rdd_var>.keyBy(<tuple> => <tuple._1>)`
 
+---
 
+## Spark SQL 
 
+- Use RDD to process text file.
 
+- Use Spark SQL to process database, e.g. MySQL. 
+
+### DataFrame  
+
+- A DataFrame is a kind of distributed dataset on basis of RDD. 
+
+- A DataFrame is a distributed set of Row objects. Each Row object represents a row of record, which provide detailed schema info. 
+- Through DataFrame, Spark SQL is able to know column name and type of the dataset. 
+
+### SparkSession 
+
+From Spark 2.0, `SparkSession` interface was introduced to realize all functions of `SQLContext` and `HiveContext`.
+
+Using `SparkSession`, you can
+
+- load data from different data source and transfer to DataFrame. 
+- transfer DataFrame to table in `SQLContext`.
+- use SQL statements to operate data. 
+
+### RDD -> DataFrame 
+
+![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
+
+Two ways to transfer RDD to DataFrame: 
+
+- Use Reflection to infer the schema of the RDD that contains specific type data. Firstly define a case class. Then Spark will transfer in to DataFrame implicitly. This way is suitable for the RDD whose data type is known.
+- Use programming interface to construct a schema and apply it to the known RDD.  
+
+### Spark SQL & Hive 
+
+It is compulsory to add Hive support for Spark in order to accessing Hive using Spark. 
+
+Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code. 
+
+---
 
 ## Spark Streaming 
 
@@ -187,7 +259,17 @@ Spark streaming is not real stream computing. It is second level.
 
 If you want millisecond level, use stream computing framework, e.g. Storm.  
 
+![spark-streaming-input-output.png](img/spark-streaming-input-output.png)
 
+![spark-streaming.png](img/spark-streaming.png)
+
+### Coding Steps 
+
+![spark-streaming-coding-steps.png](img/spark-streaming-coding-steps.png)
+
+---
+
+## Spark ML
 
 
 
@@ -220,9 +302,26 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ---
 
+## Spark Ecosystem 
+
+![spark-ecosystem.png](img/spark-ecosystem.png)
+
+![bdas-architecture.png](img/bdas-architecture.png)
+
+![spark-ecosystem-2.png](img/spark-ecosystem-2.png)
+
+---
+
 ## Features & Versions 
 
-- Write Ahead Logs (WAL) was introduced in Spark Streaming 1.2.
+- Write Ahead Logs (WAL): introduced in Spark Streaming 1.2.
+- Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3. 
+- `SparkSession` interface: introduced in Spark 2.0. 
 
-- Direct approach of Spark Streaming and Kafka integration was introduced in Spark 1.3. 
+---
 
+## Glossary 
+
+**Parquet**: It is a very efficient format. Generally, you take .csv or .json files. Then do ETL. Then write down to parquet files for future analysis. Parquet is great for **column oriented data**. The schema is in the file.  
+
+**Avro**: Avro format is great for **row oriented data**. The schema is stored in another file. 
