@@ -156,7 +156,8 @@ For instance,
 When to cache data: 
 
 - When doing data validation and cleaning. 
-- Cache for iterative algorithm. 
+- When querying a small “hot” dataset. 
+- Cache for iterative algorithm like PageRank. 
 - Generally, **DO NOT** use for input data as input data is too large. 
 
 ---
