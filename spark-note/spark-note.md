@@ -317,6 +317,7 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 - Write Ahead Logs (WAL): introduced in Spark Streaming 1.2.
 - Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3. 
 - `SparkSession` interface: introduced in Spark 2.0. 
+- After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD.
 
 ---
 
