@@ -31,6 +31,7 @@ When executing an application, Driver will apply resources from Cluster Manager,
 - Standalone 
 - Yarn 
 - Mesos
+- Kubernetes
 
 Spark build-in cluster resource manager (standalone) is not easy to use. **DO NOT** use it generally. 
 
@@ -93,6 +94,17 @@ Optimize for dependencies:
 ![rdd-running-process-3.png](img/rdd-running-process-3.png)
 
 ![spark-transformations-dag.png](img/spark-transformations-dag.png)
+
+---
+
+### Dataset
+
+After Spark 2.0, RDDs are replaced by Dataset. The RDD interface is still supported.
+
+Two ways to create a Dataset: 
+
+- from Hadoop InputFormats (such as HDFS files).
+- by transforming other Datasets.
 
 ---
 
@@ -317,7 +329,7 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 - Write Ahead Logs (WAL): introduced in Spark Streaming 1.2.
 - Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3. 
 - `SparkSession` interface: introduced in Spark 2.0. 
-- After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD.
+- After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD. The RDD interface is still supported.
 
 ---
 
