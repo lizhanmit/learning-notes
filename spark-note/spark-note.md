@@ -1,14 +1,14 @@
 # Spark Note
 
-## Spark Core 
+## Spark Core
 
 ### Architecture  
 
-A Job includes multiple RDDs. 
+A Job includes multiple RDDs.
 
-A RDD can be divided into multiple Stages. 
+A RDD can be divided into multiple Stages.
 
-A Stage includes multiple Tasks. 
+A Stage includes multiple Tasks.
 
 ![spark-workflow.png](img/spark-workflow.png)
 
@@ -20,60 +20,60 @@ A Stage includes multiple Tasks.
 
 There is a **BlockManager** storage module in **Executor**, which uses both RAM and disk as storage devices in order to reduce IO overhead effectively.
 
-When executing an application, Driver will apply resources from Cluster Manager, start up Executors, send program code and files to Executors, and then execute Tasks on Executors. 
+When executing an application, Driver will apply resources from Cluster Manager, start up Executors, send program code and files to Executors, and then execute Tasks on Executors.
 
 ![spark-architecture-3.png](img/spark-architecture-3.png)
 
 ---
 
-### Cluster Resource Manager 
+### Cluster Resource Manager
 
-- Standalone 
-- Yarn 
+- Standalone
+- Yarn
 - Mesos
 - Kubernetes
 
-Spark build-in cluster resource manager (standalone) is not easy to use. **DO NOT** use it generally. 
+Spark build-in cluster resource manager (standalone) is not easy to use. **DO NOT** use it generally.
 
-Mesos integrates with Spark better than Yarn. 
+Mesos integrates with Spark better than Yarn.
 
 You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** management allocating resource to Docker, and then Yarn is for **fine-grained** management.
 
 ---
 
-### RDD 
+### RDD
 
-- A RDD (Resilient Distributed Dataset) is essentially a **read-only** partition record set. 
-
+- A RDD (Resilient Distributed Dataset) is essentially a **read-only** partition record set.
 - Each RDD can be divided into multiple partitions. Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
 
-#### Partitioning 
+#### Partitioning
 
-##### Partitioning Rule 
+##### Partitioning Rule
 
-- The number of partitions should be equal to the number or its integer multiple of CPU cores in the cluster as possible. 
+- The number of partitions should be equal to the number or its integer multiple of CPU cores in the cluster as possible.
 - Each partition is generally between 100 - 200 MB.
 
 ##### Default Partition Number
 
-Configure default partition number through set the parameter `spark.default.parallelism`. 
+Configure default partition number through set the parameter `spark.default.parallelism`.
 
-- Local model: Number of CPU of local machine. If `local[N]` has been set, default partition number is N. 
-- Mesos: 8. 
-- Standalone or Yarn: Max value between number of CPU cores in the cluster and 2. 
+- Local model: Number of CPU of local machine. If `local[N]` has been set, default partition number is N.
+- Mesos: 8.
+- Standalone or Yarn: Max value between number of CPU cores in the cluster and 2.
 
-##### Manually Configure Partition 
+##### Manually Configure Partition
 
-RDD partitioning is automatic but can be done manually through programming. 
+RDD partitioning is automatic but can be done manually through programming.
 
 - When creating a RDD using `textFile()` or `parallelize()` methods, specify it. For example, `sc.textFile(<path>, <partitionNum>)`.
-- When getting a new RDD by transformation, invoke `repartition(<partitionNum>)` method. For example, `rdd2 = rdd1.repartition(4)`. 4 partitions. 
+  - By default, Spark creates one partition for each block of the file (blocks being 128MB by default in HDFS).
+  - You cannot have fewer partitions than blocks.
+- When getting a new RDD by transformation, invoke `repartition(<partitionNum>)` method. For example, `rdd2 = rdd1.repartition(4)`. 4 partitions.
   - Check number of partitions: `rdd2.partitions.size`.
 
 ##### Stage Division & Dependencies
 
 - Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1.
-
 - Wide dependencies: The relationship between RDDs is 1 : many or many : many.
 
 Create a new stage when it comes across wide dependencies.
@@ -85,7 +85,7 @@ Optimize for dependencies:
 - Do as many narrow dependencies together before hitting a wide dependency.  
 - Try to group wide dependency transformations together, possibly inside a single function and do it once.  
 
-#### RDD Running Process 
+#### RDD Running Process
 
 ![rdd-running-process.png](img/rdd-running-process.png)
 
@@ -95,46 +95,60 @@ Optimize for dependencies:
 
 ![spark-transformations-dag.png](img/spark-transformations-dag.png)
 
+#### Printing Elements of an RDD
+
+It is common to print out the elements of an RDD using `<rdd_var>.foreach(println)` or `<rdd_var>.map(println)`.
+
+- On a single machine, OK.
+- In cluster mode, the methods called by executors will print output on executors rather than the driver.
+
+To print all elements on the driver, you may use collect all RDDs to the driver firstly and then print: `<rdd_var>.collect().foreach(println)`.
+
+- This will cause the driver to run out of memory.
+- Thus, only print a few elements for testing: `<rdd_var>.take(<number_of_elements>).foreach(println)`.
+
+
 ---
 
 ### Dataset
 
 After Spark 2.0, RDDs are replaced by Dataset. The RDD interface is still supported.
 
-Two ways to create a Dataset: 
+Two ways to create a Dataset:
 
 - from Hadoop InputFormats (such as HDFS files).
 - by transforming other Datasets.
 
 ---
 
-### Shared Variables 
+### Shared Variables
 
-#### Broadcast Variables 
+#### Broadcast Variables
 
-- Use `SparkContext.broadcast(<var>)` to create a broadcast variable from a normal variable.
-
-- The broadcast variable is like a wrapper of its corresponding normal variable. 
-
-- All functions in the cluster can access the broadcast variable, thereby you do not need to repeatedly send the original normal variable to all nodes. 
-- After creating the broadcast variable, the original normal variable cannot be modified. Consequently, the broadcast variable on all nodes are the same. 
+- Use `SparkContext.broadcast(<var>)` to create a broadcast variable from a normal variable, which is cached on each machine.
+- The broadcast variable is like a wrapper of its corresponding normal variable.
+- The broadcasted data is cached in serialized form and deserialized before running each task.
+- After the broadcast variable is created, it should be used instead of the original normal variable in any functions run on the cluster.
+- All functions in the cluster can access the broadcast variable, thereby you do not need to repeatedly send the original normal variable to all nodes.
+- After creating the broadcast variable, the original normal variable cannot be modified (is **read-only**). Consequently, the broadcast variable on all nodes are the same.
 - **When to use**: when a very large variable need to be used repeatedly.
 
-For instance, 
+For instance,
 
 1. Create: `val broadcastVar = sc.broadcast(Array(1,2,3))`
 
 2. Get value: `broadcastVar.value`
 
-#### Accumulators 
+#### Accumulators
 
-- Used for counter and sum functions. 
-- Use `SparkContext.longAccumulator()` or `SparkContext.doubleAccumulator()` to create. 
-- These accumulators are available on Slave nodes, but Slave nodes cannot read them. 
-- Master node is the only one that can read and compute the aggregate of all updates.
-- Spark support numeric accumulator by default. But you can customize other type. 
+- Used for counter and sum functions.
+- Create: `<accum_var> = SparkContext.longAccumulator()` or `<accum_var> = SparkContext.doubleAccumulator()`
+- Use: `<accum_var>.add(<number>)`
+- These accumulators are available on Slave nodes, but **Slave nodes cannot read them**.
+- Master node is the only one that can read and compute the aggregate of all updates. `<accum_var>.value`
+- Spark natively supports accumulators of numeric types, and programmers can add support for new types.
 
-For instance, 
+For instance,
 
 1. Create: `val nErrors=sc.accumulator(0.0)`
 
@@ -145,26 +159,43 @@ For instance,
 
 4. Get value: `nErrors.value`
 
----
+##### Accumulator Update
 
-### Caching 
-
-- By default, each job re-processes from HDFS. 
-- `<rdd_var>.cache()` 
-- Lazy 
-
-When to cache data: 
-
-- When doing data validation and cleaning. 
-- When querying a small “hot” dataset. 
-- Cache for iterative algorithm like PageRank. 
-- Generally, **DO NOT** use for input data as input data is too large. 
+- For action operations, accumulator updates in each task will only be applied once even if the task restarts.
+- For transformation operation, each task’s update may be applied more than once if tasks or job stages are re-executed.
 
 ---
 
-### Shuffle 
+### Caching / Persisting
 
-- Shuffle moves data across work nodes, which is costly. 
+- By default, each transformed RDD may be recomputed each time you run an action on it.
+- Cache or persist datasets in memory on nodes.
+- Future actions are faster (often by more than 10x).
+- `<rdd_var>.cache()` for default storage level - `MEMORY_ONLY`.
+- Or `<rdd_var>.persist()` with a specified StorageLevel parameter.
+- Spark removes cached data automatically in a least-recently-used (LRU) fashion.
+- Or use `<rdd_var>.unpersist()` if you want manually.
+
+When to cache data:
+
+- When doing data validation and cleaning.
+- When querying a small “hot” dataset.
+- Cache for iterative algorithm like PageRank.
+- Generally, **DO NOT** use for input data as input data is too large.
+
+#### Storage Level
+
+- `MEMORY_ONLY` is the 1st choice.
+- `MEMORY_ONLY_SER` is the 2nd choice. (Java and Scala)
+- **DO NOT** use disk unless computing datasets are expensive, or amount of the data is large. Recomputing a partition may be as fast as reading it from disk.
+
+---
+
+### Shuffle
+
+- Shuffle moves data across worker nodes, which is costly.
+- It involves disk I/O, data serialization, and network I/O.
+- It generates a large number of intermediate files on disk.
 
 - Use minimal shuffle as possible and do them in late stages for better performance.  
 - **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
@@ -172,21 +203,23 @@ When to cache data:
 
 No shuffle transformations:  
 
-- Map 
+- Map
 - Filter  
-- FlatMap 
+- FlatMap
 - MapPartitions  
+- ...
 
 Shuffle transformations:  
 
 - Distinct  
 - GroupByKey  
-- ReduceByKey 
+- ReduceByKey
 - Join  
+- ...
 
 ---
 
-### Lazy Evaluation 
+### Lazy Evaluation
 
 Taking advantage of lazy evaluation:  
 
@@ -195,25 +228,25 @@ Taking advantage of lazy evaluation:
 
 ---
 
-### API 
+### API
 
 ![transformation-api.png](img/transformation-api.png)
 
 ![action-api.png](img/action-api.png)
 
-The difference between `foreach()` and `map()`: 
+The difference between `foreach()` and `map()`:
 
 - `foreach()`: return void or no return value.
-- `map()`: return dataset object. 
+- `map()`: return dataset object.
 
 ---
 
-### Spark Core Coding 
+### Spark Core Coding
 
-- Get keys of RDD: `<rdd_var>.keys` 
+- Get keys of RDD: `<rdd_var>.keys`
 - Get values of RDD: `<rdd_var>.values`
 - Sort RDD by key: `<rdd_var>.sortByKey()`
-  - Ascending is default. 
+  - Ascending is default.
   - Descending: `<rdd_var>.sortByKey(false)`
 - Sort RDD: `<rdd_var>.sortBy(<sort_accordance>)`
   - E.g. according to the second element of tuple in descending: `<rdd_var>.sortBy(_._2, false)`
@@ -226,49 +259,52 @@ The difference between `foreach()` and `map()`:
 
 ---
 
-## Spark SQL 
+## Spark SQL
 
 - Use RDD to process text file.
-
-- Use Spark SQL to process database, e.g. MySQL. 
+- Use Spark SQL to process structured data.
 
 ### DataFrame  
 
-- A DataFrame is a kind of distributed dataset on basis of RDD. 
+- A DataFrame is a kind of distributed dataset on basis of RDD.
+- A DataFrame is a distributed set of Row objects. Each Row object represents a row of record, which provide detailed schema info.
+- Through DataFrame, Spark SQL is able to know column name and type of the dataset.
+- Can be created from:
+  - structured data files
+  - Hive tables
+  - external databases
+  - existing RDDs
 
-- A DataFrame is a distributed set of Row objects. Each Row object represents a row of record, which provide detailed schema info. 
-- Through DataFrame, Spark SQL is able to know column name and type of the dataset. 
-
-### SparkSession 
+### SparkSession
 
 From Spark 2.0, `SparkSession` interface was introduced to realize all functions of `SQLContext` and `HiveContext`.
 
 Using `SparkSession`, you can
 
-- load data from different data source and transfer to DataFrame. 
+- load data from different data source and transfer to DataFrame.
 - transfer DataFrame to table in `SQLContext`.
-- use SQL statements to operate data. 
+- use SQL statements to operate data.
 
-### RDD -> DataFrame 
+### RDD -> DataFrame
 
 ![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
 
-Two ways to transfer RDD to DataFrame: 
+Two ways to transfer RDD to DataFrame:
 
 - Use Reflection to infer the schema of the RDD that contains specific type data. Firstly define a case class. Then Spark will transfer in to DataFrame implicitly. This way is suitable for the RDD whose data type is known.
 - Use programming interface to construct a schema and apply it to the known RDD.  
 
-### Spark SQL & Hive 
+### Spark SQL & Hive
 
-It is compulsory to add Hive support for Spark in order to accessing Hive using Spark. 
+It is compulsory to add Hive support for Spark in order to accessing Hive using Spark.
 
-Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code. 
+Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code.
 
 ---
 
-## Spark Streaming 
+## Spark Streaming
 
-Spark streaming is not real stream computing. It is second level. 
+Spark streaming is not real stream computing. It is second level.
 
 If you want millisecond level, use stream computing framework, e.g. Storm.  
 
@@ -276,7 +312,7 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ![spark-streaming.png](img/spark-streaming.png)
 
-### Coding Steps 
+### Coding Steps
 
 ![spark-streaming-coding-steps.png](img/spark-streaming-coding-steps.png)
 
@@ -288,7 +324,7 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 
 
-## Scaling 
+## Scaling
 
 ### Scale Kafka Connect  
 
@@ -305,17 +341,17 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 ### Scale Spark Streaming  
 
 - Have a single instance of the drive program with separate threads for each stream in the driver.  
-- Create separate driver instances for each stream. 
+- Create separate driver instances for each stream.
 - Spark cluster – add nodes.  
 
-### Scale MySQL 
+### Scale MySQL
 
-- Keep table size small, thereby keeping the entire table in memory, which makes updates and querying very quick. 
+- Keep table size small, thereby keeping the entire table in memory, which makes updates and querying very quick.
 - Use distributed databases with a lot of nodes that are good for frequent updates – e.g. Cassandra.   
 
 ---
 
-## Spark Ecosystem 
+## Spark Ecosystem
 
 ![spark-ecosystem.png](img/spark-ecosystem.png)
 
@@ -325,17 +361,18 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ---
 
-## Features & Versions 
+## Features & Versions
 
 - Write Ahead Logs (WAL): introduced in Spark Streaming 1.2.
-- Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3. 
-- `SparkSession` interface: introduced in Spark 2.0. 
+- Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3.
+- `SparkSession` interface: introduced in Spark 2.0.
+- Dataset: introduced in Spark 1.6.
 - After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD. The RDD interface is still supported.
 
 ---
 
-## Glossary 
+## Glossary
 
-**Parquet**: It is a very efficient format. Generally, you take .csv or .json files. Then do ETL. Then write down to parquet files for future analysis. Parquet is great for **column oriented data**. The schema is in the file.  
+- **Avro**: Avro format is great for **row oriented data**. The schema is stored in another file.
+- **Parquet**: It is a very efficient format. Generally, you take .csv or .json files. Then do ETL. Then write down to parquet files for future analysis. Parquet is great for **column oriented data**. The schema is in the file.  
 
-**Avro**: Avro format is great for **row oriented data**. The schema is stored in another file. 
