@@ -112,7 +112,12 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 ### Dataset
 
-After Spark 2.0, RDDs are replaced by Dataset. The RDD interface is still supported.
+After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported.
+
+Processing or transmitting over the network:
+
+- RDD: using Java serialization or Kryo.
+- Dataset: using a specialized Encoder to serialize the objects.
 
 Two ways to create a Dataset:
 
@@ -289,10 +294,20 @@ Using `SparkSession`, you can
 
 ![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
 
-Two ways to transfer RDD to DataFrame:
+Two ways to convert RDD to DataFrame:
 
-- Use Reflection to infer the schema of the RDD that contains specific type data. Firstly define a case class. Then Spark will transfer in to DataFrame implicitly. This way is suitable for the RDD whose data type is known.
-- Use programming interface to construct a schema and apply it to the known RDD.  
+- Use Reflection to infer the schema of the RDD that contains specific type data.
+  - Firstly define a case class. Then Spark will convert it to DataFrame implicitly.
+  - This way is suitable for the RDD whose data type is known.
+  - More concise code.
+  - Currently (Spark 2.4), Spark SQL does not support converting JavaBeans to DataFrames that contain Map field(s).
+- Use programming interface to construct a schema and apply it to an existing RDD.
+  - Construct Datasets when the columns and their types are not known until runtime.
+  - More verbose.
+  - Steps:
+    1. Create an RDD of `Rows` from the original RDD;
+    2. Create the schema represented by a `StructType` matching the structure of Rows in the RDD created in Step 1.
+    3. Apply the schema to the RDD of `Rows` via `createDataFrame()` method provided by `SparkSession`.
 
 ### Spark SQL & Hive
 
@@ -375,4 +390,3 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 - **Avro**: Avro format is great for **row oriented data**. The schema is stored in another file.
 - **Parquet**: It is a very efficient format. Generally, you take .csv or .json files. Then do ETL. Then write down to parquet files for future analysis. Parquet is great for **column oriented data**. The schema is in the file.  
-
