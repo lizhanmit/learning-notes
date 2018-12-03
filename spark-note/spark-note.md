@@ -107,17 +107,19 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 - This will cause the driver to run out of memory.
 - Thus, only print a few elements for testing: `<rdd_var>.take(<number_of_elements>).foreach(println)`.
 
-
 ---
 
 ### Dataset
 
 After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported.
 
+Datasets are similar to RDDs but are strongly typed that mapped to relational schema. 
+
 Processing or transmitting over the network:
 
 - RDD: using Java serialization or Kryo.
 - Dataset: using a specialized Encoder to serialize the objects.
+  - This Encoder is highly optimized and generates bytecode at run time for serialization and deserialization. 
 
 Two ways to create a Dataset:
 
@@ -272,13 +274,17 @@ The difference between `foreach()` and `map()`:
 ### DataFrame  
 
 - A DataFrame is a kind of distributed dataset on basis of RDD.
-- A DataFrame is a distributed set of Row objects. Each Row object represents a row of record, which provide detailed schema info.
+- A DataFrame is a distributed set of `Row` objects or `Dataset[Row]`.
+- Each `Row` object represents a row of record, which provide detailed schema info. 
+- `Row` is an untyped JVM object.
 - Through DataFrame, Spark SQL is able to know column name and type of the dataset.
 - Can be created from:
   - structured data files
   - Hive tables
   - external databases
   - existing RDDs
+
+![rdd-dataframe-dataset.png](img/rdd-dataframe-dataset.png)
 
 ### SparkSession
 
