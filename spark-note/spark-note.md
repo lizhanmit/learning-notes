@@ -113,7 +113,7 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported.
 
-Datasets are similar to RDDs but are strongly typed that mapped to relational schema. 
+Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema. 
 
 Processing or transmitting over the network:
 
@@ -125,6 +125,8 @@ Two ways to create a Dataset:
 
 - from Hadoop InputFormats (such as HDFS files).
 - by transforming other Datasets.
+
+![when-to-use-datasets.png](img/when-to-use-datasets.png)
 
 ---
 
