@@ -47,6 +47,12 @@ Using Kafka as a hub:
 
 ### Topic
 
+- Kafka splits a topic into partitions. 
+- Each partition is an ordered immutable sequence of messages.
+- Each message is assigned a unique sequential identifier called offset. 
+- Kafka retains all messages for a configurable period of time. 
+- Kafka' performance is effectively constant with respect to data size. 
+
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
 
 - Lead partition: handle writing data to the topic.
@@ -54,8 +60,11 @@ Using Kafka as a hub:
 - Other slave partitions: handle reading data from the topic.
   - Will be written after lead partition.
 - Different topics can have different configurations of the amount of partitions.
+- If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer. 
 
 ### Broker
+
+A single broker can handle several hundred megabytes of reads and writes per second from thousands of applications.
 
 ![brokers-and-topic-partitions.png](img/brokers-and-topic-partitions.png)
 
@@ -67,7 +76,7 @@ If Broker 3 goes down,
 
 ![broker-3-goes-down.png](img/broker-3-goes-down.png)
 
-Multiple brokers: split topics across brokers into partitions. (replication)
+Multiple brokers: split topics across brokers into partitions. (replication for fault tolerance)
 
 ---
 
