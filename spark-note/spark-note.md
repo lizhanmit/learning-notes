@@ -107,7 +107,6 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 - This will cause the driver to run out of memory.
 - Thus, only print a few elements for testing: `<rdd_var>.take(<number_of_elements>).foreach(println)`.
 
-
 ---
 
 ### Dataset
@@ -272,7 +271,7 @@ The difference between `foreach()` and `map()`:
 ### DataFrame  
 
 - A DataFrame is a kind of distributed dataset on basis of RDD.
-- A DataFrame is a distributed set of Row objects. Each Row object represents a row of record, which provide detailed schema info.
+- **A DataFrame is a distributed Dataset of `Row` objects.** Each `Row` object represents a row of record, which provide detailed schema info.
 - Through DataFrame, Spark SQL is able to know column name and type of the dataset.
 - Can be created from:
   - structured data files
@@ -317,6 +316,21 @@ Pre-compile version Spark from official site generally does not contain Hive sup
 
 ---
 
+## Structured Streaming
+
+Built on the Spark SQL engine. 
+
+- Micro-batch processing: 100 milliseconds latencies, **exactly-once** guarantees.
+- Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
+
+Treats a live data stream as an unbounded input table that is being continuously appended. 
+
+![structured-streaming-model.png](img/structured-streaming-model.png)
+
+Event-time: The time embedded in the data itself.
+
+---
+
 ## Spark Streaming
 
 Spark streaming is not real stream computing. It is second level.
@@ -335,11 +349,40 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ## Spark ML
 
+### ML Workflow
 
+Estimator receives an input DataFrame via `.fit()` method, and then generate a Transformer. 
 
+- Estimator: algorithm 
+- Transformer: model
 
+![ml-workflow.png](img/ml-workflow.png)
 
-## Scaling
+![ml-workflow-2.png](img/ml-workflow-2.png)
+
+- Red frame: estimator 
+- Blue frame: transformer 
+
+1. Create a new pipeline to fit trainingData, and then generate a pipelineModel. 
+2. Use this model to transform testData, and then get DataFrame with prediction. 
+
+![ml-pipeline.png](img/ml-pipeline.png)
+
+---
+
+### Feature Transformation 
+
+Feature transformation: transformation of label and index. 
+
+`StringIndexer`
+
+- Construction order of the index is the frequency of label. 
+- When encoding labels, give priority to those with higher frequency.
+- The index of the label with highest frequency is 0.
+
+---
+
+## System Scaling
 
 ### Scale Kafka Connect  
 
@@ -382,7 +425,9 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 - Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3.
 - `SparkSession` interface: introduced in Spark 2.0.
 - Dataset: introduced in Spark 1.6.
-- After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD. The RDD interface is still supported.
+  - After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD. The RDD interface is still supported.
+- Continuous Processing: introduced in Spark 2.3.
+- Watermarking: introduced in Spark 2.1. Allows the user to specify the threshold of late data, and allows the engine to accordingly clean up old state.
 
 ---
 
@@ -390,3 +435,10 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 - **Avro**: Avro format is great for **row oriented data**. The schema is stored in another file.
 - **Parquet**: It is a very efficient format. Generally, you take .csv or .json files. Then do ETL. Then write down to parquet files for future analysis. Parquet is great for **column oriented data**. The schema is in the file.  
+
+---
+
+## Useful Resources 
+
+- [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
+
