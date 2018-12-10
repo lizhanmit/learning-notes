@@ -6,6 +6,7 @@
 - [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
 - [Flume and Kafka Integration](https://github.com/lizhanmit/learning-notes/blob/master/flume-kafka-integration-note/flume-kafka-integration-note.md)
 - [Spark](https://github.com/lizhanmit/learning-notes/blob/master/spark-note/spark-note.md)
+- [Spark Coding](https://github.com/lizhanmit/spark-coding-tutorial)
 - [Spark Streaming](https://github.com/lizhanmit/learning-notes/blob/master/spark-streaming-note/spark-streaming-note.md)
 - [Spark Streaming Real Project Tutorial](https://github.com/lizhanmit/sparktrain)
   - [Kafka client app (producer and consumer)](https://github.com/lizhanmit/sparktrain#srcmainjavacomzhandevsparkkafka)
@@ -40,13 +41,19 @@
 
 ---
 
-- [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
-- [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
+## Java
+
 - [Java Design Patterns](https://github.com/lizhanmit/java-design-patterns)
-- [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
-- [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Java Advanced](https://github.com/lizhanmit/learning-notes/blob/master/java-advanced-note/java-advanced-note.md)
 - [Java 8 Lambda Expression](https://github.com/lizhanmit/java-8-lambda)
+- [Java Concurrency](https://github.com/lizhanmit/java-concurrency)
+
+---
+
+- [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
+- [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
+- [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
+- [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
 
