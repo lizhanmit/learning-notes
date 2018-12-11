@@ -2,7 +2,7 @@
 
 ## Real-Time Applications
 
-### Real-Time
+Real-Time
 
 - As the response time expectations get higher, or the target response times get lower, the cost increases exponentially.
 - Go as high as possible for the response time value without impacting user experience or application effectiveness.
@@ -11,7 +11,7 @@ Synchronous vs. Asynchronous Pipelines
 
 ![synchronous-vs-asynchronous-pipelines.png](img/synchronous-vs-asynchronous-pipelines.png)
 
-Strategy:
+Strategies
 
 - Use asynchronous pipelines wherever possible.
 - **DO NOT** use synchronous pipelines unless absolutely required.
@@ -23,11 +23,9 @@ Strategy:
 
 ---
 
-### Use Cases
+### Social Media Sentiment Analysis
 
-#### Social Media Sentiment Analysis
-
-##### Problem
+#### Problem
 
 Business needs an overall real-time (a few minutes) tracking board and list of negative posts and posters.
 
@@ -38,7 +36,7 @@ Goals:
 - real-time summary for the overall social media sentiment
 - capability to add more social media channels
 
-##### Solution
+#### Solution
 
 ![social-media-sentiment-analysis-solution.png](img/social-media-sentiment-analysis-solution.png)
 
@@ -51,13 +49,13 @@ Goals:
 - Use reduce to summarize tweets by sentiment.
 - Keep batch intervals as high as possible.
 
-##### Technologies
+#### Technologies
 
-**Stream Processing**
+##### Stream Processing
 
 ![social-media-sentiment-analysis-technologies.png](img/social-media-sentiment-analysis-technologies.png)
 
-**Streaming Message Queues**
+##### Streaming Message Queues
 
 - :negative_squared_cross_mark: RabbitMQ
 
@@ -67,25 +65,25 @@ Goals:
 
 The above three have equivalent capabilities.
 
-**Real-Time Subscribers**
+##### Real-Time Subscribers
 
 - Build customized subscribers to subscribe to messages in real time, and then push them to Kafka.
 
-**Sentiment Analysis Engine**
+##### Sentiment Analysis Engine
 
 - Build a web service (application) based on Python libraries (NTLK package).
 - Scale by using multiple web servers behind a load balancer.
 
-**Message Database**
+##### Message Database
 
 - MySQL can easily handle 100,000 records per day.
 - If the number of records increases in the future, you may need to use NoSQL.  
 
 ---
 
-#### Payment Fraud Detection
+### Payment Fraud Detection
 
-##### Problem
+#### Problem
 
 When a customer buys online, your business wants to determine fraud before order shipment.
 
@@ -96,7 +94,7 @@ Goals:
 - predictive analysis
 - enable human review of fraudulent transactions
 
-##### Solution
+#### Solution
 
 ![payment-fraud-detection-solution.png](img/payment-fraud-detection-solution.png)
 
@@ -106,32 +104,32 @@ Goals:
 - Predict in map operations as each transaction is independent.
 - The number of Spark and Kafka partitions should be the same.
 
-##### Technologies
+#### Technologies
 
-**Machine Learning**
+##### Machine Learning
 
 ![payment-fraud-detection-technologies.png](img/payment-fraud-detection-technologies.png)
 
-**Streaming Message Queues**
+##### Streaming Message Queues
 
 - Apache Kafka
 
 ---
 
-#### Online Production Recommendations
+### Online Production Recommendations
 
-##### Problem
+#### Problem
 
-##### Solution
+#### Solution
 
-##### Technologies
+#### Technologies
 
 ---
 
-#### Mobile Couponing
+### Mobile Couponing
 
-##### Problem
+#### Problem
 
-##### Solution
+#### Solution
 
-##### Technologies
+#### Technologies
