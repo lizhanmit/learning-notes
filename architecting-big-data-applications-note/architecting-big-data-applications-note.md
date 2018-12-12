@@ -116,13 +116,37 @@ Goals:
 
 ---
 
-### Online Production Recommendations
+### E-Commerce Product Recommendations
 
 #### Problem
 
+Your business wants to recommend products in real time (a few seconds) while the user is browsing your e-commerce website.
+
+- Recommendation based on the product currently being viewed.
+- Recommendation based on the clickstream during the current browsing session.
+
 #### Solution
 
+![e-commerce-product-recommendations-technologies.png](img/e-commerce-product-recommendations-technologies.png)
+
+- Combine two kinds of recommendations to give a consolidated list of products.
+- Each event is handled and predicted and the in-memory database is accessed inside the map function to ensure parallelism.
+- Adopt asynchronous recommendation.
+- Purge old data once session expires.
+
 #### Technologies
+
+##### Recommendation Service
+
+- Should be stateless.
+- Any state should be stored in the central in-memory database.
+- Deploy multiple recommendation services behind a load balancer.
+
+##### In-Memory Database
+
+![hazelcast-setup.png](img/hazelcast-setup.png)
+
+- Use in-memory database to store current user, session and recommendations.
 
 ---
 
