@@ -2,9 +2,14 @@
 
 ## Data Engineering
 
+- [Apache Airflow](https://github.com/lizhanmit/learning-notes/blob/master/apache-airflow-note/apache-airflow-note.md)
+- [Architecting Big Data Applications](https://github.com/lizhanmit/learning-notes/blob/master/architecting-big-data-applications-note/architecting-big-data-applications-note.md)
+- [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
+- [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
 - [Flume](https://github.com/lizhanmit/learning-notes/blob/master/flume-note/flume-note.md)
-- [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
 - [Flume and Kafka Integration](https://github.com/lizhanmit/learning-notes/blob/master/flume-kafka-integration-note/flume-kafka-integration-note.md)
+- [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
+- [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
 - [Spark](https://github.com/lizhanmit/learning-notes/blob/master/spark-note/spark-note.md)
 - [Spark Coding](https://github.com/lizhanmit/spark-coding-tutorial)
 - [Spark Streaming](https://github.com/lizhanmit/learning-notes/blob/master/spark-streaming-note/spark-streaming-note.md)
@@ -31,29 +36,26 @@
   - [Web Log ==> Flume ==> Kafka](https://github.com/lizhanmit/sparktrain#web-log--flume--kafka)
   - [Web Log ==> Flume ==> Kafka ==> Spark Streaming](https://github.com/lizhanmit/sparktrain#web-log--flume--kafka--spark-streaming)
   - [Web Log ==> Flume ==> Kafka ==> Spark Streaming ==> Data Cleansing](https://github.com/lizhanmit/sparktrain#web-log--flume--kafka--spark-streaming--data-cleansing)
-  - [Do Statistics about Page View (PV)](https://github.com/lizhanmit/sparktrain#do-statistics-about-page-view-pv) 
+  - [Do Statistics about Page View (PV)](https://github.com/lizhanmit/sparktrain#do-statistics-about-page-view-pv)
     - [Page View](https://github.com/lizhanmit/sparktrain#page-view)
     - [Page View Contributed by Search Engines](https://github.com/lizhanmit/sparktrain#page-view-contributed-by-search-engines)
   - [Data Visualization](https://github.com/lizhanmit/sparktrain#data-visualization)
-- [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
-- [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
-- [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
 
 ---
 
 ## Java
 
-- [Java Design Patterns](https://github.com/lizhanmit/java-design-patterns)
-- [Java Advanced](https://github.com/lizhanmit/learning-notes/blob/master/java-advanced-note/java-advanced-note.md)
 - [Java 8 Lambda Expression](https://github.com/lizhanmit/java-8-lambda)
+- [Java Advanced](https://github.com/lizhanmit/learning-notes/blob/master/java-advanced-note/java-advanced-note.md)
 - [Java Concurrency](https://github.com/lizhanmit/java-concurrency)
+- [Java Design Patterns](https://github.com/lizhanmit/java-design-patterns)
+- [Spring Boot](https://github.com/lizhanmit/learning-notes/blob/master/spring-boot-note/spring-boot-note.md)
 
 ---
 
+- [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
-- [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
-
