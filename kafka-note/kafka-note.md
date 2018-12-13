@@ -51,7 +51,7 @@ Using Kafka as a hub:
 - Each partition is an ordered immutable sequence of messages.
 - Each message is assigned a unique sequential identifier called offset. 
 - Kafka retains all messages for a configurable period of time. 
-- Kafka' performance is effectively constant with respect to data size. 
+- Kafka's performance is effectively constant with respect to data size. 
 
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
 
