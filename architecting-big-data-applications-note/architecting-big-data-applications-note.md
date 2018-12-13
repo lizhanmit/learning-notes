@@ -79,6 +79,14 @@ The above three have equivalent capabilities.
 - MySQL can easily handle 100,000 records per day.
 - If the number of records increases in the future, you may need to use NoSQL.  
 
+#### Best Practice of Real-Time Streaming
+
+- Different streaming products offer different kinds of guarantees like only once, at least one and at most once.
+- Requery data from an earlier point if failures happen.
+- Decouple the publishers and the subscribers.
+- Redundacny to support failover.
+- Should be horizontally scalable.
+
 ---
 
 ### Payment Fraud Detection
@@ -110,9 +118,12 @@ Goals:
 
 ![payment-fraud-detection-technologies.png](img/payment-fraud-detection-technologies.png)
 
-##### Streaming Message Queues
+#### Best Practices of Predictive Analytics
 
-- Apache Kafka
+- Should be possible to run predictions on a number of transactions simultaneously and easily scalable.
+- Keep the prediction process as asynchronous as possible.
+- Measure and benchmark prediction times.
+- Benchmark user response times during synchronous predictions.
 
 ---
 
@@ -124,6 +135,12 @@ Your business wants to recommend products in real time (a few seconds) while the
 
 - Recommendation based on the product currently being viewed.
 - Recommendation based on the clickstream during the current browsing session.
+
+Goals:
+
+- real-time: a few seconds
+- context specific
+- scalable to support thousands of online users simultaneously
 
 #### Solution
 
@@ -140,7 +157,6 @@ Your business wants to recommend products in real time (a few seconds) while the
 
 - Should be stateless.
 - Any state should be stored in the central in-memory database.
-- Deploy multiple recommendation services behind a load balancer.
 
 ##### In-Memory Database
 
@@ -148,12 +164,60 @@ Your business wants to recommend products in real time (a few seconds) while the
 
 - Use in-memory database to store current user, session and recommendations.
 
+#### Best Practices of Parallel Processing
+
+- Store all data including session state in a central database, which should be able to scale horizontally.
+- Services should be stateless.
+- Deploy multiple recommendation services behind a load balancer.
+- Spend time learning and designing partition management.
+- Data processing should be done in map operations as much as possible to ensure parallelism.
+- Reduced operations should be kept to a minimum and should be in the last stage.
+
 ---
 
 ### Mobile Couponing
 
 #### Problem
 
+- Your business pushes mobile couponing to customers' mobile phones depending on the location they are currently in and based on their past buying behaviors and preferences.
+- Your business gets paid only if customers use the coupons.
+- Customers have your mobile app installed on their mobile phones.
+
+Goals:
+
+- real-time: a few seconds
+- location specific
+- user-based recommendations
+- scalable to support hundreds of thousands of active mobile phones
+
 #### Solution
 
+![mobile-couponing-solution.png](img/mobile-couponing-solution.png)
+
+- The mobile gateway should be horizontally scalable and capable of processing multiple requests in parallel.
+- The recommendations should be queried and decided within map operations so that the work is distributed amongst Spark partitions.
+- Coupon queue will have a smaller load since not all location information coming in will find coupon matches.
+
 #### Technologies
+
+##### User Preferences & Location Services Databases
+
+![user-preferences-and-location-services-databases.png](img/user-preferences-and-location-services-databases.png)
+
+##### Mobile Gateway
+
+- Should be stateless.
+- Should be horizontally scalable.
+- Coupons have a time to live (TTL): a few seconds, as the user could have moved to another location when the coupons finally arrive.
+- Drop coupons if their TTL expires.
+
+#### Best Practices of Pipeline Management
+
+- Use cluster managers (Yarn or Mesos) for
+  - monitoring cluster health
+  - scheduling jobs
+  - job management
+  - failover
+  - scaling with additional nodes
+  - reporting of cluster health
+  - backlog tracking
