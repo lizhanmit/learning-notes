@@ -1,27 +1,29 @@
 # Java Advanced Note
 
-## StringBuilder & StringBuffer 
+## StringBuilder & StringBuffer
 
-StringBuilder and StringBuffer essentially do the same thing. 
+StringBuilder and StringBuffer (older) essentially do the same thing.
 
-StringBuilder 
+StringBuilder (introduced in JDK 1.5)
 
 - More efficient
+- Not synchronized
 - Cannot be used for multithreading
 
 StringBuffer
 
+- Synchronized
 - Multithreading
 
 **Generally we use StringBuilder** as long as we do not need multithreading.
 
 ## Variable Arguments (VarArgs)
 
-introduced in JDK 1.5 
+introduced in JDK 1.5
 
 ```java
 public static int add(int x, int ...args) { // ...args refers to variable parameter, namely potential multiple number of parameters
-    
+
     int sum = x;
     for (int i : args) { // args is regarded as an array
         sum += i;
@@ -35,27 +37,27 @@ public static int add(int x, int ...args) { // ...args refers to variable parame
 ## Autoboxing & Unboxing
 
 ```java
-Integer x = 1; 
-Integer y = 1; 
-System.out.println(x == y); // true, only for x and y between -128 and 127 
+Integer x = 1;
+Integer y = 1;
+System.out.println(x == y); // true, only for x and y between -128 and 127
 
-Integer x = 200; 
-Integer y = 200; 
+Integer x = 200;
+Integer y = 200;
 System.out.println(x == y); // false
 ```
 
 ---
 
-## Enum 
+## Enum
 
-introduced in JDK 1.5 
+introduced in JDK 1.5
 
 ```java
 public static void main(String[] args) {
 
     Weekday weekday1 = Weekday.SUN;
     System.out.println(weekday1); // output is SUN
-    
+
     System.out.println(Weekday.values().length); // Weekday.values() returns Weekday[]
 }
 
@@ -78,63 +80,63 @@ public enum TrafficLight {
         public TrafficLight nextLight() {
             return GREEN;
         }
-    }, 
+    },
     GREEN(45) {
         public TrafficLight nextLight() {
             return YELLOW;
         }
-    }, 
+    },
     YELLOW(5) {
         public TrafficLight nextLight() {
             return RED;
         }
     };
-    
+
     public abstract TrafficLight nextLight();
-    
-    private int time; 
-    
+
+    private int time;
+
     private TrafficLight(int time) {
         this.time = time;
     }
 }
 ```
 
-If there is only one member in the enum, this can be used as an implementation of singleton pattern. 
+If there is only one member in the enum, this can be used as an implementation of singleton pattern.
 
 ---
 
 ## Reflection（反射）
 
-Why to use reflection: 
+Why to use reflection:
 
 - Used in the scenario that the name of class is unknown.
 - Increase the flexibility of program.
 - Used to implement framework.
 
-Reflection will decrease the performance of program. 
+Reflection will decrease the performance of program.
 
-如何得到字节码对应的实例对象： 
+如何得到字节码对应的实例对象：
 
-- `<Class_name>.class`, e.g. `Date.class` 
+- `<Class_name>.class`, e.g. `Date.class`
 - `<object>.getClass()`, e.g. `new Date().getClass()`
 - `Class.forName("full_class_name")`, e.g. `Class.forName("java.lang.String")`
 
 ```java
-String str = "abc"; 
-Class cls1 = str.getClass(); 
-Class cls2 = String.class; 
+String str = "abc";
+Class cls1 = str.getClass();
+Class cls2 = String.class;
 Class cls3 = Class.forName("java.lang.String");
 
 System.out.println(cls1 == cls2);  // true
 System.out.println(cls2 == cls3);  // true
 
-System.out.println(cls1.isPrimitive());  // false 
+System.out.println(cls1.isPrimitive());  // false
 System.out.println(int.class.isPrimitive());  // true
-System.out.println(int.class == Integer.class);  // false 
+System.out.println(int.class == Integer.class);  // false
 System.out.println(int.class == Integer.TYPE);  // true
 System.out.println(int[].class.isPrimitive());  // false
-System.out.println(int[].class.isArray());  // true 
+System.out.println(int[].class.isArray());  // true
 ```
 
 ### Constructor 类
@@ -150,7 +152,7 @@ System.out.println(str1.charAt(2));  // output should be "c"
 // String str1 = constructor1.newInstance(new StringBuffer("abc"));
 
 
-// if you only use non-param constructor, do not need to create a constructor, but use internal default constructor instead 
+// if you only use non-param constructor, do not need to create a constructor, but use internal default constructor instead
 String str2 = (String)Class.forName("java.lang.String").newInstance();
 ```
 
@@ -160,26 +162,26 @@ String str2 = (String)Class.forName("java.lang.String").newInstance();
 public class Main() {
     public static void main(String[] args) {
         ReflectionPoint point1 = new ReflectionPoint(3, 5);
-        
+
         Field fieldY = point1.getClass().getField("Y");
         System.out.println(fieldY.get(point1));  // output should be 5
-        
+
         Field fieldX = point1.getClass().getField("X");
         System.out.println(fieldX.get(point1));  // exception, as X is private, so getField() method can only access public field
-        
+
         Field fieldX = point1.getClass().getDeclaredField("X");  // can access field X here
         System.out.println(fieldX.get(point1));  // but cannot get the value of field X, as X is private
-        
-        // in order to get field X value of point1 
+
+        // in order to get field X value of point1
         fieldX.setAccessible(true);
         System.out.println(fieldX.get(point1));  // output should be 3
-        
-        
+
+
         // for all String type fields, change "a" to "b" of its value
         changeAtoB(point1);
         System.out.println(point1);  // output should be "bpple, bbnbnb"
     }
-    
+
     public static void changeAtoB(Object obj) {
         Field[] fields = obj.getClass().getFields();
         for (Field field : fields) {
@@ -193,17 +195,17 @@ public class Main() {
 }
 
 public class ReflectionPoint() {
-    private int x; 
+    private int x;
     public int y;
     public String s1 = "apple";
     public String s2 = "banana";
-    
+
     public ReflectionPoint(int x, int y) {
         super();
         this.x = x;
         this.y = y;
     }
-    
+
     @Override
     public String toString() {
         return s1 + ", " + s2;
@@ -216,15 +218,15 @@ public class ReflectionPoint() {
 ```java
 public static void main(String[] args) {
     String str1 = "abc";
-    // in general 
+    // in general
     // str1.charAt(1);
-    // using reflection 
+    // using reflection
     Method methodCharAt = String.class.getMethod("charAt", int.class);
     System.out.println(methodCharAt.invoke(str1, 1));  // output should be "b"
 }
 ```
 
-If the 1st parameter of `invoke()` is `null`, then the method is a static method. 
+If the 1st parameter of `invoke()` is `null`, then the method is a static method.
 
 ### Array 类
 
@@ -232,7 +234,7 @@ If the 1st parameter of `invoke()` is `null`, then the method is a static method
 public static void main(String[] args) {
 	String[] s = new String[]{"a", "b", "c"};
     printObject(s);
-    // output should be 
+    // output should be
     // a
     // b
     // c
@@ -263,7 +265,7 @@ public class Main() {
         // InputStream inputStream = new FileInputStream("config.properties");  
 
 		InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("<project_relative_path>/config.properties");
-        // alternative way 
+        // alternative way
         // InputStream inputStream = Main.class.getResourceAsStream("<Main.class_relative_path> or <project_absolute_path>/config.properties");
         Properties props = new Properties();
         props.load(inputStream);
@@ -287,15 +289,15 @@ Get and set properties:
 public class Main() {
     public static void main(String[] args) {
         ReflectPoint pt1 = new ReflectPoint(3, 5);
-        
-        String propertyName = "x"; 
-        
+
+        String propertyName = "x";
+
         PropertyDescriptor pd = new PropertyDescriptor(propertyName, pt1.getClass());
-        
+
         Method methodGetX = pd.getReadMethod();
         Object retVal = methodGetX.invoke(pt1);
         System.out.println(retVal);  // output should be 3
-        
+
         Method methodSetX = pd.getWriteMethod();
         methodSetX.invoke(pt1, 7);
         System.out.println(pt1.getX());  // output should be 7      
@@ -307,33 +309,33 @@ public class ReflectPoint() {
     private int x;
     private int y;
     private Date birthday = new Date();
-    
+
     public ReflectPoint(int x, int y) {
         super();
-        this.x = x; 
+        this.x = x;
         this.y = y;
     }
-    
+
     public int getX() {
         return x;
     }
-    
+
     public void setX(int x) {
         this.x = x;
     }
-    
+
     public int getY() {
         return y;
     }
-    
+
     public void setY(int y) {
         this.y = y;
     }
-    
+
     public int getBirthday() {
         return birthday;
     }
-    
+
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
@@ -344,31 +346,31 @@ public class ReflectPoint() {
 
 Use BeanUtils tool package to get and set properties of JavaBean.
 
-Need to import BeanUtils .jar package. 
+Need to import BeanUtils .jar package.
 
 Advantages of using BeanUtils:
 
 - You can set type of all parameters as String.
-- You are able to access properties of Java Bean in a cascade way. 
+- You are able to access properties of Java Bean in a cascade way.
 
 If the type of property is not correct when using BeanUtils to transfer, you can use PropertyUtils.
 
 ```java
 public static void main(String[] args) {
-	// continue with the above example 
-    System.out.println(BeanUtils.getProperty(pt1, "x").getClass().getName());  // output should be java.lang.String 
+	// continue with the above example
+    System.out.println(BeanUtils.getProperty(pt1, "x").getClass().getName());  // output should be java.lang.String
     // when using BeanUtils, type of parameters is regarded as String
-    
+
     BeanUtils.setProperty(pt1, "x", "9");  // note: type of "9" is String
     System.out.println(pt1.getX());  // output should be 9
-    
-    
+
+
     BeanUtils.setProperty(pt1, "birthday.time", "111");
     System.out.println(BeanUtils.getProperty(pt1, "birthday.time"));  // output should be 111
-    
-    
+
+
     // when using PropertyUtils, type of parameters is regarded as its original type
-    PropertyUtils.setProperty(pt1, "x", 10);  // note: type of 10 is not String 
+    PropertyUtils.setProperty(pt1, "x", 10);  // note: type of 10 is not String
     System.out.println(PropertyUtils.getProperty(pt1, "x").getClass().getName());  // output should be java.lang.Integer    
 }
 
@@ -376,9 +378,9 @@ public static void main(String[] args) {
 
 ---
 
-## Annotation 
+## Annotation
 
-introduced in JDK 1.5 
+introduced in JDK 1.5
 
 Using an annotation is essentially invoking a class.
 
@@ -412,7 +414,7 @@ public @interface AnnotationDemo {
 	String color();  // attribute of annotation, then you are able to set attribute when applying the annotation
 	String value() default "aaa";
 	int[] arrayAttr() default {1,2,3};
-	MetaAnnotationDemo annotationAttr() default @MetaAnnotationDemo("I am the value attr of MetaAnnotationDemo."); 
+	MetaAnnotationDemo annotationAttr() default @MetaAnnotationDemo("I am the value attr of MetaAnnotationDemo.");
 }
 
 
@@ -423,21 +425,21 @@ public @interface MetaAnnotationDemo {
 
 ### Build-in Annotations
 
-@SuppressWarnings("deprecation") 
+@SuppressWarnings("deprecation")
 
 - Write out of functions.
 
 - Use it when you are using deprecated methods but you do not want to be warned about it.
 
-@Deprecated 
+@Deprecated
 
 - Write out of functions.
 
 - Use it when you do not want others to use the method anymore but you do not want to influence the previous program.
 
-### Meta Annotation 
+### Meta Annotation
 
-@Retention() - determine retention of the annotation. 
+@Retention() - determine retention of the annotation.
 
 - @Retention(RetentionPolicy.RUNTIME)
 - @Retention(RetentionPolicy.SOURCE)
@@ -452,15 +454,15 @@ public @interface MetaAnnotationDemo {
 
 ## Generic
 
-introduced in JDK 1.5 
+introduced in JDK 1.5
 
-- 去类型化：Generic exerts the effect while compiling process. Thus, after compile, there is no generic in runtime. 
+- 去类型化：Generic exerts the effect while compiling process. Thus, after compile, there is no generic in runtime.
 
 - 可以通过reflection得到带有泛型的参数的类型。（高难度知识点）
 
 ### Wildcard: `<?>`
 
-`<?>`: represents any type of collection. 
+`<?>`: represents any type of collection.
 
 `<? extends *>`: represents the type of collection extends * type.
 
@@ -471,11 +473,11 @@ introduced in JDK 1.5
 - E.g. `List<? super Integer> list = new ArrayList<Number>();`
 
 ```java
-// a function that can print any type of collection 
+// a function that can print any type of collection
 public static void printCollection(Collection<?> collection) {
     // collection.add("aaa");  // error
     // collection = new HashSet<Date>();  // no error
-    
+
     System.out.println(collection.size());
     for (Object obj : collection) {
         System.out.println(obj);
@@ -483,17 +485,17 @@ public static void printCollection(Collection<?> collection) {
 }
 ```
 
-### Customized Generic 
+### Customized Generic
 
-`<T>` represents customized type. 
+`<T>` represents customized type.
 
-- It can only be object or reference type but cannot be basic type. 
+- It can only be object or reference type but cannot be basic type.
 - You may find `<E>` in some places. It is the same as `<T>`.
 
 #### Generic Methods
 
 ```java
-// a function that can swap two elements in a customized type array 
+// a function that can swap two elements in a customized type array
 public static <T> void swap(T[] arr, int i, int j) {  // <T> here is the declaration of T
     T tmp = arr[i];
     arr[i] = arr[j];
@@ -515,10 +517,10 @@ public static <T> void fillArray(T[] arr, Object obj) {
 }
 
 
-// a function that can print any type of collection 
+// a function that can print any type of collection
 public static <T> void printCollection(Collection<T> collection, T obj2) {
     // collection.add(obj2);  // no error
-    
+
     System.out.println(collection.size());
     for (Object obj : collection) {
         System.out.println(obj);
@@ -526,56 +528,56 @@ public static <T> void printCollection(Collection<T> collection, T obj2) {
 }
 ```
 
-#### Generic Classes 
+#### Generic Classes
 
 ```java
 // a DAO that can be used for any type of data
 public class GenericDao<T> {  // declare <T> at class level
     public void add(T t) {
-        
+
     }
-    
+
     public T findById(int id) {
         return null;
     }
-    
+
     public void delete(T t) {
-        
+
     }
-    
+
     public void delete(int id) {
-        
+
     }
-    
+
     public void update(T t) {
-        
+
     }
-    
+
     public Set<T> findByConditions(String condition) {
         return null;
     }
-    
+
     // for static methods, you need to declare <T> at method level, you cannot rely on <T> at class level
     public static <T> void update(T t) {
-        
+
     }
 }
 ```
 
 ---
 
-## Class Loader 
+## Class Loader
 
-Source code is complied to binary class files, which are loaded by class loaders. 
+Source code is complied to binary class files, which are loaded by class loaders.
 
-There are many class loaders in JVM. 
+There are many class loaders in JVM.
 
-Three system default class loaders: 
+Three system default class loaders:
 
-- BootStrap: The first class loader. (Special. It is not a class.) 
-- ExtClassLoader 
+- BootStrap: The first class loader. (Special. It is not a class.)
+- ExtClassLoader
   - Ext refers to extend.
-- AppClassLoader 
+- AppClassLoader
 
 ```java
 public class ClassLoaderDemo {
@@ -591,13 +593,13 @@ public class ClassLoaderDemo {
 
 ![class-loader-relationship.png](img/class-loader-relationship.png)
 
-When loading a class, the current class loader will delegate to parent class loader until BootStrap before searching the class file. 
+When loading a class, the current class loader will delegate to parent class loader until BootStrap before searching the class file.
 
-For instance, AppClassLoader will delegate to ExtClassLoader, then delegate to BootStrap. If BootStrap find the class file, load it. If not, BootStrap will ask ExtClassLoader to find and try to load it. Then AppClassLoader. If AppClassLoader cannot find the class file, throw exception. 
+For instance, AppClassLoader will delegate to ExtClassLoader, then delegate to BootStrap. If BootStrap find the class file, load it. If not, BootStrap will ask ExtClassLoader to find and try to load it. Then AppClassLoader. If AppClassLoader cannot find the class file, throw exception.
 
-It will only be delegated to AppClassLoader as it was launched by AppClassLoader. So, it will not be delegated to MyClassLoader further. 
+It will only be delegated to AppClassLoader as it was launched by AppClassLoader. So, it will not be delegated to MyClassLoader further.
 
-### Customized Class Loader 
+### Customized Class Loader
 
 When you create a class loader yourself, override `findClass()` rather than `loadClass()`.
 
@@ -611,7 +613,7 @@ When you create a class loader yourself, override `findClass()` rather than `loa
 
 ![proxy.png](img/proxy.png)
 
-Client program called Target class originally. Now create a Proxy class and let Client program call this class. 
+Client program called Target class originally. Now create a Proxy class and let Client program call this class.
 
 Methods in Proxy class have the same name as methods in Target class.
 
@@ -623,11 +625,11 @@ If using factory pattern and config file to do management, you are able to decid
 
 ### Dynamic Proxy Class
 
-If you create proxy function for every interface in the system, it will be too troublesome. It is better to use dynamic proxy class which can be generated by JVM in runtime. 
+If you create proxy function for every interface in the system, it will be too troublesome. It is better to use dynamic proxy class which can be generated by JVM in runtime.
 
-A dynamic proxy class must implement one or more interface. 
+A dynamic proxy class must implement one or more interface.
 
-If you want to apply dynamic proxy class for a class which does not have interface, you can use CGLIB library. CGLIB will dynamically create a subclass of the target class which can be used as proxy. 
+If you want to apply dynamic proxy class for a class which does not have interface, you can use CGLIB library. CGLIB will dynamically create a subclass of the target class which can be used as proxy.
 
 ![dynamic-proxy-principle.png](img/dynamic-proxy-principle.png)
 
@@ -644,51 +646,51 @@ public class ProxyDemo {
 	public static void main(String[] args) throws Exception {
 		/*
 		 * create a dynamic proxy class
-		 * check its method list 
+		 * check its method list
 		 */
 		Class proxyCls = Proxy.getProxyClass(Collection.class.getClassLoader(), Collection.class);
 		System.out.println(proxyCls.getName());
-		
+
 		System.out.println("------ begin constructor list ------");
 		Constructor[] constructors = proxyCls.getConstructors();
 		for (Constructor constructor : constructors) {
 			String name = constructor.getName();
 			StringBuilder sBuilder = new StringBuilder(name);
-			sBuilder.append("("); 
-			
+			sBuilder.append("(");
+
 			Class[] paramClses = constructor.getParameterTypes();
 			for (Class paramCls : paramClses) {
 				sBuilder.append(paramCls.getName()).append(",");
 			}
 			if (paramClses != null && paramClses.length != 0) {
-				sBuilder.deleteCharAt(sBuilder.length() - 1);  // delete the last "," 
+				sBuilder.deleteCharAt(sBuilder.length() - 1);  // delete the last ","
 			}
-			
-			sBuilder.append(")"); 
+
+			sBuilder.append(")");
 			System.out.println(sBuilder.toString());
 		}
-		
-		
+
+
 		System.out.println("------ begin method list ------");
 		Method[] methods = proxyCls.getMethods();
 		for (Method method : methods) {
 			String name = method.getName();
 			StringBuilder sBuilder = new StringBuilder(name);
-			sBuilder.append("("); 
-			
+			sBuilder.append("(");
+
 			Class[] paramClses = method.getParameterTypes();
 			for (Class paramCls : paramClses) {
 				sBuilder.append(paramCls.getName()).append(",");
 			}
 			if (paramClses != null && paramClses.length != 0) {
-				sBuilder.deleteCharAt(sBuilder.length() - 1);  // delete the last "," 
+				sBuilder.deleteCharAt(sBuilder.length() - 1);  // delete the last ","
 			}
-			
-			sBuilder.append(")"); 
+
+			sBuilder.append(")");
 			System.out.println(sBuilder.toString());
 		}
-		
-		
+
+
 		/*
 		 * create instances of proxy class
 		 */
@@ -701,13 +703,13 @@ public class ProxyDemo {
 				return null;
 			}
 		}
-		
+
 		Collection proxy1 = (Collection) constructor.newInstance(new MyInvocationHandler1());
 		System.out.println(proxy1.toString());  // null
 		proxy1.clear();  // no exception as this method return void
 		//proxy1.size();  // NullPointerException as this method has return value
-	
-	
+
+
 		/*
 		 * create instances of proxy class using anonymous inner class
 		 */
@@ -717,18 +719,18 @@ public class ProxyDemo {
 				return null;
 			}
 		});
-	
-		
+
+
 		/*
 		 * or use a simpler way to create the instance of Proxy from Proxy directly
 		 * hard code invoke() method
 		 */
 		Collection proxy3 = (Collection) Proxy.newProxyInstance(
-				Collection.class.getClassLoader(), 
-				new Class[] {Collection.class}, 
+				Collection.class.getClassLoader(),
+				new Class[] {Collection.class},
 				new InvocationHandler() {
 					ArrayList target = new ArrayList();
-					
+
 					@Override
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 						long beginTime = System.currentTimeMillis();
@@ -738,16 +740,16 @@ public class ProxyDemo {
 						return retVal;
 					}
 				});
-		
-		
+
+
 		/*
-		 * do not hard code invoke() method 
+		 * do not hard code invoke() method
 		 * when you want to create a proxy, just pass a target and an advice
 		 */
 		ArrayList target = new ArrayList();
 		Collection proxy4 = (Collection) getProxy(target, new MyAdvice());
-		
-		proxy4.add("aaa");  // this method will further call the above invoke() method 
+
+		proxy4.add("aaa");  // this method will further call the above invoke() method
 		proxy4.add("bbb");
 		/*
 		 * output should be:
@@ -757,15 +759,15 @@ public class ProxyDemo {
 		 */
 		proxy4.add("ccc");
 		System.out.println(proxy4.size());  // 3
-		
+
 	}
 
 	private static Object getProxy(Object target, AdviceInterface advice) {
 		Object proxy0 = Proxy.newProxyInstance(
-				target.getClass().getClassLoader(), 
-				target.getClass().getInterfaces(), 
+				target.getClass().getClassLoader(),
+				target.getClass().getInterfaces(),
 				new InvocationHandler() {
-					
+
 					@Override
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 						advice.beforeMethod(method);
@@ -793,7 +795,7 @@ import java.lang.reflect.Method;
 public class MyAdvice implements AdviceInterface {
 
 	long beginTime;
-	
+
 	@Override
 	public void beforeMethod(Method method) {
 		System.out.println("------ beforeMethod() ------");
@@ -808,4 +810,3 @@ public class MyAdvice implements AdviceInterface {
 	}
 }
 ```
-
