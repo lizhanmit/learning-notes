@@ -2,6 +2,8 @@
 
 ## Data Engineering
 
+[What is Data Engineering?](https://www.dataquest.io/blog/what-is-a-data-engineer/)
+
 - [Apache Airflow](https://github.com/lizhanmit/learning-notes/blob/master/apache-airflow-note/apache-airflow-note.md)
 - [Architecting Big Data Applications](https://github.com/lizhanmit/learning-notes/blob/master/architecting-big-data-applications-note/architecting-big-data-applications-note.md)
 - [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
@@ -58,4 +60,5 @@
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
+- [Scala](https://github.com/lizhanmit/scala-tutorial)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
