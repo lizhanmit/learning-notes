@@ -6,9 +6,9 @@
 
 A Job includes multiple RDDs.
 
-A RDD can be divided into multiple Stages.
+A RDD can be broken into multiple Stages.
 
-A Stage includes multiple Tasks.
+A Stages get broken into multiple Tasks that are distributed to nodes on the cluster and then executed.
 
 ![spark-workflow.png](img/spark-workflow.png)
 
@@ -113,13 +113,13 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported.
 
-Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema. 
+Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
 
 Processing or transmitting over the network:
 
 - RDD: using Java serialization or Kryo.
 - Dataset: using a specialized Encoder to serialize the objects.
-  - This Encoder is highly optimized and generates bytecode at run time for serialization and deserialization. 
+  - This Encoder is highly optimized and generates bytecode at run time for serialization and deserialization.
 
 Two ways to create a Dataset:
 
@@ -212,18 +212,19 @@ When to cache data:
 
 No shuffle transformations:  
 
-- Map
-- Filter  
-- FlatMap
-- MapPartitions  
+- map
+- filter  
+- flatMap
+- mapPartitions  
 - ...
 
 Shuffle transformations:  
 
-- Distinct  
-- GroupByKey  
-- ReduceByKey
-- Join  
+- distinct  
+- groupByKey  
+- reduceByKey
+- join  
+- countByValue
 - ...
 
 ---
@@ -277,7 +278,7 @@ The difference between `foreach()` and `map()`:
 
 - A DataFrame is a kind of distributed dataset on basis of RDD.
 - **A DataFrame is a distributed set of `Row` objects or `Dataset[Row]`.**
-- Each `Row` object represents a row of record, which provides detailed schema info. 
+- Each `Row` object represents a row of record, which provides detailed schema info.
 - `Row` is an untyped JVM object.
 - Through DataFrame, Spark SQL is able to know column name and type of the dataset.
 - Can be created from:
@@ -327,12 +328,12 @@ Pre-compile version Spark from official site generally does not contain Hive sup
 
 ## Structured Streaming
 
-Built on the Spark SQL engine. 
+Built on the Spark SQL engine.
 
 - Micro-batch processing: 100 milliseconds latencies, **exactly-once** guarantees.
 - Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
 
-Treats a live data stream as an unbounded input table that is being continuously appended. 
+Treats a live data stream as an unbounded input table that is being continuously appended.
 
 ![structured-streaming-model.png](img/structured-streaming-model.png)
 
@@ -360,32 +361,32 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ### ML Workflow
 
-Estimator receives an input DataFrame via `.fit()` method, and then generate a Transformer. 
+Estimator receives an input DataFrame via `.fit()` method, and then generate a Transformer.
 
-- Estimator: algorithm 
+- Estimator: algorithm
 - Transformer: model
 
 ![ml-workflow.png](img/ml-workflow.png)
 
 ![ml-workflow-2.png](img/ml-workflow-2.png)
 
-- Red frame: estimator 
-- Blue frame: transformer 
+- Red frame: estimator
+- Blue frame: transformer
 
-1. Create a new pipeline to fit trainingData, and then generate a pipelineModel. 
-2. Use this model to transform testData, and then get DataFrame with prediction. 
+1. Create a new pipeline to fit trainingData, and then generate a pipelineModel.
+2. Use this model to transform testData, and then get DataFrame with prediction.
 
 ![ml-pipeline.png](img/ml-pipeline.png)
 
 ---
 
-### Feature Transformation 
+### Feature Transformation
 
-Feature transformation: transformation of label and index. 
+Feature transformation: transformation of label and index.
 
 `StringIndexer`
 
-- Construction order of the index is the frequency of label. 
+- Construction order of the index is the frequency of label.
 - When encoding labels, give priority to those with higher frequency.
 - The index of the label with highest frequency is 0.
 
@@ -447,7 +448,6 @@ Feature transformation: transformation of label and index.
 
 ---
 
-## Useful Resources 
+## Useful Resources
 
 - [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
-
