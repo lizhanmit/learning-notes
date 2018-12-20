@@ -7,7 +7,7 @@
 Three ways:
 
 - By constructor - most preferred
-- By Setters - area of much debate
+- By setters - area of much debate, may have NullPointerException
 - By class properties - least preferred
 
 DI via Interface is highly preferred.
