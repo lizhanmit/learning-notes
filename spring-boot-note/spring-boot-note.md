@@ -7,10 +7,12 @@
 Three ways:
 
 - By constructor - most preferred
+  - If a bean only has one constructor, you can omit the `@Autowired` on the top the constructor.
+  - Mark the private property as `final` indicating that it cannot be subsequently changed.
 - By setters - area of much debate, may have NullPointerException
 - By class properties - least preferred
 
-DI via Interface is highly preferred.
+DI via interfaces rather than concrete classes is highly preferred.
 
 - Allows runtime to decide implementation to inject.
 - Follows Interface Segregation Principle of SOLID.
