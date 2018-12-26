@@ -47,6 +47,7 @@
 
 ## Java
 
+- [Java](https://github.com/lizhanmit/learning-notes/blob/master/java-note/java-note.md)
 - [Java 8 Lambda Expression](https://github.com/lizhanmit/java-8-lambda)
 - [Java Advanced](https://github.com/lizhanmit/learning-notes/blob/master/java-advanced-note/java-advanced-note.md)
 - [Java Concurrency](https://github.com/lizhanmit/java-concurrency)
