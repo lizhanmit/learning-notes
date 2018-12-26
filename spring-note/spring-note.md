@@ -1,6 +1,6 @@
-# Spring Boot Note
+# Spring Note
 
-## Concepts
+## Basic Concepts
 
 ### Dependency Injection (DI)
 
@@ -18,6 +18,8 @@ DI via interfaces rather than concrete classes is highly preferred.
 - Follows Interface Segregation Principle of SOLID.
 - Makes your code more testable.
 
+---
+
 ### Inversion of Control (IoC)
 
 - Allows dependencies to be injected at runtime.
@@ -25,9 +27,27 @@ DI via interfaces rather than concrete classes is highly preferred.
 
 ---
 
-## Run Applications
+### Spring Bean Life Cycle
 
-Three ways to run a application:
+![spring-bean-life-cycle.png](img/spring-bean-life-cycle.png)
+
+![spring-bean-life-cycle-annotations.png](img/spring-bean-life-cycle-annotations.png)
+
+![callback-interfaces.png](img/callback-interfaces.png)
+
+---
+
+## Spring MVC 
+
+![spring-mvc-architecture.png](img/spring-mvc-architecture.png)
+
+---
+
+## Spring Boot
+
+### Run Applications
+
+Three ways to run a Spring Boot application:
 
 - Run in IDE.
 - In terminal, `cd` into project folder. Use Maven to run.`mvn spring-boot:run`.
@@ -35,7 +55,7 @@ Three ways to run a application:
 
 ---
 
-## application.properties File
+### application.properties File
 
 Common properties
 
@@ -82,4 +102,6 @@ When you run the project in terminal, you can specify which one you will use. `j
 
 ---
 
-When testing using Postman, if you are testing `PUT` method, you need to select "x-www-form-urlencoded" for RequestParam in Body instead of "form-data".
+##  Practical Skills
+
+When testing using **Postman**, if you are testing `PUT` method, you need to select "**x-www-form-urlencoded**" for RequestParam in Body instead of "**form-data**".
