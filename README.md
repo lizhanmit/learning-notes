@@ -51,7 +51,7 @@
 - [Java Advanced](https://github.com/lizhanmit/learning-notes/blob/master/java-advanced-note/java-advanced-note.md)
 - [Java Concurrency](https://github.com/lizhanmit/java-concurrency)
 - [Java Design Patterns](https://github.com/lizhanmit/java-design-patterns)
-- [Spring Boot](https://github.com/lizhanmit/learning-notes/blob/master/spring-boot-note/spring-boot-note.md)
+- [Spring](https://github.com/lizhanmit/learning-notes/blob/master/spring-note/spring-note.md)
 
 ---
 
