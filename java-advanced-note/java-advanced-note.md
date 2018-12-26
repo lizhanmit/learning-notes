@@ -609,6 +609,8 @@ When you create a class loader yourself, override `findClass()` rather than `loa
 
 ## Proxy & AOP
 
+[Spring AOP & Proxy](https://mp.weixin.qq.com/s/LKtwCL95nnL1btZHVCf96g)
+
 ### Proxy
 
 ![proxy.png](img/proxy.png)
