@@ -1,12 +1,14 @@
 # Spring Note
 
-## Basic Concepts
+## Spring
 
-### Dependency Injection (DI)
+### Basic Concepts
+
+#### Dependency Injection (DI)
 
 Three ways:
 
-- By constructor - most preferred
+- By constructor - **most preferred**
   - If a bean only has one constructor, you can omit the `@Autowired` on the top the constructor.
   - Mark the private property as `final` indicating that it cannot be subsequently changed.
 - By setters - area of much debate, may have NullPointerException
@@ -20,7 +22,7 @@ DI via interfaces rather than concrete classes is highly preferred.
 
 ---
 
-### Inversion of Control (IoC)
+#### Inversion of Control (IoC)
 
 - Allows dependencies to be injected at runtime.
 - Dependencies are not predetermined.
@@ -37,7 +39,52 @@ DI via interfaces rather than concrete classes is highly preferred.
 
 ---
 
-## Spring MVC 
+### Spring Configuration
+
+Options:
+
+- XML based configuration
+  - Introduced in Spring 2.0.
+  - Common in legacy Spring Applications.
+  - Still supported in Spring 5.
+- Annotation based configuration
+  - Introduced in Spring 3.0.
+  - Component scans `@Component`, `@Controller`, `@Service`, `@Respository`.
+- Java based configuration :white_check_mark:​
+  - Introduced in Spring 3.0.
+  - Uses Java classes to define Spring Beans.
+  - Configuration classes are defined with `@Configuration`.
+  - Beans are declared with `@Bean`.
+- Groovy Bean definition DSL (Domain-Specific Language) configuration
+  - Introduced in Spring 4.0.
+  - Allows you to declare beans in Groovy.
+
+Industry trend is using Java based configuration.
+
+![spring-stereotypes.png](img/spring-stereotypes.png)
+
+Q: What is special about the `@Respository` stereotype?
+
+A: Spring will detect platform specific persistence exceptions and re-throw them as Spring exceptions.
+
+---
+
+### Spring Bean Scopes
+
+- Singleton: (**default**) Only one instance of the bean is created in the IoC container.
+- Prototype: A new instance is created each time the bean (object) is requested.
+- Request: A single instance per http request. Only valid in the context of a web-aware Spring ApplicationContext.
+- Session: A single instance per http session. Only valid in the context of a web-aware Spring ApplicationContext.
+- Global-session: A single instance per global session. Typically only used in a Portlet context. (Not many people use this.) Only valid in the context of a web-aware Spring ApplicationContext.
+- Application: Bean is scoped to the lifecycle of a ServletContext. Only valid in the context of a web-aware Spring ApplicationContext.
+- WebSocket: Scopes a single bean definition to the lifecycle of a WebSocket. Only valid in the context of a web-aware Spring ApplicationContext.
+- Custom Scope: You can define your own scope by implementing "Scope" interface. (Very rare)
+
+Most commonly used: Singleton and Prototype scope.
+
+---
+
+## Spring MVC
 
 ![spring-mvc-architecture.png](img/spring-mvc-architecture.png)
 
