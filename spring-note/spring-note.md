@@ -8,13 +8,15 @@
 
 Three ways:
 
-- By constructor - **most preferred**
+- By constructor - **most preferred** :white_check_mark:​
   - If a bean only has one constructor, you can omit the `@Autowired` on the top the constructor.
   - Mark the private property as `final` indicating that it cannot be subsequently changed.
 - By setters - area of much debate, may have NullPointerException
 - By class properties - least preferred
 
-DI via interfaces rather than concrete classes is highly preferred.
+([Spring DI Patterns: The Good, The Bad, and The Ugly](https://dzone.com/articles/spring-di-patterns-the-good-the-bad-and-the-ugly))
+
+DI via interfaces rather than concrete classes is highly preferred:
 
 - Allows runtime to decide implementation to inject.
 - Follows Interface Segregation Principle of SOLID.
@@ -84,6 +86,20 @@ Most commonly used: Singleton and Prototype scope.
 
 ---
 
+### External Properties
+
+#### Properties Files
+
+- Specify properties in customized "<file_name>.properties" files. But you need extract code to involve these files in your code. (https://www.udemy.com/spring-framework-5-beginner-to-guru/learn/v4/t/lecture/7437634?start=518)
+- (Spring Boot) Specify properties in "application.properties" file. See "application.properties File" section.
+- Use YAML "<file_name>.yml" files.
+
+#### Environment Properties
+
+If you need to run Spring program on different environments, e.g. development environment, QA or test environment and product environment, you can set environment properties through defining environment variables, and then access them in your code. (https://www.udemy.com/spring-framework-5-beginner-to-guru/learn/v4/t/lecture/7437636?start=287)
+
+---
+
 ## Spring MVC
 
 ![spring-mvc-architecture.png](img/spring-mvc-architecture.png)
@@ -139,11 +155,12 @@ private String property_name;
 ```
 **In real projects, there should be three properties files.**
 
-- application-dev.properties: configure properties for development environment.
-- application-prod.properties: configure properties for production environment.
-- application.properties: determine which properties file will be used. And common configure properties for both dev and prod environment.
+- application-dev.properties: Configures properties for development environment.
+- application-prod.properties: Configures properties for production environment.
+- application.properties: Determines which properties file will be used. And common configuration properties for both dev and prod environment can be specified here.
   - For development environment: `spring.profiles.active=dev`.
   - For production environment: `spring.profiles.active=prod`.
+  - If there are repetitive properties in "application-<environment_type>.properties" file and "application.properties" file, the latter one will be overridden.
 
 When you run the project in terminal, you can specify which one you will use. `java -jar <project_name>.jar --spring.profiles.active=prod`.
 
