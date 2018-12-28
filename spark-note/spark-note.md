@@ -339,6 +339,19 @@ Treats a live data stream as an unbounded input table that is being continuously
 
 Event-time: The time embedded in the data itself.
 
+### Watermarking
+
+- It lets the engine automatically track the current event time in the data and attempt to clean up old state accordingly. 
+
+- You can define the watermark of a query by specifying the event time column and the threshold on how late the data is expected to be in terms of event time. 
+- For example, `words.withWatermark("timestamp", "10 minutes").groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word").count()`.  Late data within 10 mins will be aggregated, but data later than 10 mins will start getting dropped. But it is not guaranteed to be dropped; it may or may not get aggregated.
+
+Conditions for watermarking to clean aggregation state:
+
+- Output mode must be **Append** or **Update**.
+- The aggregation must have either the event-time column, or a "window" on the event-time column.
+- `withWatermark()` method must be called on the same column as the timestamp column used in the aggregate. For example, `df.withWatermark("time", "1 min").groupBy("time2").count()` is invalid.
+
 ---
 
 ## Spark Streaming
