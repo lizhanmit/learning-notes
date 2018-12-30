@@ -57,6 +57,7 @@
 ---
 
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
+- [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
