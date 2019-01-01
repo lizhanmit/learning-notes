@@ -108,6 +108,118 @@ If you need to run Spring program on different environments, e.g. development en
 
 ## Spring Boot
 
+### JPA Entity Relationships
+
+#### Unidirectional VS Bidirectional
+
+- Unidirectional: Mapping is done one way. One side of the relationship will not know about the other.
+  - Only set owning side as a property in referencing side entity class.
+- Bidirectional: Both sides know about each other.
+  - Set both sides as properties in each other entity class.
+
+Generally **recommend** to use **Bidirectional** since you can navigate the object graph in either direction.
+
+#### Owning Side VS Referencing Side
+
+**Owning Side**
+
+The one in the relationship who will **own** or hold the foreign key in the database. That is to say, **the table that has the foreign key is the owning side**.
+
+- For instance, a person has many email addresses. "Email" table has "employee_id" as the foreign key, so "Email" entity is the owning side.  
+
+How to decide who is the owning side?
+
+- For OneToOne: you can specify.
+- For OneToMany and ManyToOne: "Many" side.
+
+`@JoinColumn` annotation is used in owning side class with foreign key as `name` attribute.
+
+```java
+@Entity
+public class Email {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    // ...
+
+}
+```
+
+**Referencing Side**
+
+Inverse side which maps to the owning side.
+
+`mappedBy` is used as an attribute of `@OneToMany` in referencing side class and its value is name of referencing side entity.
+
+```java
+@Entity
+public class Employee {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee")
+    private List<Email> emails;
+
+    // ...
+}
+```
+
+#### Fetch Types
+
+- Lazy Fetch Type: Data is not queried until referenced.
+- Eager Fetch Type: Data is queried up front.
+
+JPA 2.1 (Hibernate 5 supports) Fetch Type defaults:
+
+- OneToMany - Lazy
+- ManyToMany - Lazy
+- OneToOne - Eager
+- ManyToOne - Eager
+
+#### Cascade Types
+
+JPA Cascade Types control how state changes are cascaded from parent objects to child objects.
+
+Operations:
+
+- PERSIST: If parent entities are saved, child entities will also be saved.
+- MERGE
+- REFRESH
+- REMOVE
+- DETACH: The entities are no longer associated with Hibernate session.
+- ALL: Applies all the above options.
+
+If you specify any of the above options, the operation conducted on parent entities will also conduct on child entities (cascade).
+
+By **default**, no operations are cascaded.
+
+#### Inheritance
+
+- MappedSuperClass: A database is not created for the super class.
+- Single Table: (Hibernate **default**) One table is used for all subclasses.
+- Joined Table: Base class and subclasses have own tables. But subclass tables only have the additional columns.
+  - Fetching subclass entities require a join to the base class table.
+  - Large data sets, performance problem.
+- Table Per Class
+
+#### Create and Update Timestamps
+
+A **best practice** to use create and update timestamps on your entities for audit purposes.
+
+JPA supports `@PrePersist` and `@PreUpdate`which can be used to support audit timestamps via JPA lifecycle callbacks.
+
+Hibernate provides `@CreationTimestamp` and `@UpdateTimestamp`.
+
+---
+
 ### Run Applications
 
 Three ways to run a Spring Boot application:
