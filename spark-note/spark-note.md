@@ -365,6 +365,29 @@ Stream-stream Joins
 - [Outer Joins with Watermarking](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#outer-joins-with-watermarking)
 - If any of the two input streams being joined does not receive data for a while, the outer (both cases, left or right) output may get delayed.
 
+As of Spark 2.3,
+
+- you can use joins only when the query is in Append output mode.
+- you cannot use other non-map-like operations before joins.
+
+---
+
+### Streaming Deduplication
+
+You can deduplicate records in data streams using a unique identifier in the events.
+
+```scala
+val streamingDf = spark.readStream. ...  // columns: guid, eventTime, ...
+
+// Without watermark using guid column
+streamingDf.dropDuplicates("guid")
+
+// With watermark using guid and eventTime columns
+streamingDf
+  .withWatermark("eventTime", "10 seconds")
+  .dropDuplicates("guid", "eventTime")
+```
+
 ---
 
 ## Spark Streaming
