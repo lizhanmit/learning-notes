@@ -51,7 +51,7 @@ Options:
   - Still supported in Spring 5.
 - Annotation based configuration
   - Introduced in Spring 3.0.
-  - Component scans `@Component`, `@Controller`, `@Service`, `@Respository`.
+  - Component scans `@Component`, `@Controller`, `@Service`, `@Repository`.
 - Java based configuration :white_check_mark:​
   - Introduced in Spring 3.0.
   - Uses Java classes to define Spring Beans.
@@ -65,7 +65,9 @@ Industry trend is using Java based configuration.
 
 ![spring-stereotypes.png](img/spring-stereotypes.png)
 
-Q: What is special about the `@Respository` stereotype?
+**When setting these stereotype annotations, set them on top of classes instead of interfaces.**
+
+Q: What is special about the `@Repository` stereotype?
 
 A: Spring will detect platform specific persistence exceptions and re-throw them as Spring exceptions.
 
@@ -204,7 +206,8 @@ By **default**, no operations are cascaded.
 #### Inheritance
 
 - MappedSuperClass: A database is not created for the super class.
-- Single Table: (Hibernate **default**) One table is used for all subclasses.
+- Single Table: (**Hibernate default**) One table is used for all subclasses.
+  - Disadvantage: unused data columns.
 - Joined Table: Base class and subclasses have own tables. But subclass tables only have the additional columns.
   - Fetching subclass entities require a join to the base class table.
   - Large data sets, performance problem.
@@ -217,6 +220,21 @@ A **best practice** to use create and update timestamps on your entities for aud
 JPA supports `@PrePersist` and `@PreUpdate`which can be used to support audit timestamps via JPA lifecycle callbacks.
 
 Hibernate provides `@CreationTimestamp` and `@UpdateTimestamp`.
+
+---
+
+### DDL VS DML
+
+- DDL: Data Definition Language, used to define database structures such as tables and indexes.
+- DML: Data Manipulation Language, used with data operations such as inserts and updates.
+
+---
+
+### SQL Files for Database Initialization
+
+Spring Boot will look on the root classpath for the files "schema.sql" and "data.sql".
+
+You can put them under "src/main/resources" folder to initialize database when startup.
 
 ---
 
