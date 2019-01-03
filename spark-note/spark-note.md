@@ -324,6 +324,10 @@ It is compulsory to add Hive support for Spark in order to accessing Hive using 
 
 Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code.
 
+### Aggregations
+
+[SparkSQL 中group by、grouping sets、rollup和cube方法详解](https://www.jianshu.com/p/45cf609f5a61)
+
 ---
 
 ## Structured Streaming
