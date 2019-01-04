@@ -472,6 +472,12 @@ Feature transformation: transformation of label and index.
 
 ---
 
+## Deployment of Spark Applications
+
+[Spark Modes of Deployment – Cluster Mode and Client Mode](https://techvidvan.com/tutorials/spark-modes-of-deployment/)
+
+---
+
 ## Spark Ecosystem
 
 ![spark-ecosystem.png](img/spark-ecosystem.png)
