@@ -243,8 +243,8 @@ You can put them under "src/main/resources" folder to initialize database when s
 Three ways to run a Spring Boot application:
 
 - Run in IDE.
-- In terminal, `cd` into project folder. Use Maven to run.`mvn spring-boot:run`.
-- In terminal, `cd` into project folder. Use Maven to compile.`mvn install`. Then cd into "target" folder. Use java to execute the .jar file. `java -jar <project_name>.jar`.
+- In terminal, `cd` into project folder. Use Maven to run.`mvn clean spring-boot:run`.
+- In terminal, `cd` into project folder. Use Maven to compile.`mvn clean install`. Then cd into "target" folder. Use java to execute the .jar file. `java -jar <package_name>.jar`.
 
 ---
 
