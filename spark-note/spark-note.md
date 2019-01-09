@@ -33,7 +33,7 @@ When executing an application, Driver will apply resources from Cluster Manager,
 - Mesos
 - Kubernetes
 
-Spark build-in cluster resource manager (standalone) is not easy to use. **DO NOT** use it generally.
+Spark built-in cluster resource manager (standalone) is not easy to use. It is more limited than other cluster managers. The cluster can only run Spark. **DO NOT** use it generally.
 
 Mesos integrates with Spark better than Yarn.
 
