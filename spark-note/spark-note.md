@@ -145,7 +145,6 @@ Two ways to create a Dataset:
 For instance,
 
 1. Create: `val broadcastVar = sc.broadcast(Array(1,2,3))`
-
 2. Get value: `broadcastVar.value`
 
 #### Accumulators
@@ -160,12 +159,9 @@ For instance,
 For instance,
 
 1. Create: `val nErrors=sc.accumulator(0.0)`
-
 2. Load file: `val logs = sc.textFile("/Users/akuntamukkala/temp/output.
    log")`
-
 3. Count number of "error": `logs.filter(_.contains(“error”)).foreach(x => nErrors += 1)`
-
 4. Get value: `nErrors.value`
 
 ##### Accumulator Update
