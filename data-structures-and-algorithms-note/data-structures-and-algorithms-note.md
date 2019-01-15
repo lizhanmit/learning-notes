@@ -1,6 +1,6 @@
-# Data Structures and Algorithms Note 
+# Data Structures and Algorithms Note
 
-## Data Structures 
+## Data Structures
 
 ### Array
 
@@ -23,7 +23,7 @@ If arrays are fixed length, when an array is full, a typical implementation is t
 
 ### StringBuilder
 
-When you concatenate a listing of strings, if you use String type to store the final string, complexity is O(n^2). However, you can use StringBuilder to create a resizable array. 
+When you concatenate a listing of strings, if you use String type to store the final string, complexity is O(n^2). However, you can use StringBuilder to create a resizable array.
 
 ```java
 String joinWords(String[] words) {
@@ -39,12 +39,12 @@ String joinWords(String[] words) {
 
 ### Linked List
 
-A list of data items connected with links. 
+A list of data items connected with links.
 
-Types of linked list: 
+Types of linked list:
 
-- Simple Linked List 
-- Doubly Linked List 
+- Simple Linked List
+- Doubly Linked List
 - Circular Linked List
 
 When to use a linked list:
@@ -60,11 +60,11 @@ When to use a linked list:
 - Advantages: insertion and deletion can be very quick.
   - insertion (prepend) - **O(1)**
   - insertion (append) - **O(n)**
-- Disadvantages 
+- Disadvantages
   - Slow to access an element. **O(n)**
-  - Memory is a concern. Require data and pointers. 
+  - Memory is a concern. Require data and pointers.
 
-#### Doubly Linked List 
+#### Doubly Linked List
 
 ![doubly-linked-list.jpg](img/doubly-linked-list.jpg)
 
@@ -80,7 +80,7 @@ When to use a linked list:
 
 ---
 
-### Stack 
+### Stack
 
 An Abstract Data Type (ADT) used to store and retrieve values in Last In First Out method.
 
@@ -90,7 +90,7 @@ time factor - O(n)
 
 ![stack.jpg](img/stack.jpg)
 
-When to use stack: 
+When to use stack:
 
 - recursive function calls
 - expression parsing
@@ -98,16 +98,16 @@ When to use stack:
 
 Basic operations:
 
-- push(): 
-  - Firstly check if the stack is full. 
-- pop(): 
-  - Firstly check if the stack is empty. 
-  - Return the top value. 
+- push():
+  - Firstly check if the stack is full.
+- pop():
+  - Firstly check if the stack is empty.
+  - Return the top value.
 - peek(): get the top data element of the stack, without removing it.
   - `return stack[top]`
 - isFull(): check if stack is full.
   - ```
-    // array implementation 
+    // array implementation
     if (top == MAXSIZE - 1)
         return true;
     else
@@ -115,13 +115,13 @@ Basic operations:
     ```
 - isEmpty(): check if stack is empty.
   - ```
-    // array implementation 
+    // array implementation
     if (top == -1)
         return true;
     else
         return false;
     ```
-    
+
 ---
 
 ### Queue
@@ -132,26 +132,26 @@ flexible size
 
 ![queue.jpg](img/queue.jpg)
 
-When to use queue: 
+When to use queue:
 
 - priority queues
-- breadth first traversal of graphs 
+- breadth first traversal of graphs
 
 Basic operations:
 
 - enqueue():
-  - Firstly check if the queue is full. 
+  - Firstly check if the queue is full.
 
 - dequeue():
-  - Firstly check if the queue is empty. 
-  - Return the front value. 
+  - Firstly check if the queue is empty.
+  - Return the front value.
 
-- peek(): get the element at the front of the queue without removing it. 
+- peek(): get the element at the front of the queue without removing it.
   - `return queue[front]`
 
 - isFull(): check if queue is full.
   - ```
-    // array implementation 
+    // array implementation
     if (rear == MAXSIZE - 1)
         return true;
     else
@@ -161,7 +161,7 @@ Basic operations:
 - isEmpty(): check if queue is empty.
   - ```
     // array implementation
-    if (front < 0 || front > rear) 
+    if (front < 0 || front > rear)
       return true;
     else
       return false;
@@ -174,10 +174,10 @@ Basic operations:
 - One common implementation: based on arrays.
 - Use hash technique to generate an index where an element is to be inserted or is to be located from.
 - Insertion and search operations are very fast.
-- Hard to order. 
-- Do not need to search through the array when finding a value. 
+- Hard to order.
+- Do not need to search through the array when finding a value.
 
-Hashing is a technique to convert a key into an index of an array. 
+Hashing is a technique to convert a key into an index of an array.
 
 两种说法：（都对）
 
@@ -186,32 +186,32 @@ Hashing is a technique to convert a key into an index of an array.
 
 ![hash-function.jpg](img/hash-function.jpg)
 
-1. There are key-value pair data. 
-2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array. 
-3. The index may be repeated, which is called collision. Ways to solve collision: 
-   - Chaining with linked lists: store data with the same hash code in linked lists. So, the whole data structure will be array of linked lists. 
-     - **the most common** approach 
+1. There are key-value pair data.
+2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array.
+3. The index may be repeated, which is called collision. Ways to solve collision:
+   - Chaining with linked lists: store data with the same hash code in linked lists. So, the whole data structure will be array of linked lists.
+     - **the most common** approach
      - worst lookup time O(n)
-     - If the number of collisions is small, it is efficient. 
-     - :-1: The linked list may be very long. It will take time to find data with the same index. 
+     - If the number of collisions is small, it is efficient.
+     - :-1: The linked list may be very long. It will take time to find data with the same index.
      - :-1: If much data is stored in the linked list instead of array, the remaining of the array will be wasted.
-   - Chaining with balanced binary search trees: store collisions in a binary search tree. 
-     - rare approach 
+   - Chaining with balanced binary search trees: store collisions in a binary search tree.
+     - rare approach
      - worst  lookup time O(log n)
-     - for extremely non-uniform distribution 
+     - for extremely non-uniform distribution
      - 👍 Potentially using less space, since no longer allocate a large array.
      - 👍 Can iterate through the keys in order.
    - Linear probing: search the next empty location in the array to store the data. Probe distance is 1 or another fixed value.
-     - If the number of collisions is small, it is efficient. 
-     - 👎 Size of array is limited. 
+     - If the number of collisions is small, it is efficient.
+     - 👎 Size of array is limited.
      - 👎 Data may be stored one next to one another, which causes clustering.  
-   - Quadratic probing: increase the probe distance quadratically. 
+   - Quadratic probing: increase the probe distance quadratically.
    - Double hashing: use a second hash function to determine the probe distance.
 
 
-Load factor = number of data inserted into the array / size of the array. Lower load factor indicates lower possibility of collision. 
+Load factor = number of data inserted into the array / size of the array. Lower load factor indicates lower possibility of collision.
 
-Rule of thumb: once load factor >= 0.7, resize the array to double size. 
+Rule of thumb: once load factor >= 0.7, resize the array to double size.
 
 ![hash-table.png](img/hash-table.png)
 
@@ -219,27 +219,27 @@ Rule of thumb: once load factor >= 0.7, resize the array to double size.
 
 Applications:
 
-- Phone directory: Name is the key and phone number is the value. 
-- Domain Name System (DNS): Domain name is the key and IP address is the value. 
-- Vote: Check if voters have voted already. 
-- Cache on web server. Cache web pages. URL is the key and web page is the value. 
+- Phone directory: Name is the key and phone number is the value.
+- Domain Name System (DNS): Domain name is the key and IP address is the value.
+- Vote: Check if voters have voted already.
+- Cache on web server. Cache web pages. URL is the key and web page is the value.
 
-Implementation in programming languages: 
+Implementation in programming languages:
 
-- Java: Map. 
+- Java: Map.
 - Python: Dictionary.
 
 ---
 
-### Graph 
+### Graph
 
 A pictorial representation of a set of objects where some pairs of objects are connected by links. Objects are represented by points termed as vertices, and the links that connect the vertices are called edges.
 
-A graph is a pair of sets (V, E). 
+A graph is a pair of sets (V, E).
 
-Vertices - represent them using an array. 
+Vertices - represent them using an array.
 
-Edges - represent them using a two-dimensional array. 
+Edges - represent them using a two-dimensional array.
 
 #### Depth First Search (DFS)  
 
@@ -252,11 +252,11 @@ Traverse a graph in a depthward motion. Use stack to remember to get the next ve
 
 ![graph-depth-first-search.png](img/graph-depth-first-search.png)
 
-Applications: 
+Applications:
 
 - Produce the minimum spanning tree and all pair shortest path tree for an unweighted graph.
 - Cycle detection in a graph (both undirected and directed).
-- Path finding. 
+- Path finding.
 - Solving puzzles with only one solution, such as mazes. DFS can be adapted to find all solutions to a maze by only including nodes on the current path in the visited set.
 
 #### Breadth First Search (BFS)  
@@ -270,9 +270,9 @@ Traverse a graph in a breadthward motion. Use a queue to remember to get the nex
 
 ![graph-breadth-first-search.png](img/graph-breadth-first-search.png)
 
-Applications: 
+Applications:
 
-- Peer to Peer networks: In Peer to Peer networks like BitTorrent, BFS is used to find all neighbor nodes. 
+- Peer to Peer networks: In Peer to Peer networks like BitTorrent, BFS is used to find all neighbor nodes.
 - Crawlers in search engines: Crawlers build index using BFS. The idea is to start from source page and follow all links from source and keep doing same. DFS can also be used for crawlers, but the advantage with BFS is, depth or levels of the built tree can be limited.
 - Social networking websites: In social networks, we can find people within a given distance "k" from a person using Breadth First Search till "k" levels.
 - GPS navigation systems: BFS is used to find all neighboring locations.
@@ -281,19 +281,19 @@ Applications:
 - Cycle detection in undirected graph.
 - Path finding.
 
-### Tree 
+### Tree
 
 A tree is a minimally connected graph having no loops and circuits.
 
 ![binary-tree.jpg](img/binary-tree.jpg)
 
-Three types of traversal: 
+Three types of traversal:
 
-- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. Prefer this one, as nodes can be printed in order for binary search tree. 
+- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. Prefer this one, as nodes can be printed in order for binary search tree.
 
 ![tree-in-order-traversal.jpg](img/tree-in-order-traversal.jpg)
 
-- **Pre-order Traversal**: the root node is visited first, then the left subtree and finally the right subtree. 
+- **Pre-order Traversal**: the root node is visited first, then the left subtree and finally the right subtree.
 
 ![tree-pre-order-traversal.jpg](img/tree-pre-order-traversal.jpg)
 
@@ -305,9 +305,9 @@ Three types of traversal:
 
 - pre: 先root -> left -> right
 - in: left -> 中间root -> right
-- post: left -> right -> 最后root 
+- post: left -> right -> 最后root
 
-#### Binary Tree 
+#### Binary Tree
 
 A binary tree has a special condition that each node can have two children at maximum.
 
@@ -315,7 +315,7 @@ A binary tree has a special condition that each node can have two children at ma
 
 - A node's left child must have a value less than or equal to its parent's value.
 - A node's right child must have a value greater than its parent's value.
-- Each node has a key and an associated value. 
+- Each node has a key and an associated value.
 - Binary search tree is a special binary tree.
 
 ![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
@@ -324,13 +324,17 @@ Why do we want trees to be balanced?
 
 ![balanced-vs-unbalanced-tree.png](img/balanced-vs-unbalanced-tree.png)
 
+#### Red-Black Tree
+
+[漫画：什么是红黑树？](https://zhuanlan.zhihu.com/p/31805309)
+
 #### AVL Tree
 
 - Height balancing binary search tree.
 
-- Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1. Otherwise, the tree is unbalanced. 
+- Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1. Otherwise, the tree is unbalanced.
 
-Rotation techniques to balance the tree: 
+Rotation techniques to balance the tree:
 
 - Left rotation
 - Right rotation
@@ -349,9 +353,9 @@ number of spanning trees, where n is the number of nodes.
 
 - Removing one edge from the spanning tree will make the graph disconnected, i.e. the spanning tree is **minimally connected**.
 - Adding one edge to the spanning tree will create a circuit or loop, i.e. the spanning tree is **maximally acyclic**.
-- Used to find a minimum path to connect all nodes in a graph. 
+- Used to find a minimum path to connect all nodes in a graph.
 
-Common application of spanning trees: 
+Common application of spanning trees:
 
 - Civil Network Planning
 - Computer Network Routing Protocol
@@ -359,9 +363,9 @@ Common application of spanning trees:
 
 ##### Minimum Spanning Tree (MST)
 
-In a weighted graph, a minimum spanning tree is a spanning tree that has minimum weight than all other spanning trees of the same graph. In real-world situations, this weight can be measured as distance, congestion, traffic load or any arbitrary value denoted to the edges. 
+In a weighted graph, a minimum spanning tree is a spanning tree that has minimum weight than all other spanning trees of the same graph. In real-world situations, this weight can be measured as distance, congestion, traffic load or any arbitrary value denoted to the edges.
 
-Minimum Spanning Tree algorithms: 
+Minimum Spanning Tree algorithms:
 
 - Kruskal's Algorithm
 - Prim's Algorithm
@@ -374,7 +378,7 @@ Heap is a special case of balanced binary tree data structure where root-node ke
 
 The value of the parent node is greater than or equal to either of its children.
 
-**Max Heap Construction** 
+**Max Heap Construction**
 
 ![max-heap-constructure.gif](img/max-heap-constructure.gif)
 
@@ -388,19 +392,19 @@ The value of the parent node is less than or equal to either of its children.
 
 ---
 
-## Algorithms 
+## Algorithms
 
-### Basic Concepts 
+### Basic Concepts
 
-#### Algorithm Complexity 
+#### Algorithm Complexity
 
-Two main factors decide the efficiency of algorithm: 
-- Time Factor: counting the number of key operations. 
-- Space Factor: counting the maximum memory space required by the algorithm. 
+Two main factors decide the efficiency of algorithm:
+- Time Factor: counting the number of key operations.
+- Space Factor: counting the maximum memory space required by the algorithm.
 
-#### Asymptotic Analysis 
+#### Asymptotic Analysis
 
-Refers to computing the running time of any operation in mathematical units of computation. 
+Refers to computing the running time of any operation in mathematical units of computation.
 
 The time required by an algorithm falls under three types:
 
@@ -410,9 +414,9 @@ The time required by an algorithm falls under three types:
 
 Asymptotic Notations:
 
-- Omega Notation **Ω(n)** - measures the **best case** time complexity or the best amount of time. 
-- Big O Notation **Ο(n)** - measures the **worst case** time complexity or the longest amount of time. 
-- Theta Notation **θ(n)** - **average case**, express both the lower bound and the upper bound of an algorithm's running time. 
+- Omega Notation **Ω(n)** - measures the **best case** time complexity or the best amount of time.
+- Big O Notation **Ο(n)** - measures the **worst case** time complexity or the longest amount of time.
+- Theta Notation **θ(n)** - **average case**, express both the lower bound and the upper bound of an algorithm's running time.
 
 #### Big O Complexity Chart
 
@@ -455,7 +459,7 @@ overall optimization
 
 For problems which can be divided into **similar** sub-problems, so that their results can be re-used.
 
-Use the output of a smaller sub-problem and then try to optimize a bigger sub-problem. 
+Use the output of a smaller sub-problem and then try to optimize a bigger sub-problem.
 
 Use Memorization to remember the output of already solved sub-problems.
 
@@ -470,7 +474,7 @@ Problems solved using dynamic programming approach:
 
 ---
 
-### Expression Parsing 
+### Expression Parsing
 
 - Infix Notation - human readable
 - Prefix (Polish) Notation - operator is ahead
@@ -480,27 +484,27 @@ Problems solved using dynamic programming approach:
 
 ---
 
-### Searching Algorithms 
+### Searching Algorithms
 
 #### Linear Search  
 
-Find an item in a sequentially arranged data type. Compare expected data item with each of data items in list or array. 
+Find an item in a sequentially arranged data type. Compare expected data item with each of data items in list or array.
 
-average - Ο(n) 
+average - Ο(n)
 
 worst - O(n^2)
 
 Work better finding all matched values in an array.
 
-#### Binary Search 
+#### Binary Search
 
 Select the middle which splits the entire list into two parts. Compare the target value to the mid of the list.
 
 Ο(log n)
 
-Work better finding one match if there is no duplicates in the array. 
+Work better finding one match if there is no duplicates in the array.
 
-**The array must be sorted in advance.** 
+**The array must be sorted in advance.**
 
 ---
 
@@ -508,18 +512,18 @@ Work better finding one match if there is no duplicates in the array.
 
 - In-place Sorting vs. Not-in-place Sorting
 - Stable vs. Not Stable Sorting
-- Adaptive vs. Non-Adaptive Sorting 
+- Adaptive vs. Non-Adaptive Sorting
   - Adaptive: if the source list has some element already sorted, it will try not to re-order them.
   - Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
 
-#### Bubble Sort 
+#### Bubble Sort
 
-A comparison-based algorithm in which each pair of adjacent elements is compared and elements are swapped if they are not in order. 
+A comparison-based algorithm in which each pair of adjacent elements is compared and elements are swapped if they are not in order.
 
 - time - O(n^2) - not suitable for large set of data. :-1:
-- space - O(1) 
+- space - O(1)
 
-#### Insertion Sort 
+#### Insertion Sort
 
 Divide the list into two sub-list: sorted and unsorted. Then it takes one element at a time and finds an appropriate location in sorted sub-list and insert it.
 
@@ -547,25 +551,25 @@ not stable
 
 找min，一趟loop完后再做交换。
 
-#### Merge Sort 
+#### Merge Sort
 
-Divide and conquer approach. Keep on dividing the list into smaller sub-list until all sub-list has only one element. Then it merges them in a sorted way until all sub-lists are sorted. 
+Divide and conquer approach. Keep on dividing the list into smaller sub-list until all sub-list has only one element. Then it merges them in a sorted way until all sub-lists are sorted.
 
 O(n log n)
 
 space - O(n)
 
-#### Shell Sort 
+#### Shell Sort
 
-A variant of insertion sort. Divide the list into smaller sub-list based on some gap variables. Sort each sub-list using insertion sort. 
+A variant of insertion sort. Divide the list into smaller sub-list based on some gap variables. Sort each sub-list using insertion sort.
 
 best - O(n log n)
 
 1. Initialize the value of interval h. (h = h * 3 + 1) (O(n^(3/2)) by Knuth, 1973: 1, 4, 13, 40, 121, ...)
 2. Divide the list into smaller sub-list of equal interval h.
-3. Sort these sub-lists using insertion sort. 
-4. Reduce h, divide sub-lists into smaller one. Sort. 
-5. Repeat step 4 until h is 1. Final insertion sort. 
+3. Sort these sub-lists using insertion sort.
+4. Reduce h, divide sub-lists into smaller one. Sort.
+5. Repeat step 4 until h is 1. Final insertion sort.
 
 ![img/shell-sort.jpg](img/shell-sort.jpg)
 
@@ -575,7 +579,7 @@ best - O(n log n)
 
 Divide and conquer approach. Divide the list in smaller "partitions" using "pivot". The values which are smaller than the pivot are arranged in the left partition and greater values are arranged in the right partition. Each partition is recursively sorted using quick sort.
 
-1. Randomly choose a value in the array as pivot. 
+1. Randomly choose a value in the array as pivot.
 2. Compare the a[0] and pivot, a[n] and pivot. If a[0] > pivot, a[n] < pivot, swap a[0] and a[n].
 3. Compare a[1] and pivot, a[n-1] and pivot. If a[1] < pivot, a[n-1] < pivot, compare a[2] and pivot. If a[2] > pivot, swap a[2] and a[n-1].
 4. When all elements <= pivot are at the left and all elements >= pivot are at the right (这里只是将array以pivot为基准分成大的小的两组，不一定是pivot左边的都小于pivot，右边的都大于pivot), split them as two sub-lists. Then do the above steps recursively until the sub-list cannot be split again.  
@@ -592,16 +596,16 @@ Divide and conquer approach. Divide the list in smaller "partitions" using "pivo
 
 ---
 
-### Recursion 
+### Recursion
 
 A recursive function is one which calls itself, directly or calls a function that in turn calls it.
 
-Properties: 
+Properties:
 
 - Base criteria: where function stops calling itself recursively.
-- Progressive approach: where function tries to meet the base criteria in each iteration. 
+- Progressive approach: where function tries to meet the base criteria in each iteration.
 
-Many programming languages implement recursion by means of stacks. 
+Many programming languages implement recursion by means of stacks.
 
 ![recursion.jpg](img/recursion.jpg)
 
@@ -612,23 +616,23 @@ Many programming languages implement recursion by means of stacks.
 
 **Disadvantages**:
 
-- Space complexity of recursive function may go higher than that of a function with iteration, because the system needs to store activation record each time a recursive call is made. 
+- Space complexity of recursive function may go higher than that of a function with iteration, because the system needs to store activation record each time a recursive call is made.
 
 #### Tower of Hanoi
 
 ![tower-of-hanoi.jpg](img/tower-of-hanoi.jpg)
 
-Tower of Hanoi puzzle with n disks can be solved in minimum 
+Tower of Hanoi puzzle with n disks can be solved in minimum
 $$
 2^n-1
 $$
-steps. 
+steps.
 
-Algorithm ideas: 
+Algorithm ideas:
 
 - Divide the stack of disks in two parts:
-  - n^th disk 
-  - all other n-1 disks 
+  - n^th disk
+  - all other n-1 disks
 - The ultimate aim is to move disk n^th from source to destination and then put all other n-1 disks onto it.
 
 Steps:
