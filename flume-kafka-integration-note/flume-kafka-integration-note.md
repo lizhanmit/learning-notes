@@ -1,6 +1,6 @@
-# Flume and Kafka Integration Note 
+# Flume and Kafka Integration Note
 
-- Flume: 1.7.0 
+- Flume: 1.7.0
 - kafka: 2.11-0.9.0.0
 
 ---
@@ -18,13 +18,13 @@ File changes -> Flume -> Kafka
 
 **Note:** start agent 2 firestly. Next, start agent 1.
 
-How to use: 
+How to use:
 
 1. Create avro-memory-kafka.conf. (agent 2)
 2. Create exec-memory-avro.conf. (agent 1)
 3. Start Zookeeper.
-4. Start Kafka. 
-5. In terminal 2, start agent 2 firstly. 
+4. Start Kafka.
+5. In terminal 2, start agent 2 firstly.
 
 ```
 flume-ng agent \
@@ -34,7 +34,7 @@ flume-ng agent \
 -Dflume.root.logger=INFO,console
 ```
 
-6. In terminal 1, start agent 1 secondly. 
+6. In terminal 1, start agent 1 secondly.
 
 ```
 flume-ng agent \
@@ -45,4 +45,10 @@ flume-ng agent \
 ```
 
 7. In terminal 3, start a consumer. `bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic hello_topic`.
-8. In terminal 4, add "hello" into data.log file. `echo hello >> data.log`. Then "hello" will be displayed in terminal 3. 
+8. In terminal 4, add "hello" into data.log file. `echo hello >> data.log`. Then "hello" will be displayed in terminal 3.
+
+---
+
+## Flume VS Kafka
+
+[Flume VS Kafka](https://www.jianshu.com/p/a6444d2a9cb3)
