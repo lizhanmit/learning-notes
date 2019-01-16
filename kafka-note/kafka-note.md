@@ -43,15 +43,15 @@ Using Kafka as a hub:
     - new orders
     - page views
     - scanning products
-- When one system update the log, other systems can read from that log to sync themselves.
+- When one system updates the log, other systems can read from that log to sync themselves.
 
 ### Topic
 
-- Kafka splits a topic into partitions. 
+- Kafka splits a topic into partitions.
 - Each partition is an ordered immutable sequence of messages.
-- Each message is assigned a unique sequential identifier called offset. 
-- Kafka retains all messages for a configurable period of time. 
-- Kafka's performance is effectively constant with respect to data size. 
+- Each message is assigned a unique sequential identifier called offset.
+- Kafka retains all messages for a configurable period of time.
+- Kafka's performance is effectively constant with respect to data size.
 
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
 
@@ -60,7 +60,7 @@ Using Kafka as a hub:
 - Other slave partitions: handle reading data from the topic.
   - Will be written after lead partition.
 - Different topics can have different configurations of the amount of partitions.
-- If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer. 
+- If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer.
 
 ### Broker
 
