@@ -182,9 +182,9 @@ If the workload of the reducer is too large, it would be good to set combiners b
 
 ![hadoop-version-selection-consideration-factors.png](img/hadoop-version-selection-consideration-factors.png)
 
-![hadoop-versions-comaprison.png](img/hadoop-versions-comaprison.png)
+![hadoop-versions-comparison.png](img/hadoop-versions-comparison.png)
 
-![hadoop-versions-comaprison-2.png](img/hadoop-versions-comaprison-2.png)
+![hadoop-versions-comparison-2.png](img/hadoop-versions-comparison-2.png)
 
 ---
 
