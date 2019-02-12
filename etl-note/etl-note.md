@@ -764,7 +764,7 @@ Employee table:
 | ----- | ----- | ------- | ---- | ---- | ------ | ------ |
 |       |       |         |      |      |        |        |
 
-```mssql
+```sql
 -- Return employee record with max salary. 
 select * from employee where salary = (select max(salary) from employee)
 
