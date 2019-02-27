@@ -111,9 +111,21 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 ### Dataset
 
-After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported.
+After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported. **The trend in Spark is to use RDDs less and Datasets more.**
 
 Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
+
+Datasets can explicitly wrap a given struct or type. (Dataset[Person], Dataset[(String, Double)])
+
+#### Advantages
+
+- Datasets are more efficient.
+  - They can be serialized very efficiently, even better than Kryo.
+  - Optimal execution plans can be determined at compile time.
+- Datasets allow for better interoperability.
+  - MLLib and Spark Streaming are moving toward using Datasets instead of RDDs for their primary API.  
+- Datasets simplify development.
+  - You can perform most SQL operations on a dataset with one line.
 
 Processing or transmitting over the network:
 
@@ -125,6 +137,8 @@ Two ways to create a Dataset:
 
 - from Hadoop InputFormats (such as HDFS files).
 - by transforming other Datasets.
+
+RDDs can be converted to Datasets with `.toDF()`.
 
 ![when-to-use-datasets.png](img/when-to-use-datasets.png)
 
@@ -247,28 +261,12 @@ The difference between `foreach()` and `map()`:
 
 ---
 
-### Spark Core Coding
-
-- Get keys of RDD: `<rdd_var>.keys`
-- Get values of RDD: `<rdd_var>.values`
-- Sort RDD by key: `<rdd_var>.sortByKey()`
-  - Ascending is default.
-  - Descending: `<rdd_var>.sortByKey(false)`
-- Sort RDD: `<rdd_var>.sortBy(<sort_accordance>)`
-  - E.g. according to the second element of tuple in descending: `<rdd_var>.sortBy(_._2, false)`
-- Only do mapping for RDD values: `<rdd_var>.mapValues(<func>)`
-  - E.g. add 1 for values only: `<rdd_var>.mapValues(_ + 1)`
-- Join two RDDs with the same key: `<rdd_var1>.join(<rdd_var2>)`
-  - E.g. `(k, v1).join(k, v2)` Then you will get `(k, (v1, v2))`.
-- Create a new key for RDD: `<rdd_var>.keyBy(<func>)`
-  - E.g. `<rdd_var>.keyBy(<tuple> => <tuple._1>)`
-
----
-
 ## Spark SQL
 
 - Use RDD to process text file.
 - Use Spark SQL to process structured data.
+
+![sparkSQL-shell-access.png](img/sparkSQL-shell-access.png)
 
 ### DataFrame  
 
@@ -284,6 +282,9 @@ The difference between `foreach()` and `map()`:
   - existing RDDs
 
 ![rdd-dataframe-dataset.png](img/rdd-dataframe-dataset.png)
+
+DataFrames schema is inferred at runtime; but a Dataset can be inferred at compile time.
+- faster detection of errors and better optimization
 
 ### SparkSession
 
