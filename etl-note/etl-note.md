@@ -764,7 +764,7 @@ Employee table:
 | ----- | ----- | ------- | ---- | ---- | ------ | ------ |
 |       |       |         |      |      |        |        |
 
-```mssql
+```sql
 -- Return employee record with max salary. 
 select * from employee where salary = (select max(salary) from employee)
 
@@ -802,7 +802,7 @@ select year(GETDATE()) as Year;
 
 Employee and Department table:
 
-```mssql
+```sql
 -- Return employee name, highest salary and department name. 
 select e.empName, e.salary, d.deptName from Employee e inner join Department d on (e.deptId = d.deptId) where salary in (select max(salary) from employee)
 
@@ -812,7 +812,7 @@ select e.empName, e.salary, d.deptName from Employee e inner join Department d o
 
 Create a new, empty table using the schema of another.  
 
-```mssql
+```sql
 SELECT * INTO newtable 
 FROM oldtable 
 WHERE 1 = 0; -- As this is false, data from oldtable will not be inserted into newtable. Only schema will be transferred.
@@ -822,7 +822,7 @@ WHERE 1 = 0; -- As this is false, data from oldtable will not be inserted into n
 
 The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions. 
 
-```mssql
+```sql
 SELECT COUNT(CustomerID), Country
 FROM Customers
 GROUP BY Country
