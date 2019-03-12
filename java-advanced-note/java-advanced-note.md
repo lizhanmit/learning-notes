@@ -457,8 +457,8 @@ public @interface MetaAnnotationDemo {
 introduced in JDK 1.5
 
 - 去类型化：Generic exerts the effect while compiling process. Thus, after compile, there is no generic in runtime.
-
 - 可以通过reflection得到带有泛型的参数的类型。（高难度知识点）
+- 基本的指导原则：无论何时，如果你能做到，你就该尽量使用泛型方法。
 
 ### Wildcard: `<?>`
 
@@ -491,8 +491,11 @@ public static void printCollection(Collection<?> collection) {
 
 - It can only be object or reference type but cannot be basic type.
 - You may find `<E>` in some places. It is the same as `<T>`.
+- 泛型类，是在实例化类的时候指明泛型的具体类型，所以static method不能访问类上定义的泛型；泛型方法，是在调用方法的时候指明泛型的具体类型。
 
 #### Generic Methods
+
+Only the methods with `<T>` can be regarded as generic methods. 其实这个`<T>`只是一个标记。说明这个method中用到了泛型`<T>`。
 
 ```java
 // a function that can swap two elements in a customized type array
@@ -528,6 +531,67 @@ public static <T> void printCollection(Collection<T> collection, T obj2) {
 }
 ```
 
+```java
+public class genericMethodDemo {
+    @Test
+    public void test() {
+        test1();
+        test2(new Integer(2));
+        test3(new int[3],new Object());
+
+        // print result:
+	// null
+	// 2
+	// [I@3d8c7aca
+	// java.lang.Object@5ebec15
+    }
+    
+    public <T> void test1() {
+        T t = null;
+        System.out.println(t);
+    }
+    
+    public <T> T test2(T t) {
+        System.out.println(t);
+        return t;
+    }
+
+    public <T, E> void test3(T t, E e) {
+        System.out.println(t);
+        System.out.println(e);
+    }
+}
+```
+
+```java
+public class genericMethodWithVarArgsDemo {
+    @Test
+    public void test() {
+        print("dasdas","dasdas", "aa");
+	print2("dasd",1,"dasd",2.0,false);
+    }
+
+    // specific type var args
+    public void print(String ... args) {
+        for(String t : args){
+            System.out.println(t);
+        }
+    }
+    // generic type var args
+    public <T> void print2(T... args) {
+        for(T t : args){
+            System.out.println(t);
+        }
+    }
+        // print result of print2() method:
+    //dasd
+    //1
+    //dasd
+    //2.0
+    //false
+}
+```
+
 #### Generic Classes
 
 ```java
@@ -558,10 +622,25 @@ public class GenericDao<T> {  // declare <T> at class level
     }
 
     // for static methods, you need to declare <T> at method level, you cannot rely on <T> at class level
+    // because generic is declared when instantiating
     public static <T> void update(T t) {
 
     }
 }
+```
+
+#### Generic Array
+
+You cannot create an array with a specific generic type. 
+
+```java
+// not allowed, complie error
+List<String>[] ls = new ArrayList<String>[10];  
+
+// allowed, no error
+List<?>[] ls = new ArrayList<?>[10];  
+// or
+List<String>[] ls = new ArrayList[10];
 ```
 
 ---
