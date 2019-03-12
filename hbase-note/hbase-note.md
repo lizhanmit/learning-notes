@@ -15,6 +15,11 @@
 
 ![hbase-data-product-storage.png](img/hbase-data-product-storage.png)
 
+### Namespace
+
+- Namespace命名空间指对一组表的逻辑分组，类似RDBMS中的database，方便对表在业务上划分。
+- Namespace特性是对表资源进行隔离的一种技术，隔离技术决定了HBase能否实现资源统一化管理的关键，提高了整体的安全性。
+
 ---
 
 ## Architecture
