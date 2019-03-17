@@ -68,3 +68,10 @@
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Scala](https://github.com/lizhanmit/scala-tutorial)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
+
+---
+
+## Interview Preparation
+
+- [Data Engineer Interview Preparation](https://github.com/lizhanmit/learning-notes/blob/master/interview-preparation/data-engineer-interview-preparation.md)
+- [Data Structure & Algorithm Interview Preparation](https://github.com/lizhanmit/learning-notes/blob/master/interview-preparation/data-structure-and-algorithm-interview-preparation.md)
