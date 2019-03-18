@@ -512,6 +512,7 @@ Work better finding one match if there is no duplicates in the array.
 
 - In-place Sorting vs. Not-in-place Sorting
 - Stable vs. Not Stable Sorting
+  - Stable sorting sort repeated elements in the same order that they appear in the input.
 - Adaptive vs. Non-Adaptive Sorting
   - Adaptive: if the source list has some element already sorted, it will try not to re-order them.
   - Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
