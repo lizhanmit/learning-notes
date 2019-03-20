@@ -1,5 +1,17 @@
 # Spark Streaming Note
 
+Spark streaming is not real stream computing. It is second level.
+
+If you want millisecond level, use stream computing framework, e.g. Storm.  
+
+![spark-streaming-input-output.png](img/spark-streaming-input-output.png)
+
+![spark-streaming.png](img/spark-streaming.png)
+
+## Coding Steps
+
+![spark-streaming-coding-steps.png](img/spark-streaming-coding-steps.png)
+
 ---
 
 ## Spark Streaming Working Principle 

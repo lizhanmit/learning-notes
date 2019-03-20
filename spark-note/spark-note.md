@@ -173,8 +173,7 @@ For instance,
 For instance,
 
 1. Create: `val nErrors=sc.accumulator(0.0)`
-2. Load file: `val logs = sc.textFile("/Users/akuntamukkala/temp/output.
-   log")`
+2. Load file: `val logs = sc.textFile("/Users/akuntamukkala/temp/output.log")`
 3. Count number of "error": `logs.filter(_.contains(“error”)).foreach(x => nErrors += 1)`
 4. Get value: `nErrors.value`
 
@@ -311,7 +310,7 @@ Two ways to convert RDD to DataFrame:
   - Construct Datasets when the columns and their types are not known until runtime.
   - More verbose.
   - Steps:
-    1. Create an RDD of `Rows` from the original RDD;
+    1. Create an RDD of `Rows` from the original RDD.
     2. Create the schema represented by a `StructType` matching the structure of Rows in the RDD created in Step 1.
     3. Apply the schema to the RDD of `Rows` via `createDataFrame()` method provided by `SparkSession`.
 
