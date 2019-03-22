@@ -22,6 +22,72 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ---
 
+## Structured Streaming
+
+Built on the Spark SQL engine.
+
+The **best thing** about Structured Streaming is that it allows you to rapidly and quickly extract value out of streaming systems with virtually no code changes.
+
+- Micro-batch processing: 100 milliseconds latencies, **exactly-once** guarantees.
+- Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
+
+Treats a live data stream as an unbounded input table that is being continuously appended.
+
+![structured-streaming-model.png](img/structured-streaming-model.png)
+
+Event-time: The time embedded in the data itself.
+
+### Watermarking
+
+- It lets the engine automatically track the current event time in the data and attempt to clean up old state accordingly.
+
+- You can define the watermark of a query by specifying the event time column and the threshold on how late the data is expected to be in terms of event time.
+- For example, `words.withWatermark("timestamp", "10 minutes").groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word").count()`.  Late data within 10 mins will be aggregated, but data later than 10 mins will start getting dropped. But it is not guaranteed to be dropped; it may or may not get aggregated.
+
+Conditions for watermarking to clean aggregation state:
+
+- Output mode must be **Append** or **Update**.
+- The aggregation must have either the event-time column, or a "window" on the event-time column.
+- `withWatermark()` method must be called on the same column as the timestamp column used in the aggregate. For example, `df.withWatermark("time", "1 min").groupBy("time2").count()` is invalid.
+
+---
+
+### Join Operations
+
+Stream-stream Joins
+
+- Introduced in Spark 2.3.
+- For both the input streams, we buffer past input as streaming state, so that we can match every future input with past input and accordingly generate joined results.
+- Similar to streaming aggregations, we automatically handle late, out-of-order data and can limit the state using watermarks.
+- [Inner Joins with optional Watermarking](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#inner-joins-with-optional-watermarking)
+- [Outer Joins with Watermarking](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#outer-joins-with-watermarking)
+- If any of the two input streams being joined does not receive data for a while, the outer (both cases, left or right) output may get delayed.
+
+As of Spark 2.3,
+
+- you can use joins only when the query is in Append output mode.
+- you cannot use other non-map-like operations before joins.
+
+---
+
+### Streaming Deduplication
+
+You can deduplicate records in data streams using a unique identifier in the events.
+
+```scala
+val streamingDf = spark.readStream. ...  // columns: guid, eventTime, ...
+
+// Without watermark using guid column
+streamingDf.dropDuplicates("guid")
+
+// With watermark using guid and eventTime columns
+streamingDf
+  .withWatermark("eventTime", "10 seconds")
+  .dropDuplicates("guid", "eventTime")
+```
+
+---
+
 ## How to use spark-submit to run spark application script （for real projects）
 
 Take processing socket text as an example.
