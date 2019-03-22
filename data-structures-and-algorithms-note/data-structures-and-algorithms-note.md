@@ -19,6 +19,8 @@ If arrays are fixed length, when an array is full, a typical implementation is t
   }
 ```
 
+[Find the index of an element in an array in Java.](https://www.techiedelight.com/find-index-element-array-java/)
+
 ---
 
 ### StringBuilder
@@ -345,11 +347,11 @@ Rotation techniques to balance the tree:
 
 A spanning tree is a subset of Graph G, which has all the vertices covered with minimum possible number of edges.
 
-A complete undirected graph can have maximum 
+A complete undirected graph can have maximum 
 $$
 n^{n-2}
 $$
-number of spanning trees, where n is the number of nodes.  
+number of spanning trees, where n is the number of nodes.  
 
 - Removing one edge from the spanning tree will make the graph disconnected, i.e. the spanning tree is **minimally connected**.
 - Adding one edge to the spanning tree will create a circuit or loop, i.e. the spanning tree is **maximally acyclic**.
