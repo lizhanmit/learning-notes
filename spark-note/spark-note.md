@@ -1,5 +1,7 @@
 # Spark Note
 
+Apache Spark is a fast and general-purpose distributed / cluster computing system. It provides high-level APIs in Java, Scala, Python and R, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools including Spark SQL for SQL and structured data processing, MLlib for machine learning, GraphX for graph processing, and Spark Streaming.
+
 ## Spark Core
 
 ### Architecture  
@@ -45,6 +47,8 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 
 - A RDD (Resilient Distributed Dataset) is essentially a **read-only** partition record set.
 - Each RDD can be divided into multiple partitions. Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
+- Virtually everything in Spark is built on top of RDDS.
+- One thing that you might use RDDs for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
 
 #### Partitioning
 
@@ -111,6 +115,8 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 ### Dataset
 
+Datasets and DataFrames are distributed table-like collections with well-defined rows and columns.
+
 - After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported. **The trend in Spark is to use RDDs less and Datasets more.**
 - Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
 - Datasets can explicitly wrap a given struct or type. (Dataset[Person], Dataset[(String, Double)])
@@ -140,6 +146,114 @@ Two ways to create a Dataset:
 RDDs can be converted to Datasets with `.toDF()`.
 
 ![when-to-use-datasets.png](img/when-to-use-datasets.png)
+
+---
+
+### DataFrame  
+
+- A DataFrame simply represents a table of data with rows and columns. 
+- A DataFrame is a kind of distributed dataset on basis of RDD.
+- **A DataFrame is a distributed set of `Row` objects or `Dataset[Row]`.**
+- Each `Row` object represents a row of record, which provides detailed schema info.
+- `Row` is an untyped JVM object.
+- Through DataFrame, Spark SQL is able to know column name and type of the dataset.
+- When you are using DataFrames, you are taking advantage of Spark's optimized internal Catalyst format. 
+- Can be created from:
+  - structured data files
+  - Hive tables
+  - external databases
+  - existing RDDs
+
+#### RDD VS DataFrame VS Dataset
+
+![rdd-dataframe-dataset.png](img/rdd-dataframe-dataset.png)
+
+- DataFrame maps to a collection of Row-type objects. 
+- Dataset maps to a collection of objects. 
+- DataFrames schema is inferred at **runtime**; but a Dataset can be inferred at **compile time**.
+  - faster detection of errors and better optimization
+
+---
+
+### RDD -> DataFrame
+
+![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
+
+Two ways to convert RDD to DataFrame:
+
+- Use Reflection to infer the schema of the RDD that contains specific type data.
+  - Firstly define a case class. Then Spark will convert it to DataFrame implicitly.
+  - This way is suitable for the RDD whose data type is known.
+  - More concise code.
+  - Currently (Spark 2.4), Spark SQL does not support converting JavaBeans to DataFrames that contain Map field(s).
+- Use programming interface to construct a schema and apply it to an existing RDD.
+  - Construct Datasets when the columns and their types are not known until runtime.
+  - More verbose.
+  - Steps:
+    1. Create an RDD of `Rows` from the original RDD.
+    2. Create the schema represented by a `StructType` matching the structure of Rows in the RDD created in Step 1.
+    3. Apply the schema to the RDD of `Rows` via `createDataFrame()` method provided by `SparkSession`.
+
+---
+
+### Structured API Execution
+
+Steps: 
+
+1. Write DataFrame / Dataset / SQL Code.
+2. If valid code, Spark converts this to a Logical Plan.
+3. Spark transforms this Logical Plan to a Physical Plan, checking for optimizations along the way through Catalyst Optimizer.
+4. Spark then executes this Physical Plan (RDD manipulations) on the cluster.
+
+![catalyst-optimizer.png](img/catalyst-optimizer.png)
+
+#### Logical Plan
+
+![logical-planning-process.png](img/logical-planning-process.png)
+
+#### Physical Plan 
+
+![physical-planning-process.png](img/physical-planning-process.png)
+
+#### Execution
+
+Spark performs further optimizations at runtime, generating native Java bytecode that can remove entire tasks or stages during execution.
+
+---
+
+### Schema
+
+- Schema-on-read
+  - Infer schema automatically.
+  - Inaccurate, precision issues.
+- Define schema manually through StructType and StructField
+  - Use this in production especially for untyped sources like CSV and JSON files.
+
+#### Column
+
+Different ways to construct or refer a column: 
+
+- `col("columnName")`
+- `column("columnName")`
+- `$"columnName"` (in Scala)
+- `'columnName` (in Scala)
+- `expr("columnName")` (the most flexible)
+
+- Columns are just expressions.
+- Columns and transformations of those columns compile to the same logical plan as parsed expressions. For example, `expr("columnName - 5")` = `expr("columnName") - 5`, because Spark compiles these to a logical tree specifying the order of operations.
+
+#### Row
+
+- Each row in a DataFrame is a single record.
+- A record is an object of type Row.
+- Row objects internally represent arrays of bytes. 
+
+- Create a Row: `val myRow = Row("hello", null, 1, false)`
+- Access a Row: 
+  - `myRow(0)`: type Any
+  - `myRow(0).asInstanceOf[String]`: type String
+  - `myRow.getString(0)`: type String
+  - `myRow.getInt(2)`: type Int
 
 ---
 
@@ -266,29 +380,6 @@ The difference between `foreach()` and `map()`:
 
 ![sparkSQL-shell-access.png](img/sparkSQL-shell-access.png)
 
-### DataFrame  
-
-- A DataFrame simply represents a table of data with rows and columns. 
-- A DataFrame is a kind of distributed dataset on basis of RDD.
-- **A DataFrame is a distributed set of `Row` objects or `Dataset[Row]`.**
-- Each `Row` object represents a row of record, which provides detailed schema info.
-- `Row` is an untyped JVM object.
-- Through DataFrame, Spark SQL is able to know column name and type of the dataset.
-- Can be created from:
-  - structured data files
-  - Hive tables
-  - external databases
-  - existing RDDs
-
-#### RDD VS DataFrame VS Dataset
-
-![rdd-dataframe-dataset.png](img/rdd-dataframe-dataset.png)
-
-- DataFrame maps to a collection of Row-type objects. 
-- Dataset maps to a collection of objects. 
-- DataFrames schema is inferred at runtime; but a Dataset can be inferred at compile time.
-  - faster detection of errors and better optimization
-
 ### SparkSession
 
 From Spark 2.0, `SparkSession` interface was introduced to realize all functions of `SQLContext` and `HiveContext`.
@@ -299,30 +390,15 @@ Using `SparkSession`, you can
 - transfer DataFrame to table in `SQLContext`.
 - use SQL statements to operate data.
 
-### RDD -> DataFrame
-
-![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
-
-Two ways to convert RDD to DataFrame:
-
-- Use Reflection to infer the schema of the RDD that contains specific type data.
-  - Firstly define a case class. Then Spark will convert it to DataFrame implicitly.
-  - This way is suitable for the RDD whose data type is known.
-  - More concise code.
-  - Currently (Spark 2.4), Spark SQL does not support converting JavaBeans to DataFrames that contain Map field(s).
-- Use programming interface to construct a schema and apply it to an existing RDD.
-  - Construct Datasets when the columns and their types are not known until runtime.
-  - More verbose.
-  - Steps:
-    1. Create an RDD of `Rows` from the original RDD.
-    2. Create the schema represented by a `StructType` matching the structure of Rows in the RDD created in Step 1.
-    3. Apply the schema to the RDD of `Rows` via `createDataFrame()` method provided by `SparkSession`.
+---
 
 ### Spark SQL & Hive
 
 It is compulsory to add Hive support for Spark in order to accessing Hive using Spark.
 
 Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code.
+
+---
 
 ### Aggregations
 
@@ -332,7 +408,26 @@ Pre-compile version Spark from official site generally does not contain Hive sup
 
 ## Spark ML
 
+- Machine learning algorithms in MLlib require that data is represented as numerical values. 
+- All machine learning algorithms in Spark take as input a Vector type, which must be a set of numerical values. 
+
 ### ML Workflow
+
+Steps: 
+
+1. Data preprocessing: prepare **trainDataFrame** and **testDataFrame** based on raw data without using any ML concepts.
+2. Data processing: feature engineering and get **transformation pipeline**. 
+3. Prepare for training.
+    1. Transformation pipeline fits trainDataFrame to get **fitted pipeline**.
+    2. Fitted pipeline transforms trainDataFrame to get **transformedTraining**.
+4. Cache transformedTraining.
+5. Prepare for ML model.
+    1. Create **untrained model**.
+    2. Untrained model fits transformedTraining to get **trained model**.
+    3. Trained model computes cost of transformedTraining.
+6. Test.
+    1. Fitted pipeline transforms testDataFrame to get **transformedTest**.
+    2. Trained model computes cost of transformedTest.
 
 Estimator receives an input DataFrame via `.fit()` method, and then generate a Transformer.
 
@@ -430,3 +525,10 @@ Feature transformation: transformation of label and index.
 ## Useful Resources
 
 - [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
+
+---
+
+## Reasons for Using Spark
+
+- Spark's simple, robust programming model makes it easy to apply to a large number of problems. 
+- There are also a lot of packages created by Spark community. 
