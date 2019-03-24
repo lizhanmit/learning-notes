@@ -162,7 +162,7 @@ RDDs can be converted to Datasets with `.toDF()`.
   - structured data files
   - Hive tables
   - external databases
-  - existing RDDs
+  - existing RDDs: `val myDF = spark.createDataFrame(myRDD, mySchema)`
 
 #### RDD VS DataFrame VS Dataset
 
