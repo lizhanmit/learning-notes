@@ -46,6 +46,7 @@
     - [Page View](https://github.com/lizhanmit/sparktrain#page-view)
     - [Page View Contributed by Search Engines](https://github.com/lizhanmit/sparktrain#page-view-contributed-by-search-engines)
   - [Data Visualization](https://github.com/lizhanmit/sparktrain#data-visualization)
+- [ZooKeeper](https://github.com/lizhanmit/learning-notes/blob/master/zooKeeper-note/zooKeeper-note.md)
 
 ---
 
