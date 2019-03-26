@@ -351,6 +351,27 @@ Shuffle transformations:
 
 ---
 
+### UDFs
+
+Spark will serialize the UDF on the driver and transfer it over the network to all executor processes.
+
+If the function is written in Scala or Java,
+
+- little performance penalty. 
+- performance issues if you create or use a lot of objects.
+
+If the function is written in Python,
+
+1. Spark starts a Python process on the worker, serializes all of the data to a format that Python can understand.
+2. Executes the function row by row on that data in the Python process.
+3. Returns the results of the row operations to the JVM and Spark.
+
+Starting this Python process and serializing the data to Python are expensive. **Recommend writing UDFs in Scala or Java.**
+
+**Best practice**: define the return type for the UDF when you define it.
+
+---
+
 ### Lazy Evaluation
 
 Taking advantage of lazy evaluation:  
