@@ -257,6 +257,44 @@ Different ways to construct or refer a column:
 
 ---
 
+### Joins
+
+Communication Strategies
+
+- Shuffle join
+  - All-to-all communication.
+  - Every node talks to every other node. 
+  - Expensive, especially if your data is not partitioned well.
+- Broadcast join
+  - Replicate the small DataFrame onto every worker node.
+  - More efficient.
+  - Explicitly use a broadcast join: `<df1>.join(broadcast(<df2>), <joinExpr>)`.
+
+#### Big table–to–big table
+
+Use shuffle join.
+
+![join-two-big-tables.png](img/join-two-big-tables.png)
+
+#### Big table–to–small table
+
+Small: small enough to fit into the memory of a single worker node. 
+
+Use broadcast join.
+
+Steps:
+
+1. Use broadcast variable to broadcast small table onto every node.
+2. Joins will be performed on every single node individually. No further communication between nodes.
+
+![join-big-table-and-small-table.png](img/join-big-table-and-small-table.png)
+
+#### Small table–to–small table
+
+It is usually best to let Spark decide how to join them.
+
+---
+
 ### Shared Variables
 
 #### Broadcast Variables
