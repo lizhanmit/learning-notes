@@ -43,7 +43,43 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 
 ---
 
-### RDD
+## Deployment of Spark Applications
+
+[Spark Modes of Deployment – Cluster Mode and Client Mode](https://techvidvan.com/tutorials/spark-modes-of-deployment/)
+
+---
+
+### Life Cycle of a Spark Application
+
+#### Outside Spark (cluster mode)
+
+1. Client Request
+    1. You submit an application executing code on your local machine through `spark-submit`.
+    2. Make a request to the cluster manager driver node explicitly asking for resources for the Spark driver process only.
+    3. Cluster manager places the driver process onto a node in the cluster.
+    4. The client process exits and application is off and running on the cluster.
+2. Launch
+    1. The driver process runs user code on the cluster including a SparkSession that initializes a Spark cluster.
+    2. The SparkSession communicates with the cluster manager asking it to
+launch Spark executor processes across the cluster.
+    3. The cluster manager responds by launching the executor processes and sends the relevant information about their locations to the driver process.
+3. Execution
+    1. The driver and the workers communicate among themselves, executing code and moving data around.
+4. Completion
+    1. The driver process exits with either success or failure.
+    2. The cluster manager then shuts down the executors.
+    3. You can see the success or failure of the Spark Application by asking the cluster manager.
+ 
+#### Inside Spark 
+
+1. Create a SparkSession (the first step of any Spark Application).
+2. Execute code.
+
+1 data block - 1 partition - 1 Spark task - runs on 1 executor
+
+---
+
+### RDDs
 
 - A RDD (Resilient Distributed Dataset) is essentially a **read-only** partition record set.
 - Each RDD can be divided into multiple partitions. Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
@@ -51,6 +87,8 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 - One thing that you might use RDDs for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
 
 #### Partitioning
+
+Get partition number of a Dataset or DataFrame: `<dataset_or_dataFrame>.rdd.partitions.size`.
 
 ##### Partitioning Rule
 
@@ -113,7 +151,7 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 ---
 
-### Dataset
+### Datasets
 
 Datasets and DataFrames are distributed table-like collections with well-defined rows and columns.
 
@@ -121,6 +159,7 @@ Datasets and DataFrames are distributed table-like collections with well-defined
 - Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
 - Datasets can explicitly wrap a given struct or type. (Dataset[Person], Dataset[(String, Double)])
 - The Dataset API gives users the ability to assign a Java/Scala class to the records within a DataFrame and manipulate it as a collection of typed objects.
+- **Recommend** using Datasets only with user-defined encoding surgically and only where it makes sense. This might be at the beginning of a big data pipeline or at the end of one.
 
 #### Advantages
 
@@ -147,13 +186,19 @@ RDDs can be converted to Datasets with `.toDF()`.
 
 ![when-to-use-datasets.png](img/when-to-use-datasets.png)
 
+#### Disadvantages
+
+- Cost of performance: Spark converts the Row format (domain specifies type) to the object you specified (a case class or Java class).
+- By specifying a function, you are forcing Spark to evaluate this function on every row in your Dataset. This can be very resource intensive. For simple filters it is always **preferred** to write
+SQL expressions.
+
 ---
 
-### DataFrame  
+### DataFrames 
 
 - A DataFrame simply represents a table of data with rows and columns. 
 - A DataFrame is a kind of distributed dataset on basis of RDD.
-- **A DataFrame is a distributed set of `Row` objects or `Dataset[Row]`.**
+- A DataFrame is a distributed set of `Row` objects or Dataset of type Row (`Dataset[Row]`).
 - Each `Row` object represents a row of record, which provides detailed schema info.
 - `Row` is an untyped JVM object.
 - Through DataFrame, Spark SQL is able to know column name and type of the dataset.
@@ -293,6 +338,16 @@ Steps:
 
 It is usually best to let Spark decide how to join them.
 
+### `joinWith()`
+
+DatasetA `joinWith` DatasetB end up with two nested Datasets. Each column represents one Dataset. 
+
+#### `join()` VS `joinWith()`
+
+![join-vs-joinWith.png](img/join-vs-joinWith.png)
+
+DataFrames can also join Datasets.
+
 ---
 
 ### Shared Variables
@@ -361,6 +416,8 @@ When to cache data:
 ---
 
 ### Shuffle
+
+A shuffle represents a physical repartitioning of the data.
 
 - Shuffle moves data across worker nodes, which is costly.
 - It involves disk I/O, data serialization, and network I/O.
@@ -432,12 +489,88 @@ The difference between `foreach()` and `map()`:
 
 ---
 
+### Data Sources
+
+Six core data sources:
+
+- csv
+- json
+- parquet
+- orc
+- jdbc/odbc connections
+- plain-text files
+
+When reading and writing, Spark will use the Parquet format **by default**.
+
+When writing, the destination directory is actually a folder with numerous files within it, which reflects the number of partitions in our DataFrame at the time we write it out.
+
+#### JSON
+
+**Recommend** using line-delimited JSON format, which is much more stable than the multiline.
+
+#### Parquet
+
+**Recommend** writing data out to Parquet for long-term storage because reading from a Parquet file will always be more efficient than JSON or CSV.
+
+Advantages: 
+
+- Storage optimizations, columnar compression.
+- When reading, it allows for reading individual columns instead of entire files.
+- Supports complex types (array, map, struct), which would fail with a CSV file.
+
+**Be careful** when you write out Parquet files with different versions of Spark (especially older ones) because this can cause significant headache.
+
+#### ORC
+
+A self-describing, type-aware columnar file format designed for Hadoop workloads.
+
+- optimized for large streaming reads
+- finding required rows quickly
+
+Difference between ORC and Parquet:
+
+- Parquet is further optimized for Spark.
+- ORC is further optimized for Hive.
+
+#### Text Files
+
+- When reading, each line in the file becomes a record in the DataFrame.
+- When writing, be sure to have only one string column; otherwise, the write will fail.
+
+#### Advanced I/O Concepts
+
+- **Recommend** Parquet with gzip compression.
+- Multiple executors cannot read from the same file at the same time.
+- By default, one file is written per partition of the data.
+
+#### Small File Problem
+
+When you are writing lots of small files, there is a significant metadata overhead that you incur managing all of those files.
+
+Spark and HDFS do not work well with small files.
+
+When writing files, you can control file sizes by controlling the number of records that are written to each file: `<columnName>.write.option("maxRecordsPerFile", <numberOfRecords>)`. 
+
+---
+
 ## Spark SQL
 
 - Use RDD to process text file.
 - Use Spark SQL to process structured data.
+- Spark SQL is intended to operate as an OLAP not OLTP.
+
+### Spark SQL CLI
+
+- Cannot communicate with the Thrift JDBC server.
+- To start Spark SQL CLI, in terminal under the Spark directory, `./bin/spark-sql`.
+
+---
+
+### Spark SQL Thrift JDBC/ODBC Server
 
 ![sparkSQL-shell-access.png](img/sparkSQL-shell-access.png)
+
+---
 
 ### SparkSession
 
@@ -449,13 +582,65 @@ Using `SparkSession`, you can
 - transfer DataFrame to table in `SQLContext`.
 - use SQL statements to operate data.
 
+#### SparkContext
+
+SparkContext focuses on more fine-grained control of Spark’s central abstractions.
+
+You should not need to explicitly initialize a SparkContext through `new SparkContext`, but use the following way:
+
+```scala
+import org.apache.spark.SparkContext
+val sc = SparkContext.getOrCreate()
+```
+
+**You should never need to use the SQLContext.**
+
+#### SQLContext
+
+SQLContext focuses on the higher-level tools like Spark SQL.
+
+**You should rarely need to use the SparkContext.**
+
 ---
 
 ### Spark SQL & Hive
 
-It is compulsory to add Hive support for Spark in order to accessing Hive using Spark.
+It is compulsory to add Hive support for Spark in order to access Hive using Spark.
 
 Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code.
+
+Spark SQL can connect to Hive metastores. To connect to the Hive metastore, there are several properties that you will need to specify.
+
+---
+
+### Catalog
+
+The highest level abstraction in Spark SQL.
+
+It is an abstraction for the storage of metadata about the data stored in your tables, databases,
+tables, functions, and views.
+
+---
+
+### Tables
+
+Core difference between tables and DataFrames:
+
+- You define DataFrames in the scope of a programming language.
+- You define tables within a database.
+
+#### Spark-Managed Tables
+
+- When you define a table from files on disk, you are defining an **unmanaged table**.
+- When you use `saveAsTable` on a DataFrame, you are creating a **Spark-managed table**.
+
+---
+
+### Views
+
+- A view specifies a set of transformations on top of an existing table. 
+- It basically just saves query plans, which can be convenient for organizing or reusing your query logic.
+- Spark will perform it only at query time.
 
 ---
 
@@ -542,13 +727,7 @@ Feature transformation: transformation of label and index.
 ### Scale MySQL
 
 - Keep table size small, thereby keeping the entire table in memory, which makes updates and querying very quick.
-- Use distributed databases with a lot of nodes that are good for frequent updates – e.g. Cassandra.   
-
----
-
-## Deployment of Spark Applications
-
-[Spark Modes of Deployment – Cluster Mode and Client Mode](https://techvidvan.com/tutorials/spark-modes-of-deployment/)
+- Use distributed databases with a lot of nodes that are good for frequent updates – e.g. Cassandra. 
 
 ---
 
