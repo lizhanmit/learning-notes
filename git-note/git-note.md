@@ -8,6 +8,12 @@ Git cannot track the change of binary files, such as images, videos, and Microso
 
 ---
 
+## Installation on Ubuntu
+
+[Install Github on Ubuntu](https://linuxtechlab.com/how-to-install-github-on-ubuntu-step-by-step/)
+
+---
+
 ## Command Line
 
 1. Go to project directory. `git init`. Init the repo.
@@ -17,6 +23,8 @@ Git cannot track the change of binary files, such as images, videos, and Microso
 5. `git remote add origin <remote repository URL>` Set the new remote.
 6. `git remote -v` Verify the new remote URL.
 7. `git push -u origin master` Push up to the remote repository.
+
+[git - the simple guide](http://rogerdudler.github.io/git-guide/)
 
 - `git log` Check commit history and get "commit_id".
 - `git reflog` Check commit history and get "commit_id" in a concise manner.
