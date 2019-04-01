@@ -43,7 +43,7 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 
 ---
 
-## Deployment of Spark Applications
+### Deployment of Spark Applications
 
 [Spark Modes of Deployment – Cluster Mode and Client Mode](https://techvidvan.com/tutorials/spark-modes-of-deployment/)
 
@@ -76,6 +76,20 @@ launch Spark executor processes across the cluster.
 2. Execute code.
 
 1 data block - 1 partition - 1 Spark task - runs on 1 executor
+
+---
+
+### Optimization
+
+#### Spark SQL Optimization
+
+![spark-sql-optimization.jpg](img/spark-sql-optimization.jpg)
+
+#### Pipelining
+
+- Spark performs as many steps as it can at one point in time before writing data to memory or disk.
+- It occurs at and below the RDD level.
+- With pipelining, any sequence of operations that feed data directly into each other, without needing to move it across nodes, is collapsed into a single stage of tasks that do all the operations together.
 
 ---
 
@@ -354,12 +368,14 @@ DataFrames can also join Datasets.
 
 #### Broadcast Variables
 
+Broadcast variables let you save a large **immutable** value on all the worker nodes and reuse it across many Spark actions without re-sending it to the cluster. 
+
 - Use `SparkContext.broadcast(<var>)` to create a broadcast variable from a normal variable, which is cached on each machine.
 - The broadcast variable is like a wrapper of its corresponding normal variable.
 - The broadcasted data is cached in serialized form and deserialized before running each task.
-- After the broadcast variable is created, it should be used instead of the original normal variable in any functions run on the cluster.
 - All functions in the cluster can access the broadcast variable, thereby you do not need to repeatedly send the original normal variable to all nodes.
-- After creating the broadcast variable, the original normal variable cannot be modified (is **read-only**). Consequently, the broadcast variable on all nodes are the same.
+- After the broadcast variable is created, it should be used instead of the original normal variable in any functions run on the cluster.
+And the original normal variable cannot be modified (is **read-only**). Consequently, the broadcast variable on all nodes are the same.
 - **When to use**: when a very large variable need to be used repeatedly.
 
 For instance,
@@ -369,11 +385,13 @@ For instance,
 
 #### Accumulators
 
+Accumulators let you add together data from all the tasks into a shared result. 
+
 - Used for counter and sum functions.
 - Create: `<accum_var> = SparkContext.longAccumulator()` or `<accum_var> = SparkContext.doubleAccumulator()`
 - Use: `<accum_var>.add(<number>)`
 - These accumulators are available on Slave nodes, but **Slave nodes cannot read them**.
-- Master node is the only one that can read and compute the aggregate of all updates. `<accum_var>.value`
+- **Master node is the only one that can read and compute the aggregate of all updates**  `<accum_var>.value`.
 - Spark natively supports accumulators of numeric types, and programmers can add support for new types.
 
 For instance,
@@ -421,7 +439,10 @@ A shuffle represents a physical repartitioning of the data.
 
 - Shuffle moves data across worker nodes, which is costly.
 - It involves disk I/O, data serialization, and network I/O.
-- It generates a large number of intermediate files on disk.
+- It generates a large number of intermediate files on disk. (shuffle persistence) 
+    - Spark has the "source" tasks (those sending data) write shuffle files to their local disks. 
+    - Running a new job over data that has already
+been shuffled does not rerun the "source" side of the shuffle.
 - By default, when we perform a shuffle, Spark outputs 200 shuffle partitions. You can specify it through `spark.conf.set("spark.sql.shuffle.partitions", "<number_of_shuffle_you_want>")`.
 - Use minimal shuffle as possible and do them in late stages for better performance.  
 - **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
