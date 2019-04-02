@@ -28,7 +28,8 @@ Git cannot track the change of binary files, such as images, videos, and Microso
 
 - `git log` Check commit history and get "commit_id".
 - `git reflog` Check commit history and get "commit_id" in a concise manner.
-- `git reset --hard HEAD^` Roll back to the last version that has been committed to the repo.
+- `git reset --soft HEAD~` Only cancel the latest commit. Take the latest file from commit to index.
+- `git reset --hard HEAD~` Roll back to the last version that has been committed to the repo.
 - `git reset --hard <commit_id>` Roll back to the specific version in the repo.
 - `git checkout -- <file_name>` Drop changes to the file in workspace.
 - `git reset HEAD <file_name>` Take the file from stage back to workspace.
