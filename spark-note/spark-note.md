@@ -368,7 +368,9 @@ DataFrames can also join Datasets.
 
 #### Broadcast Variables
 
-Broadcast variables let you save a large **immutable** value on all the worker nodes and reuse it across many Spark actions without re-sending it to the cluster. 
+When you use a variable in a closure, it must be deserialized on the worker nodes many times (one per task).
+
+Broadcast variables let you save a large **immutable** value (such as a lookup table or a machine learning model) cached on all the worker nodes instead of serialized with every single task and reuse it across many Spark actions without re-sending it to the cluster. 
 
 - Use `SparkContext.broadcast(<var>)` to create a broadcast variable from a normal variable, which is cached on each machine.
 - The broadcast variable is like a wrapper of its corresponding normal variable.
@@ -377,26 +379,49 @@ Broadcast variables let you save a large **immutable** value on all the worker n
 - After the broadcast variable is created, it should be used instead of the original normal variable in any functions run on the cluster.
 And the original normal variable cannot be modified (is **read-only**). Consequently, the broadcast variable on all nodes are the same.
 - **When to use**: when a very large variable need to be used repeatedly.
+- Use case: pass around a large lookup table that fits in memory on the executors and use that in a
+function.
 
 For instance,
 
-1. Create: `val broadcastVar = sc.broadcast(Array(1,2,3))`
+1. Create: `val broadcastVar = spark.sparkContext.broadcast(Array(1,2,3))`
 2. Get value: `broadcastVar.value`
 
 #### Accumulators
 
+Accumulators are a way of updating a value inside of a variety of transformations and propagating that value to the driver node in an efficient and fault-tolerant way.
+
 Accumulators let you add together data from all the tasks into a shared result. 
 
-- Used for counter and sum functions.
-- Create: `<accum_var> = SparkContext.longAccumulator()` or `<accum_var> = SparkContext.doubleAccumulator()`
+- Use case: counters or sum functions.
+- Accumulators are available on worker nodes, but **worker nodes cannot read them**.
+- **Driver node is the only one that can read and compute the aggregate of all updates.** 
+- Spark natively supports accumulators of numeric types, and programmers can add support for new types through extending class `AccumulatorV2`.
+- Named accumulators will display their running
+results in the Spark UI, whereas unnamed ones will not.
+- Create: 
+
+```scala
+/*
+ * unnamed accumulators
+ */
+val <accumulatorVar> = new LongAccumulator spark.sparkContext.register(<accumulatorVar>)
+
+/*
+ * named accumulators
+ */
+val <accumulatorVar> = new LongAccumulator
+spark.sparkContext.register(<accumulatorVar>, "<accumulatorName>")
+// or
+val <accumulatorVar> = spark.SparkContext.longAccumulator("<accumulatorName>")
+```
+
 - Use: `<accum_var>.add(<number>)`
-- These accumulators are available on Slave nodes, but **Slave nodes cannot read them**.
-- **Master node is the only one that can read and compute the aggregate of all updates**  `<accum_var>.value`.
-- Spark natively supports accumulators of numeric types, and programmers can add support for new types.
+- Get value:`<accum_var>.value`.
 
 For instance,
 
-1. Create: `val nErrors=sc.accumulator(0.0)`
+1. Create: `val nErrors = sc.accumulator(0.0)`
 2. Load file: `val logs = sc.textFile("/Users/akuntamukkala/temp/output.log")`
 3. Count number of "error": `logs.filter(_.contains(“error”)).foreach(x => nErrors += 1)`
 4. Get value: `nErrors.value`
@@ -405,6 +430,7 @@ For instance,
 
 - For action operations, accumulator updates in each task will only be applied once even if the task restarts.
 - For transformation operation, each task’s update may be applied more than once if tasks or job stages are re-executed.
+- Accumulator updates are not guaranteed to be executed when made within a lazy transformation because of lazy evaluation.
 
 ---
 
@@ -489,6 +515,9 @@ Starting this Python process and serializing the data to Python are expensive. *
 ---
 
 ### Lazy Evaluation
+
+Lazy evaulation means that Spark will wait until the very last moment to execute the graph of
+computation instructions.
 
 Taking advantage of lazy evaluation:  
 
