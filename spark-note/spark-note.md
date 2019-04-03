@@ -102,11 +102,22 @@ launch Spark executor processes across the cluster.
 
 #### Partitioning
 
+If there is no partitioner, the partitioning is not based upon characteristic of data but distribution is random and uniformed across nodes.
+
+```scala
+// default partitioner
+rdd.partitionBy(<numberOfPartitions>)
+// or HashPartitioner
+rdd.partitionBy(new HashPartitioner(<numberOfPartitions>))
+// RangePartitioner
+rdd.partitionBy(new RangePartitioner(<numberOfPartitions>, rdd))
+```
+
 Get partition number of a Dataset or DataFrame: `<dataset_or_dataFrame>.rdd.partitions.size`.
 
 ##### Partitioning Rule
 
-- The number of partitions should be equal to the number or its integer multiple of CPU cores in the cluster as possible.
+- The number of partitions should be equal to the number or its integer multiple (2~3) of CPU cores in the cluster as possible.
 - Each partition is generally between 100 - 200 MB.
 
 ##### Default Partition Number
@@ -127,7 +138,26 @@ RDD partitioning is automatic but can be done manually through programming.
 - When getting a new RDD by transformation, invoke `repartition(<partitionNum>)` method. For example, `rdd2 = rdd1.repartition(4)`. 4 partitions.
   - Check number of partitions: `rdd2.partitions.size`.
 
-##### Stage Division & Dependencies
+#### Partitioner
+
+##### HashPartitioner
+
+Default partitioner of Spark.
+
+HashPartitioner works on Java’s `Object.hashcode()`. Objects which are equal should have the same hashcode. So, HashPartitioner will divide the keys that have the same hashcode(). 
+
+`partitionNo = hashCode % numberOfPartitions`
+
+
+##### RangePartitioner 
+
+RangePartitioner will sort the records in almost equal ranges based on the key and then it will divide the records into a number of partitions based on the given value. The ranges are determined by sampling the content of the RDD passed in.
+
+##### CustomPartitioner
+
+You can also customize the number of partitions you need and what should be stored in those partitions by extending the default Partitioner class in Spark.
+
+#### Stage Division & Dependencies
 
 - Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1.
 - Wide dependencies: The relationship between RDDs is 1 : many or many : many.
