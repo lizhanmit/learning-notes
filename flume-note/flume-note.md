@@ -2,9 +2,33 @@
 
 ![comparison-of-similar-products-in-industry.png](img/comparison-of-similar-products-in-industry.png)
 
+---
+
+## Basics
+
+Apache Flume is a framework based on streaming data flows for collecting, aggregating, and transferring large quantities of data.
+
+An example is using Flume to collect logfiles from web servers, then moving the log events from those files into new aggregated files in HDFS for processing.
+
+Event: A unit of data flow in Flume is called an event. 
+
+- "at least once" semantics: Every event will reach the sink at least once. Duplicates are possible. Duplicate events can be removed further down the processing pipeline. 
+- "exactly once" semantics: Require a two-phase
+commit protocol, which is expensive. 
+
+---
+
+## Architecture
+
 ![flume-architecture.png](img/flume-architecture.png)
 
 ![flume-architecture-2.png](img/flume-architecture-2.png)
+
+- Supported source types: Avro Source, Thrift Source, Exec Source, and HTTP Source ...
+- Supported channel types: Memory Channel, JDBC Channel, and File Channel ...
+- Supported sink types: HDFS Sink, MorphlineSolr Sink, and HBase Sink ...
+
+The memory channel has higher throughput than the file channel.
 
 ---
 
