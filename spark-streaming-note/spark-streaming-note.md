@@ -1,5 +1,7 @@
 # Spark Streaming Note
 
+## DStream API
+
 Spark streaming is not real stream computing. It is second level.
 
 If you want millisecond level, use stream computing framework, e.g. Storm.  
@@ -8,17 +10,45 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ![spark-streaming.png](img/spark-streaming.png)
 
-## Coding Steps
+### DStream API Coding Steps
 
-![spark-streaming-coding-steps.png](img/spark-streaming-coding-steps.png)
+![dStream-api-coding-steps.png](img/dStream-api-coding-steps.png)
 
 ---
 
-## Spark Streaming Working Principle 
+### DStream API Working Principle 
 
-![spark-streaming-working-principle](img/spark-streaming-working-principle.png)
+![dStream-api-working-principle](img/dStream-api-working-principle.png)
 
-![spark-streaming-working-principle-2](img/spark-streaming-working-principle-2.png)
+![dStream-api-working-principle-2](img/dStream-api-working-principle-2.png)
+
+---
+
+### Limitations
+
+- Based purely on Java/Python objects and functions. Limits the engine’s opportunity to
+perform optimizations.
+- Purely based on processing time. To handle event-time operations, applications need to implement them on their own.
+- Only operates in a micro-batch fashion, making it difficult to support alternative execution modes.
+
+---
+
+## Continuous VS Micro-Batch Processing
+
+Continuous processing:
+
+- The processing happens on each individual record.
+- :thumbsdown: Offers the lowest possible latency.
+- :thumbsup: Lower maximum throughput.
+- :thumbsup: Has a fixed topology of operators that cannot be moved at runtime without stopping the whole system, can introduce load balancing issues.
+
+Micro-Batch processing:
+
+- :thumbsdown: High throughput per node, so needs fewer nodes.
+- :thumbsdown: Uses dynamic load balancing techniques to handle changing workloads. 
+- :thumbsup: Higher latency. 
+
+Which one to use: consider about latency and total cost of operation. 
 
 ---
 
@@ -26,7 +56,7 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 Built on the Spark SQL engine.
 
-The **best thing** about Structured Streaming is that it allows you to rapidly and quickly extract value out of streaming systems with virtually no code changes.
+The **best thing** about Structured Streaming is that it allows you to rapidly and quickly extract value out of streaming systems with virtually no code changes. You simply write a normal DataFrame (or SQL) computation and launch it on a stream. You do not need to maintain a separate streaming version of their batch code.
 
 - Micro-batch processing: 100 milliseconds latencies, **exactly-once** guarantees.
 - Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
@@ -36,6 +66,11 @@ Treats a live data stream as an unbounded input table that is being continuously
 ![structured-streaming-model.png](img/structured-streaming-model.png)
 
 Event-time: The time embedded in the data itself.
+
+Compared with DStreams API, perform better due to: 
+
+- code generation
+- Catalyst optimizer
 
 ### Watermarking
 
