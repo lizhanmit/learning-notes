@@ -102,6 +102,12 @@ launch Spark executor processes across the cluster.
 
 #### Partitioning
 
+If you often access a column when reading data, you can partition by it when writing the data for optimization. 
+
+As you do this, you encode this column as a folder. When you read data later, it allows you to skip lots of data and only read in relevant data instead of having to scan the complete dataset. E.g. `<dataFrameName>.write.format("parquet").partitionBy("<columnName>").save("<filePath>")`.
+
+It is supported for all file-based data sources.
+
 If there is no partitioner, the partitioning is not based upon characteristic of data but distribution is random and uniformed across nodes.
 
 ```scala
@@ -114,6 +120,11 @@ rdd.partitionBy(new RangePartitioner(<numberOfPartitions>, rdd))
 ```
 
 Get partition number of a Dataset or DataFrame: `<dataset_or_dataFrame>.rdd.partitions.size`.
+
+##### Downsides
+
+If you partition at too fine a granularity, it can
+result in many small files, and a great deal of overhead trying to list all the files in the storage system.
 
 ##### Partitioning Rule
 
@@ -147,7 +158,6 @@ Default partitioner of Spark.
 HashPartitioner works on Java’s `Object.hashcode()`. Objects which are equal should have the same hashcode. So, HashPartitioner will divide the keys that have the same hashcode(). 
 
 `partitionNo = hashCode % numberOfPartitions`
-
 
 ##### RangePartitioner 
 
@@ -192,6 +202,15 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 - This will cause the driver to run out of memory.
 - Thus, only print a few elements for testing: `<rdd_var>.take(<number_of_elements>).foreach(println)`.
+
+#### Bucketing
+
+- Bucketing create a certain number of files and organize your data into those "buckets".
+- Data with the same bucket ID will all be grouped together into one physical partition.
+- The data is pre-partitioned according to how you expect to use that data later on, which avoids shuffles later when you go to read the data.
+- E.g. `<dataFrameName>.write.format("parquet")
+.bucketBy(<numberBuckets>, "<columnNameToBucketBy>").saveAsTable("<bucketedFilesName>")`.
+- It is supported only for Spark-managed tables.
 
 ---
 
