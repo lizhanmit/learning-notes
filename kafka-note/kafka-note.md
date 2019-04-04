@@ -1,5 +1,9 @@
 # Kafka Note
 
+Apache Kafka is publish-subscribe, high-throughput, distributed messaging system. 
+
+---
+
 ## Application Scenarios
 
 - messaging system
@@ -24,8 +28,6 @@ Using Kafka as a hub:
 
 ![pipeline-architecture-example.png](img/pipeline-architecture-example.png)
 
-![kafka-architecture.png](img/kafka-architecture.png)
-
 ![kafka-architecture-2.png](img/kafka-architecture-2.png)
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
@@ -49,7 +51,9 @@ Using Kafka as a hub:
 
 - Kafka splits a topic into partitions.
 - Each partition is an ordered immutable sequence of messages.
-- Each message is assigned a unique sequential identifier called offset.
+- Messages are byte arrays of data with String, JSON, and Avro being the most common.
+- Messages are replicated across the cluster and persisted to disk.
+- Each message is assigned a unique sequential identifier or key called offset. Messages with the same key arrive at the same partition.
 - Kafka retains all messages for a configurable period of time.
 - Kafka's performance is effectively constant with respect to data size.
 
@@ -77,6 +81,14 @@ If Broker 3 goes down,
 ![broker-3-goes-down.png](img/broker-3-goes-down.png)
 
 Multiple brokers: split topics across brokers into partitions. (replication for fault tolerance)
+
+---
+
+## Kafka VS Flume
+
+Kafka is designed for messages to be consumed by several applications.
+
+Flume is designed to stream messages to a sink such as HDFS or HBase.
 
 ---
 
