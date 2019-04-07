@@ -38,15 +38,15 @@ perform optimizations.
 Continuous processing:
 
 - The processing happens on each individual record.
-- :thumbsdown: Offers the lowest possible latency.
-- :thumbsup: Lower maximum throughput.
-- :thumbsup: Has a fixed topology of operators that cannot be moved at runtime without stopping the whole system, can introduce load balancing issues.
+- :thumbsup: Offers the lowest possible latency.
+- :thumbsdown: Lower maximum throughput.
+- :thumbsdown: Has a fixed topology of operators that cannot be moved at runtime without stopping the whole system, which can introduce load balancing issues.
 
 Micro-Batch processing:
 
-- :thumbsdown: High throughput per node, so needs fewer nodes.
-- :thumbsdown: Uses dynamic load balancing techniques to handle changing workloads. 
-- :thumbsup: Higher latency. 
+- :thumbsup: High throughput per node, so needs fewer nodes.
+- :thumbsup: Uses dynamic load balancing techniques to handle changing workloads. 
+- :thumbsdown: Higher latency. 
 
 Which one to use: consider about latency and total cost of operation. 
 
@@ -61,7 +61,7 @@ The **best thing** about Structured Streaming is that it allows you to rapidly a
 - Micro-batch processing: 100 milliseconds latencies, **exactly-once** guarantees.
 - Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
 
-Treats a live data stream as an unbounded input table that is being continuously appended.
+Mechanism: Treats a live data stream as an unbounded input table that is being continuously appended. The job then periodically checks for new input data, process it, updates some internal state located in a state store if needed, and updates its result.
 
 ![structured-streaming-model.png](img/structured-streaming-model.png)
 
