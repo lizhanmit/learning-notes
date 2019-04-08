@@ -10,7 +10,7 @@ A Job includes multiple RDDs.
 
 A RDD can be broken into multiple Stages.
 
-A Stages get broken into multiple Tasks that are distributed to nodes on the cluster and then executed.
+A Stage gets broken into multiple Tasks that are distributed to nodes on the cluster and then executed.
 
 ![spark-workflow.png](img/spark-workflow.png)
 
