@@ -65,19 +65,40 @@ Mechanism: Treats a live data stream as an unbounded input table that is being c
 
 ![structured-streaming-model.png](img/structured-streaming-model.png)
 
-Event-time: The time embedded in the data itself.
-
 Compared with DStreams API, perform better due to: 
 
 - code generation
 - Catalyst optimizer
 
+---
+
+### Output Modes
+
+- append
+- update
+- complet: rewrite the full output
+
+---
+
+### Event-Time Processing
+
+Event-time: The time embedded in the data itself.
+
+Spark Streaming system views the input data as a table, the event time is just another field in that table,
+
+---
+
 ### Watermarking
 
-- It lets the engine automatically track the current event time in the data and attempt to clean up old state accordingly.
+Watermarks allow you to specify how late streaming systems expect to see data in event time.
+
+Watermarks can be set to limit how long they need to remember old data.
+
+Watermarks can also be used to control when to output a result for a particular
+event time window (e.g., waiting until the watermark for it has passed).
 
 - You can define the watermark of a query by specifying the event time column and the threshold on how late the data is expected to be in terms of event time.
-- For example, `words.withWatermark("timestamp", "10 minutes").groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word").count()`.  Late data within 10 mins will be aggregated, but data later than 10 mins will start getting dropped. But it is not guaranteed to be dropped; it may or may not get aggregated.
+- For example, `words.withWatermark("timestamp", "10 minutes").groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word").count()`.  Late data within 10 mins will be aggregated, but data later than 10 mins will start getting dropped. **But it is not guaranteed to be dropped; it may or may not get aggregated.**
 
 Conditions for watermarking to clean aggregation state:
 
