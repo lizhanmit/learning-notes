@@ -716,8 +716,9 @@ Spark SQL can connect to Hive metastores. To connect to the Hive metastore, ther
 
 The highest level abstraction in Spark SQL.
 
-It is an abstraction for the storage of metadata about the data stored in your tables, databases,
-tables, functions, and views.
+It is an abstraction for the storage of metadata about the data stored in your tables, databases, tables, functions, and views.
+
+It is a repository of all table and DataFrame information.
 
 ---
 
