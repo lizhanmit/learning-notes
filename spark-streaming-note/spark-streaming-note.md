@@ -2,8 +2,6 @@
 
 ## DStream API
 
-Spark streaming is not real stream computing. It is second level.
-
 If you want millisecond level, use stream computing framework, e.g. Storm.  
 
 ![spark-streaming-input-output.png](img/spark-streaming-input-output.png)
@@ -52,23 +50,40 @@ Which one to use: consider about latency and total cost of operation.
 
 ---
 
+## DStream VS Structured Streaming
+
+- DStream: Micro-batch processing, not real stream computing. It is second level.
+- Structured Streaming: Continuous processing.
+
+Compared with DStreams API, Structured Streaming performs better due to: 
+
+- code generation
+- Catalyst optimizer
+
+---
+
 ## Structured Streaming
 
 Built on the Spark SQL engine.
 
-The **best thing** about Structured Streaming is that it allows you to rapidly and quickly extract value out of streaming systems with virtually no code changes. You simply write a normal DataFrame (or SQL) computation and launch it on a stream. You do not need to maintain a separate streaming version of their batch code.
-
-- Micro-batch processing: 100 milliseconds latencies, **exactly-once** guarantees.
-- Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
+The **best thing** about Structured Streaming is that you can take the same operations that you use in batch and run them on a stream of data with very few code changes. You simply write a normal DataFrame (or SQL) computation and launch it on a stream. You do not need to maintain a separate streaming version of their batch code.
 
 Mechanism: Treats a live data stream as an unbounded input table that is being continuously appended. The job then periodically checks for new input data, process it, updates some internal state located in a state store if needed, and updates its result.
 
 ![structured-streaming-model.png](img/structured-streaming-model.png)
 
-Compared with DStreams API, perform better due to: 
+- Micro-Batch processing： 100 milliseconds latencies, **exactly-once** guarantees. (by default)
+- Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
 
-- code generation
-- Catalyst optimizer
+Structured Streaming does not let you perform schema inference without explicitly enabling it. Set the configuration `spark.sql.streaming.schemaInference` to true.
+
+When coding, must include `.awaitTermination()` to prevent the driver
+process from exiting while the query is active. Otherwise, your stream will not be
+able to run.
+
+You can see a list of active streams through `spark.streams.active`.
+
+- Spark assigns each stream a UUID, which can be used in conjunction with the above list of streams to get a specific active stream.
 
 ---
 
