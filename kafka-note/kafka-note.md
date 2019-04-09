@@ -54,6 +54,7 @@ Using Kafka as a hub:
 - Messages are byte arrays of data with String, JSON, and Avro being the most common.
 - Messages are replicated across the cluster and persisted to disk.
 - Each message is assigned a unique sequential identifier or key called offset. Messages with the same key arrive at the same partition.
+- Each message consists of a key, a value and a timestamp.
 - Kafka retains all messages for a configurable period of time.
 - Kafka's performance is effectively constant with respect to data size.
 
