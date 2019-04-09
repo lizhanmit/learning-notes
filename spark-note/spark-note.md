@@ -848,8 +848,10 @@ Feature transformation: transformation of label and index.
 - `SparkSession` interface: introduced in Spark 2.0.
 - Dataset: introduced in Spark 1.6.
   - After Spark 2.0, RDDs are replaced by Dataset, which is strongly-typed like an RDD. The RDD interface is still supported.
-- Continuous Processing: introduced in Spark 2.3.
+- Since Spark 2.0, Structured Streaming has supported joins (inner join and some type of outer joins) between a streaming and a static DataFrame/Dataset. 
 - Watermarking: introduced in Spark 2.1. Allows the user to specify the threshold of late data, and allows the engine to accordingly clean up old state.
+- Continuous Processing: introduced in Spark 2.3.
+- Stream-stream joins: introduced in Spark 2.3.
 
 ---
 
