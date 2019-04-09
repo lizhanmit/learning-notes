@@ -19,13 +19,15 @@ Git cannot track the change of binary files, such as images, videos, and Microso
 1. Go to project directory. `git init`. Init the repo.
 2. `git add .` Add "add" and "update" but not "delete" type of changes to stage.
 3. `git add -A` or `git add -all` Add all kinds of changes to stage.
-4. `git commit -m "init commit"`
-5. `git remote add origin <remote repository URL>` Set the new remote.
-6. `git remote -v` Verify the new remote URL.
-7. `git push -u origin master` Push up to the remote repository.
+4. `git diff` Check changes of the code.
+5. `git commit -m "<commit message>"`
+6. `git remote add origin <remote repository URL>` Set the new remote.
+7. `git remote -v` Verify the new remote URL.
+8. `git push -u origin master` Push up to the remote repository.
 
 [git - the simple guide](http://rogerdudler.github.io/git-guide/)
 
+- `gitk` built-in git GUI
 - `git log` Check commit history and get "commit_id".
 - `git reflog` Check commit history and get "commit_id" in a concise manner.
 - `git reset --soft HEAD~` Only cancel the latest commit. Take the latest file from commit to index.
