@@ -1,10 +1,13 @@
 # HBase Note
 
+HBase is a NoSQL database, a distributed, scalable, big data store running on top of HDFS, which is modeled after Google's BigTable.
+
+Use HBase when you need random, realtime read/write access to your Big Data. 
+
+HBase is used to host very large tables - billions of rows X millions of columns.
+
 ## Basics
 
-- Scalable data store
-- Is NoSQL
-- Runs on top of HDFS
 - Compression
 - In-memory operations:
   - MemStore
