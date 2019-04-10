@@ -89,9 +89,53 @@ You can see a list of active streams through `spark.streams.active`.
 
 ### Output Modes
 
-- append
-- update
-- complet: rewrite the full output
+- append: default.
+- update: only the rows that are different from the previous write are written out to the sink. 
+    - If the query doesn’t contain aggregations, this is equivalent to append mode.
+- complet: rewrite the full output.
+    - The map operation does not allow complete mode.
+    - Complete mode is not supported as it is infeasible to keep all unaggregated
+data in the Result Table.
+
+---
+
+### Triggers
+
+By default, Structured Streaming will output data as soon as the previous trigger completes processing.
+
+#### Processing Time Trigger
+
+Specify a duration using a string. Then data will be output periodically. 
+
+If a trigger time is missed because the previous processing has not yet completed, then Spark will wait until the next trigger point.
+
+Example:
+
+```scala
+import org.apache.spark.sql.streaming.Trigger
+
+streamingDF.writeStream
+	.trigger(Trigger.ProcessingTime("100 seconds"))
+	.format("console")
+	.outputMode("complete")
+	.start()
+```
+
+#### Once Trigger
+
+Used to run the streaming job once. (e.g., import new data into a summary table just occasionally.)
+
+Example:
+
+```scala
+import org.apache.spark.sql.streaming.Trigger
+
+streamingDF.writeStream
+	.trigger(Trigger.Once())
+	.format("console")
+	.outputMode("complete")
+	.start()
+```
 
 ---
 
@@ -155,6 +199,32 @@ streamingDf.dropDuplicates("guid")
 streamingDf
   .withWatermark("eventTime", "10 seconds")
   .dropDuplicates("guid", "eventTime")
+```
+
+---
+
+### Checkpointing
+
+Used for failure recovery. 
+
+Spark Streaming allows you to recover an application by just restarting it.
+
+You must configure the application to use checkpointing and write-ahead logs, namely, configuring a query to write to a checkpoint
+location on a reliable file system (e.g. HDFS or S3).
+
+All application relevant progress information and the current intermediate state values are saved to the checkpoint location.
+
+Must specify checkpoint location **before** starting application.
+
+Example: 
+
+```scala
+val query = streamingDF.writeStream
+	.option("checkpointLocation", "<locationDirectory>")
+	.queryName("<queryName>")
+	.format("memory")
+	.outputMode("complete")
+	.start()
 ```
 
 ---
