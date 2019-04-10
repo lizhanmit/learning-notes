@@ -290,3 +290,17 @@ auto.commit.interval.ms = 60 * 1000
 虽然可以设置为手工提交，但是好像并不能保证数据库事物与offset一起提交成功，因为 手工提交之后offset变了，但是最后面执行数据库事物操作异常了，这种情况下又感觉消费者数据丢失了，那么这种情况下如何保证消费者不重复消费数据或者，一定保证提交偏移量的数据消费了？
 
 下面有一种办法，就是把主题，分区，消费者组，offset这些关系存到数据库当中，消费者每次取数据的时候设置一下偏移量，调用消费的seek()方法，这些API可以具体参考kafka的文档，让保存偏移量和应用的事物保持一致就行，具体需不需要这些场景根据业务情况而定
+
+---
+
+## Data Lake
+
+- A data lake is a system or repository of data stored in its natural format, usually object blobs or files. 
+- A data lake is usually a single store of all enterprise data including raw copies of source system data and transformed data used for tasks such as reporting, visualization, analytics and machine learning. 
+- A data lake can include structured data from relational databases (rows and columns), semi-structured data (CSV, logs, XML, JSON), unstructured data (emails, documents, PDFs) and binary data (images, audio, video). 
+
+Examples:
+
+- Azure Data Lake 
+- HDFS
+- S3
