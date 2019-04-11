@@ -24,9 +24,9 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 
 ### Limitations
 
-- Based purely on Java/Python objects and functions. Limits the engine’s opportunity to
-perform optimizations.
-- Purely based on processing time. To handle event-time operations, applications need to implement them on their own.
+- Based purely on Java/Python objects and functions. Limits the engine’s opportunity to perform optimizations.
+- Purely based on processing time. To handle event-time operations, applications need to implement them on their own. **DStream API does not support event-time processing.**
+- **No way to handle late data.**
 - Only operates in a micro-batch fashion, making it difficult to support alternative execution modes.
 
 ---
@@ -141,20 +141,55 @@ streamingDF.writeStream
 
 ### Event-Time Processing
 
-Event-time: The time embedded in the data itself.
+Event-time: The time embedded in the data itself. Or the time at which it actually occurred.
 
 Spark Streaming system views the input data as a table, the event time is just another field in that table,
+
+DStream API does not support event-time processing.
+
+Event data can be late or out of order.
+
+#### Tumbling Windows
+
+- Operate on the data received since the last trigger.
+- Each, and only one event can fall into one window.
+
+![tumbling-windows.png](img/tumbling-windows.png)
+
+There will be a "window" column in the result table, which is a "struct" type with "start" and "end" field.
+
+#### Sliding Windows
+
+![sliding-windows.png](img/sliding-windows.png)
+
+---
+
+### Stateful Processing
+
+Stateful processing is used when you need to use or update intermediate information (state) over longer periods of time.
+
+When performing a stateful operation, Spark stores the intermediate information in a state store, namely, checkpoint directory.
+
+#### Arbitrary / Custom Stateful Processing
+
+**Fine-grained** control over:
+
+- what state should be stored
+- how it is updated
+- when it should be removed
+- explicitly or via a time-out
+
+You manage the state based on user-defined concepts.
 
 ---
 
 ### Watermarking
 
-Watermarks allow you to specify how late streaming systems expect to see data in event time.
+You **must** specify watermark in order to age-out old data and state in the stream and not overwhelm the system over a long period of time. If you do not specify how late you think you will see data, then Spark will maintain that data in memory forever.
 
-Watermarks can be set to limit how long they need to remember old data.
+Watermarks allow you to specify how late streaming systems expect to see data in event time, namely, how long they need to remember old data.
 
-Watermarks can also be used to control when to output a result for a particular
-event time window (e.g., waiting until the watermark for it has passed).
+Watermarks can also be used to control when to output a result for a particular event time window (e.g., waiting until the watermark for it has passed).
 
 - You can define the watermark of a query by specifying the event time column and the threshold on how late the data is expected to be in terms of event time.
 - For example, `words.withWatermark("timestamp", "10 minutes").groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word").count()`.  Late data within 10 mins will be aggregated, but data later than 10 mins will start getting dropped. **But it is not guaranteed to be dropped; it may or may not get aggregated.**
