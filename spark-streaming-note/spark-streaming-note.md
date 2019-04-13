@@ -181,6 +181,12 @@ When performing a stateful operation, Spark stores the intermediate information 
 
 You manage the state based on user-defined concepts.
 
+`mapGroupsWithState`: generate at most a single row for each group.
+
+`flatMapGroupsWithState`: generate one or more rows for each group.
+
+**Time-outs** specify how long you should wait before timing-out some intermediate state, which can be configured on a per-group basis.
+
 ---
 
 ### Watermarking
