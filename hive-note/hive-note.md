@@ -20,15 +20,121 @@
 
 **NOTE** that the value of the partition key does not mean it contains all or only relevant data. It is the user's job to guarantee the relationship between partition name and data content.
 
+Example: 
+
+```sql
+CREATE TABLE logs (timestamp BIGINT, line STRING)
+PARTITIONED BY (date STRING, country STRING);
+
+
+SHOW PARTITIONS logs;
+```
+
+Directory structure of "logs" table:
+
+![logs-table-directory-structure.png](img/logs-table-directory-structure.png)
+
+The partition values are specified explicitly when loading data into a partitioned table. Datafiles do not
+contain values for partition columns.
+
 ---
 
 ### Buckets 
 
-Data in each partition may in turn be divided into Buckets based on the value of a hash function of some column of the Table.
+Data in each partition may be subdivided further into Buckets based on the value of a hash function of some column of the Table.
 
 For example the page_views table may be bucketed by userid, which is one of the columns, other than the partitions columns, of the page_view table. 
 
-These can be used to efficiently sample the data.
+Advantages: 
+
+- enable more efficient queries.
+    - a join of two tables that are bucketed on the same columns, map-side join
+- make sampling more efficient.
+
+Bucketing is used to avoid data skew.
+
+Example:
+
+```sql
+CREATE TABLE bucketed_users (id INT, name STRING)
+CLUSTERED BY (id) INTO 4 BUCKETS;
+```
+
+If the bucket is sorted by one or more columns, more efficient map-side joins. 
+
+```sql
+CREATE TABLE bucketed_users (id INT, name STRING)
+CLUSTERED BY (id) SORTED BY (id ASC) INTO 4 BUCKETS;
+```
+
+**It is advisable to get Hive to perform the bucketing**, because Hive does not check that the buckets in the datafiles on disk are consistent with the buckets in the table definition. 
+
+Populate the bucketed table:
+
+1. Set `hive.enforce.bucketing` property to `true`.
+2. `INSERT OVERWRITE TABLE bucketed_users SELECT * FROM users;`
+
+Example of sampling:
+
+```sql
+-- sample 1/4
+SELECT * FROM bucketed_users TABLESAMPLE(BUCKET 1 OUT OF 4 ON id);
+```
+
+---
+
+### Managed Tables & External Tables
+
+[Differences between managed tables & external tables:](http://www.aboutyun.com/thread-7458-1-1.html)
+
+- When importing data to an external table, data is not moved under its data warehouse directory, which means data in the external table is not managed by Hive. This is different with managed table.
+- Deleting:
+  - When deleting managed tables, Hive will delete both metadata and data.
+  - When deleting external tables, Hive only deletes metadata. Data is retained.
+
+Which one to use?
+
+- Not many differences in general. So, it depends on personal preference.
+- Practical experience: If all processes involve Hive, create managed tables. Otherwise, use external tables.
+
+---
+
+### Traditional DB VS Hive
+
+Traditional database: 
+
+- Schema on write: data is checked against the schema when it is written into the database.
+- Query time performance faster because the database can index columns and perform compression on the data.
+
+Hive: 
+
+- Schema on read: does not verify the data when it is loaded.
+- Very fast initial load, since the data does not have to be read, parsed, and serialized to disk in the database’s internal format. 
+
+---
+
+### Locking
+
+Hive supports for table- and partition-level locking using ZooKeeper.
+
+For instance, it prevents one process from dropping a table while another is reading from it.  
+
+By default, locks are not enabled.
+
+---
+
+### Indexes
+
+Two types: 
+
+#### Compact Indexes
+
+- Store the HDFS block numbers of each value, rather than each file offset.
+- Do not take up much disk space.
+
+#### Bitmap Indexes
+
+Appropriate for low-cardinality columns (such as gender or country).
 
 ---
 
@@ -82,37 +188,6 @@ Better manageability and security because the database tier can be completely fi
 
 ---
 
-## Managed Tables & External Tables
-
-[Differences between managed tables & external tables:](http://www.aboutyun.com/thread-7458-1-1.html)
-
-- When importing data to an external table, data is not moved under its data warehouse directory, which means data in the external table is not managed by Hive. This is different with managed table.
-- Deleting:
-  - When deleting managed tables, Hive will delete both metadata and data.
-  - When deleting external tables, Hive only deletes metadata. Data is retained.
-
-Which one to use?
-
-- Not many differences in general. So, it depends on personal preference.
-- Practical experience: If all processes involve Hive, create managed tables. Otherwise, use external tables.
-
----
-
-### Traditional DB VS Hive
-
-Traditional database: 
-
-- Schema on write: data is checked against the schema when it is written into the database.
-- Query time performance faster because the database can index columns and perform compression on the data.
-
-Hive: 
-
-- Schema on read: does not verify the data when it is loaded.
-- Very fast initial load, since the data does not have to be read, parsed, and serialized to disk in the database’s internal format. 
-
-
----
-
 ## Coding
 
 - `show databases;`
@@ -122,3 +197,4 @@ Hive:
 - `desc formatted <table_name>;`: Show formatted detailed info about the table.
 - `! <command>`: In Hive shell, execute Linux commands. For instance, `! ls`.
 - Need alias when order by count. Otherwise, error "Not yet supported place for UDAF 'count'". For instance, `select count(*) as cnt, brand_id from user_log where action='2' group by brand_id order by cnt desc;`.
+
