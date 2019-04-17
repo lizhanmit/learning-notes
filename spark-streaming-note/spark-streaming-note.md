@@ -181,11 +181,14 @@ When performing a stateful operation, Spark stores the intermediate information 
 
 You manage the state based on user-defined concepts.
 
-`mapGroupsWithState`: generate at most a single row for each group.
+`mapGroupsWithState`: generate at most a single row for each group. Namely, do map for group. 
 
-`flatMapGroupsWithState`: generate one or more rows for each group.
+`flatMapGroupsWithState`: generate one or more rows for each group. Namely, do flatMap for group.
 
 **Time-outs** specify how long you should wait before timing-out some intermediate state, which can be configured on a per-group basis.
+
+**Count-based windows**: based on a number of events regardless of state and event times. For example, we may want to compute a value for every 500
+events received, regardless of when they are received.
 
 ---
 
@@ -221,8 +224,9 @@ Stream-stream Joins
 
 As of Spark 2.3,
 
-- you can use joins only when the query is in Append output mode.
-- you cannot use other non-map-like operations before joins.
+- can use joins only when the query is in Append output mode.
+- cannot use other non-map-like operations before joins.
+- cannot use mapGroupsWithState and flatMapGroupsWithState in Update mode before joins.
 
 ---
 
@@ -246,16 +250,18 @@ streamingDf
 
 ### Checkpointing
 
+**Most important thing.**
+
 Used for failure recovery. 
 
 Spark Streaming allows you to recover an application by just restarting it.
 
-You must configure the application to use checkpointing and write-ahead logs, namely, configuring a query to write to a checkpoint
+You **must** configure the application to use checkpointing and write-ahead logs, namely, configuring a query to write to a checkpoint
 location on a reliable file system (e.g. HDFS or S3).
 
-All application relevant progress information and the current intermediate state values are saved to the checkpoint location.
+All streaming application relevant progress information and the current intermediate state values are saved to the checkpoint location.
 
-Must specify checkpoint location **before** starting application.
+**Must** specify checkpoint location **before** starting application.
 
 Example: 
 
@@ -267,6 +273,24 @@ val query = streamingDF.writeStream
 	.outputMode("complete")
 	.start()
 ```
+
+---
+
+### Updating Application
+
+#### Updating Streaming Application Code
+
+Small adjustments like adding a new column or changing a UDF are not breaking changes and do not require a new checkpoint directory.
+
+If you update your streaming application to add a new aggregation key or fundamentally change the query itself, you must start from scratch with a new (empty) directory as your checkpoint location.
+
+Changing `spark.sql.shuffle.partitions` is not supported while a stream is currently running. This requires restarting the actual stream.
+
+#### Updating Spark Version
+
+The checkpoint format is designed to be forward-compatible (e.g. moving from Spark 2.2.0 to 2.2.1 to 2.2.2).
+
+It may be broken due to critical bug fixes that will be documented in release notes.
 
 ---
 
