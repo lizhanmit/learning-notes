@@ -99,6 +99,10 @@ launch Spark executor processes across the cluster.
 - Each RDD can be divided into multiple partitions. Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
 - Virtually everything in Spark is built on top of RDDS.
 - One thing that you might use RDDs for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
+- Read a text file line by line: `spark.sparkContext.textFile("<directory>")`. Each line corresponds to each record in a RDD. 
+- Read text files, each text file becomes a record: `spark.sparkContext.wholeTextFiles("<directory>")`.
+    - The 1st object is the name of the file.
+    - The 2nd string object is the value of the text file.
 
 #### Partitioning
 
@@ -211,6 +215,181 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 - E.g. `<dataFrameName>.write.format("parquet")
 .bucketBy(<numberBuckets>, "<columnNameToBucketBy>").saveAsTable("<bucketedFilesName>")`.
 - It is supported only for Spark-managed tables.
+
+---
+
+### Shared Variables
+
+#### Broadcast Variables
+
+When you use a variable in a closure, it must be deserialized on the worker nodes many times (one per task).
+
+Broadcast variables let you save a large **immutable** value (such as a lookup table or a machine learning model) cached on all the worker nodes instead of serialized with every single task and reuse it across many Spark actions without re-sending it to the cluster. 
+
+- Use `SparkContext.broadcast(<var>)` to create a broadcast variable from a normal variable, which is cached on each machine.
+- The broadcast variable is like a wrapper of its corresponding normal variable.
+- The broadcasted data is cached in serialized form and deserialized before running each task.
+- All functions in the cluster can access the broadcast variable, thereby you do not need to repeatedly send the original normal variable to all nodes.
+- After the broadcast variable is created, it should be used instead of the original normal variable in any functions run on the cluster.
+And the original normal variable cannot be modified (is **read-only**). Consequently, the broadcast variable on all nodes are the same.
+- **When to use**: when a very large variable need to be used repeatedly.
+- Use case: pass around a large lookup table that fits in memory on the executors and use that in a
+function.
+
+For instance,
+
+1. Create: `val broadcastVar = spark.sparkContext.broadcast(Array(1,2,3))`
+2. Get value: `broadcastVar.value`
+
+#### Accumulators
+
+Accumulators are a way of updating a value inside of a variety of transformations and propagating that value to the driver node in an efficient and fault-tolerant way.
+
+Accumulators let you add together data from all the tasks into a shared result. 
+
+- Use case: counters or sum functions.
+- Accumulators are available on worker nodes, but **worker nodes cannot read them**.
+- **Driver node is the only one that can read and compute the aggregate of all updates.** 
+- Spark natively supports accumulators of numeric types, and programmers can add support for new types through extending class `AccumulatorV2`.
+- Named accumulators will display their running
+results in the Spark UI, whereas unnamed ones will not.
+- Create: 
+
+```scala
+/*
+ * unnamed accumulators
+ */
+val <accumulatorVar> = new LongAccumulator spark.sparkContext.register(<accumulatorVar>)
+
+/*
+ * named accumulators
+ */
+val <accumulatorVar> = new LongAccumulator
+spark.sparkContext.register(<accumulatorVar>, "<accumulatorName>")
+// or
+val <accumulatorVar> = spark.SparkContext.longAccumulator("<accumulatorName>")
+```
+
+- Use: `<accum_var>.add(<number>)`
+- Get value:`<accum_var>.value`.
+
+For instance,
+
+1. Create: `val nErrors = sc.accumulator(0.0)`
+2. Load file: `val logs = sc.textFile("/Users/akuntamukkala/temp/output.log")`
+3. Count number of "error": `logs.filter(_.contains(“error”)).foreach(x => nErrors += 1)`
+4. Get value: `nErrors.value`
+
+##### Accumulator Update
+
+- For action operations, accumulator updates in each task will only be applied once even if the task restarts.
+- For transformation operation, each task’s update may be applied more than once if tasks or job stages are re-executed.
+- Accumulator updates are not guaranteed to be executed when made within a lazy transformation because of lazy evaluation.
+
+---
+
+### Caching / Persisting
+
+- By default, each transformed RDD may be recomputed each time you run an action on it.
+- Cache or persist datasets in memory on nodes.
+- Future actions are faster (often by more than 10x).
+- `<rdd_var>.cache()` for default storage level - `MEMORY_ONLY`.
+- Or `<rdd_var>.persist()` with a specified StorageLevel parameter.
+- Spark removes cached data automatically in a least-recently-used (LRU) fashion.
+- Or use `<rdd_var>.unpersist()` if you want manually.
+
+When to cache data:
+
+- When doing data validation and cleaning.
+- When querying a small “hot” dataset.
+- Cache for iterative algorithm like PageRank.
+- Generally, **DO NOT** use for input data as input data is too large.
+
+#### Storage Level
+
+- `MEMORY_ONLY` is the 1st choice.
+- `MEMORY_ONLY_SER` is the 2nd choice. (Java and Scala)
+- **DO NOT** use disk unless computing datasets are expensive, or amount of the data is large. Recomputing a partition may be as fast as reading it from disk.
+
+---
+
+### Shuffle
+
+A shuffle represents a physical repartitioning of the data.
+
+- Shuffle moves data across worker nodes, which is costly.
+- It involves disk I/O, data serialization, and network I/O.
+- It generates a large number of intermediate files on disk. (shuffle persistence) 
+    - Spark has the "source" tasks (those sending data) write shuffle files to their local disks. 
+    - Running a new job over data that has already
+been shuffled does not rerun the "source" side of the shuffle.
+- By default, when we perform a shuffle, Spark outputs 200 shuffle partitions. You can specify it through `spark.conf.set("spark.sql.shuffle.partitions", "<number_of_shuffle_you_want>")`.
+- Use minimal shuffle as possible and do them in late stages for better performance.  
+- **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
+  - `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which will result in big overhead and transmission delay.
+
+No shuffle transformations:  
+
+- map
+- filter  
+- flatMap
+- mapPartitions  
+- ...
+
+Shuffle transformations:  
+
+- distinct  
+- groupByKey  
+- reduceByKey
+- join  
+- countByValue
+- ...
+
+---
+
+### UDFs
+
+Spark will serialize the UDF on the driver and transfer it over the network to all executor processes.
+
+If the function is written in Scala or Java,
+
+- little performance penalty. 
+- performance issues if you create or use a lot of objects.
+
+If the function is written in Python,
+
+1. Spark starts a Python process on the worker, serializes all of the data to a format that Python can understand.
+2. Executes the function row by row on that data in the Python process.
+3. Returns the results of the row operations to the JVM and Spark.
+
+Starting this Python process and serializing the data to Python are expensive. **Recommend writing UDFs in Scala or Java.**
+
+**Best practice**: define the return type for the UDF when you define it.
+
+---
+
+### Lazy Evaluation
+
+Lazy evaulation means that Spark will wait until the very last moment to execute the graph of
+computation instructions.
+
+Taking advantage of lazy evaluation:  
+
+- Do as many transformations as possible before hitting an action.  
+- Avoid debugging statements with shuffle, e.g. printing counts.  
+
+---
+
+### API
+
+![transformation-api.png](img/transformation-api.png)
+
+![action-api.png](img/action-api.png)
+
+The difference between `foreach()` and `map()`:
+
+- `foreach()`: return void or no return value.
+- `map()`: return dataset object.
 
 ---
 
@@ -413,181 +592,6 @@ DataFrames can also join Datasets.
 
 ---
 
-### Shared Variables
-
-#### Broadcast Variables
-
-When you use a variable in a closure, it must be deserialized on the worker nodes many times (one per task).
-
-Broadcast variables let you save a large **immutable** value (such as a lookup table or a machine learning model) cached on all the worker nodes instead of serialized with every single task and reuse it across many Spark actions without re-sending it to the cluster. 
-
-- Use `SparkContext.broadcast(<var>)` to create a broadcast variable from a normal variable, which is cached on each machine.
-- The broadcast variable is like a wrapper of its corresponding normal variable.
-- The broadcasted data is cached in serialized form and deserialized before running each task.
-- All functions in the cluster can access the broadcast variable, thereby you do not need to repeatedly send the original normal variable to all nodes.
-- After the broadcast variable is created, it should be used instead of the original normal variable in any functions run on the cluster.
-And the original normal variable cannot be modified (is **read-only**). Consequently, the broadcast variable on all nodes are the same.
-- **When to use**: when a very large variable need to be used repeatedly.
-- Use case: pass around a large lookup table that fits in memory on the executors and use that in a
-function.
-
-For instance,
-
-1. Create: `val broadcastVar = spark.sparkContext.broadcast(Array(1,2,3))`
-2. Get value: `broadcastVar.value`
-
-#### Accumulators
-
-Accumulators are a way of updating a value inside of a variety of transformations and propagating that value to the driver node in an efficient and fault-tolerant way.
-
-Accumulators let you add together data from all the tasks into a shared result. 
-
-- Use case: counters or sum functions.
-- Accumulators are available on worker nodes, but **worker nodes cannot read them**.
-- **Driver node is the only one that can read and compute the aggregate of all updates.** 
-- Spark natively supports accumulators of numeric types, and programmers can add support for new types through extending class `AccumulatorV2`.
-- Named accumulators will display their running
-results in the Spark UI, whereas unnamed ones will not.
-- Create: 
-
-```scala
-/*
- * unnamed accumulators
- */
-val <accumulatorVar> = new LongAccumulator spark.sparkContext.register(<accumulatorVar>)
-
-/*
- * named accumulators
- */
-val <accumulatorVar> = new LongAccumulator
-spark.sparkContext.register(<accumulatorVar>, "<accumulatorName>")
-// or
-val <accumulatorVar> = spark.SparkContext.longAccumulator("<accumulatorName>")
-```
-
-- Use: `<accum_var>.add(<number>)`
-- Get value:`<accum_var>.value`.
-
-For instance,
-
-1. Create: `val nErrors = sc.accumulator(0.0)`
-2. Load file: `val logs = sc.textFile("/Users/akuntamukkala/temp/output.log")`
-3. Count number of "error": `logs.filter(_.contains(“error”)).foreach(x => nErrors += 1)`
-4. Get value: `nErrors.value`
-
-##### Accumulator Update
-
-- For action operations, accumulator updates in each task will only be applied once even if the task restarts.
-- For transformation operation, each task’s update may be applied more than once if tasks or job stages are re-executed.
-- Accumulator updates are not guaranteed to be executed when made within a lazy transformation because of lazy evaluation.
-
----
-
-### Caching / Persisting
-
-- By default, each transformed RDD may be recomputed each time you run an action on it.
-- Cache or persist datasets in memory on nodes.
-- Future actions are faster (often by more than 10x).
-- `<rdd_var>.cache()` for default storage level - `MEMORY_ONLY`.
-- Or `<rdd_var>.persist()` with a specified StorageLevel parameter.
-- Spark removes cached data automatically in a least-recently-used (LRU) fashion.
-- Or use `<rdd_var>.unpersist()` if you want manually.
-
-When to cache data:
-
-- When doing data validation and cleaning.
-- When querying a small “hot” dataset.
-- Cache for iterative algorithm like PageRank.
-- Generally, **DO NOT** use for input data as input data is too large.
-
-#### Storage Level
-
-- `MEMORY_ONLY` is the 1st choice.
-- `MEMORY_ONLY_SER` is the 2nd choice. (Java and Scala)
-- **DO NOT** use disk unless computing datasets are expensive, or amount of the data is large. Recomputing a partition may be as fast as reading it from disk.
-
----
-
-### Shuffle
-
-A shuffle represents a physical repartitioning of the data.
-
-- Shuffle moves data across worker nodes, which is costly.
-- It involves disk I/O, data serialization, and network I/O.
-- It generates a large number of intermediate files on disk. (shuffle persistence) 
-    - Spark has the "source" tasks (those sending data) write shuffle files to their local disks. 
-    - Running a new job over data that has already
-been shuffled does not rerun the "source" side of the shuffle.
-- By default, when we perform a shuffle, Spark outputs 200 shuffle partitions. You can specify it through `spark.conf.set("spark.sql.shuffle.partitions", "<number_of_shuffle_you_want>")`.
-- Use minimal shuffle as possible and do them in late stages for better performance.  
-- **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
-  - `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which will result in big overhead and transmission delay.
-
-No shuffle transformations:  
-
-- map
-- filter  
-- flatMap
-- mapPartitions  
-- ...
-
-Shuffle transformations:  
-
-- distinct  
-- groupByKey  
-- reduceByKey
-- join  
-- countByValue
-- ...
-
----
-
-### UDFs
-
-Spark will serialize the UDF on the driver and transfer it over the network to all executor processes.
-
-If the function is written in Scala or Java,
-
-- little performance penalty. 
-- performance issues if you create or use a lot of objects.
-
-If the function is written in Python,
-
-1. Spark starts a Python process on the worker, serializes all of the data to a format that Python can understand.
-2. Executes the function row by row on that data in the Python process.
-3. Returns the results of the row operations to the JVM and Spark.
-
-Starting this Python process and serializing the data to Python are expensive. **Recommend writing UDFs in Scala or Java.**
-
-**Best practice**: define the return type for the UDF when you define it.
-
----
-
-### Lazy Evaluation
-
-Lazy evaulation means that Spark will wait until the very last moment to execute the graph of
-computation instructions.
-
-Taking advantage of lazy evaluation:  
-
-- Do as many transformations as possible before hitting an action.  
-- Avoid debugging statements with shuffle, e.g. printing counts.  
-
----
-
-### API
-
-![transformation-api.png](img/transformation-api.png)
-
-![action-api.png](img/action-api.png)
-
-The difference between `foreach()` and `map()`:
-
-- `foreach()`: return void or no return value.
-- `map()`: return dataset object.
-
----
-
 ### Data Sources
 
 Six core data sources:
@@ -609,7 +613,7 @@ When writing, the destination directory is actually a folder with numerous files
 
 #### Parquet
 
-**Recommend** writing data out to Parquet for long-term storage because reading from a Parquet file will always be more efficient than JSON or CSV.
+**Recommend** writing data out to Parquet for long-term storage because reading from a Parquet file will always be **more efficient than JSON or CSV**.
 
 Advantages: 
 
