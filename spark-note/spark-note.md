@@ -95,14 +95,21 @@ launch Spark executor processes across the cluster.
 
 ### RDDs
 
-- A RDD (Resilient Distributed Dataset) is essentially a **read-only** partition record set.
+- A RDD (Resilient Distributed Dataset) is essentially a **read-only** immutable, partitioned collection of records.
+- Each record is just a Scala, Java or Python object.
 - Each RDD can be divided into multiple partitions. Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
 - Virtually everything in Spark is built on top of RDDS.
+- RDD API is similar to the Dataset, except that RDDs are not stored in, or manipulated with, the structured data engine.
 - One thing that you might use RDDs for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
 - Read a text file line by line: `spark.sparkContext.textFile("<directory>")`. Each line corresponds to each record in a RDD. 
 - Read text files, each text file becomes a record: `spark.sparkContext.wholeTextFiles("<directory>")`.
     - The 1st object is the name of the file.
     - The 2nd string object is the value of the text file.
+
+There are lots of subclasses of RDD. You will likely only create two types: 
+
+- generic RDD type
+- key-value RDD 
 
 #### Partitioning
 
@@ -127,8 +134,7 @@ Get partition number of a Dataset or DataFrame: `<dataset_or_dataFrame>.rdd.part
 
 ##### Downsides
 
-If you partition at too fine a granularity, it can
-result in many small files, and a great deal of overhead trying to list all the files in the storage system.
+If you partition at too fine a granularity, it can result in many small files, and a great deal of overhead trying to list all the files in the storage system.
 
 ##### Partitioning Rule
 
@@ -170,6 +176,8 @@ RangePartitioner will sort the records in almost equal ranges based on the key a
 ##### CustomPartitioner
 
 You can also customize the number of partitions you need and what should be stored in those partitions by extending the default Partitioner class in Spark.
+
+Specifying your own custom Partitioner can give you significant performance and stability improvements if you use it correctly.
 
 #### Stage Division & Dependencies
 
@@ -459,6 +467,8 @@ SQL expressions.
 - Dataset maps to a collection of objects. 
 - DataFrames schema is inferred at **runtime**; but a Dataset can be inferred at **compile time**.
   - faster detection of errors and better optimization
+
+[A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
 
 ---
 
@@ -808,6 +818,58 @@ Feature transformation: transformation of label and index.
 
 ---
 
+## Metrics & Monitoring
+
+### Monitoring API
+
+#### Query Status
+
+Most basic monitoring API
+
+Answer question: What processing is my stream performing right now?
+
+Get the status of a given query: `query.status`.
+
+#### Recent Progress
+
+Answer question: How fast are tuples arriving from the source?
+
+Get access to more time-based information like the processing rate and batch durations, and input sources and output sinks: `query.recentProgress`.
+
+
+When the input rate is much greater than the processing rate, it means the stream is falling behind. You need to scale the cluster up to handle the larger load.
+
+**Best practice**: visualize the changes in batch duration, and input and processing rates instead of simply reporting changes over time.
+
+---
+
+### Alerting
+
+Automatic alerting 
+
+Building on the recent progress API to integrate existing alerting tools with Spark.
+
+Monitoring system:
+
+- Coda Hale Metrics library 
+- Prometheus
+- Splunk
+
+---
+
+### Advanced Monitoring
+
+- lower-level
+- more powerful 
+
+`StreamingQueryListener` class is used to receive asynchronous updates from the streaming query and automatically output this information to other systems.
+
+1. Develop your own object to extend
+`StreamingQueryListener`.
+2. Attach your custom listener with `sparkSession.streams.addListener()`.
+
+---
+
 ## System Scaling
 
 ### Scale Kafka Connect  
@@ -863,12 +925,6 @@ Feature transformation: transformation of label and index.
 
 - **Avro**: Avro format is great for **row oriented data**. The schema is stored in another file.
 - **Parquet**: It is a very efficient format. Generally, you take .csv or .json files. Then do ETL. Then write down to parquet files for future analysis. Parquet is great for **column oriented data**. The schema is in the file.  
-
----
-
-## Useful Resources
-
-- [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
 
 ---
 
