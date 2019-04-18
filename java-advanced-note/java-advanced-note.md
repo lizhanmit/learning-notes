@@ -165,6 +165,24 @@ String str2 = (String)Class.forName("java.lang.String").newInstance();
 ### Field 类
 
 ```java
+public class ReflectionPoint() {
+    private int x;
+    public int y;
+    public String s1 = "apple";
+    public String s2 = "banana";
+
+    public ReflectionPoint(int x, int y) {
+        super();
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return s1 + ", " + s2;
+    }
+}
+
 public class Main() {
     public static void main(String[] args) {
         ReflectionPoint point1 = new ReflectionPoint(3, 5);
@@ -199,29 +217,15 @@ public class Main() {
         }
     }
 }
-
-public class ReflectionPoint() {
-    private int x;
-    public int y;
-    public String s1 = "apple";
-    public String s2 = "banana";
-
-    public ReflectionPoint(int x, int y) {
-        super();
-        this.x = x;
-        this.y = y;
-    }
-
-    @Override
-    public String toString() {
-        return s1 + ", " + s2;
-    }
-}
 ```
 
 ---
 
 ### Method 类
+
+- `public Method[] getDeclaredMethods()`: Get public, protected, default, private methods, but not including extended ones.
+- `public Method[] getMethods()`: Get public methods including extended public ones.
+- `public Method getMethod(String name, Class<?> ... paramTypes)`: Get a specific method. `name`: the name of the method. `paramTypes`: class type of parameters of the method.
 
 ```java
 public static void main(String[] args) {
@@ -229,7 +233,7 @@ public static void main(String[] args) {
     // in general
     // str1.charAt(1);
     // using reflection
-    Method methodCharAt = String.class.getMethod("charAt", int.class);
+    Method methodCharAt = String.class.getMethod("charAt", int.class);  // "chatAt" is the name of the method; "int.class" is the class type of parameter of the method
     System.out.println(methodCharAt.invoke(str1, 1));  // output should be "b"
 }
 ```
