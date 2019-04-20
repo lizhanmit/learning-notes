@@ -111,6 +111,8 @@ There are lots of subclasses of RDD. You will likely only create two types:
 - generic RDD type
 - key-value RDD 
 
+When to use RDDs: when you need fine-grained control over the physical distribution of data (custom partitioning of data).
+
 #### Partitioning
 
 If you often access a column when reading data, you can partition by it when writing the data for optimization. 
@@ -308,7 +310,7 @@ For instance,
 
 When to cache data:
 
-- When doing data validation and cleaning.
+- When doing data validation and cleansing.
 - When querying a small “hot” dataset.
 - Cache for iterative algorithm like PageRank.
 - Generally, **DO NOT** use for input data as input data is too large.
@@ -405,11 +407,17 @@ The difference between `foreach()` and `map()`:
 
 Datasets and DataFrames are distributed table-like collections with well-defined rows and columns.
 
-- After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported. **The trend in Spark is to use RDDs less and Datasets more.**
-- Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
-- Datasets can explicitly wrap a given struct or type. (Dataset[Person], Dataset[(String, Double)])
-- The Dataset API gives users the ability to assign a Java/Scala class to the records within a DataFrame and manipulate it as a collection of typed objects.
-- **Recommend** using Datasets only with user-defined encoding surgically and only where it makes sense. This might be at the beginning of a big data pipeline or at the end of one.
+After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported. **The trend in Spark is to use RDDs less and Datasets more.**
+
+Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
+
+Datasets can explicitly wrap a given struct or type. (Dataset[Person], Dataset[(String, Double)])
+
+The Dataset API gives users the ability to assign a Java/Scala class to the records within a DataFrame and manipulate it as a collection of typed objects.
+
+**Recommend** using Datasets only with user-defined encoding surgically and only where it makes sense. This might be at the beginning of a big data pipeline or at the end of one.
+
+Think of Datasets as a blend between the higher-level Structured APIs and the low-level RDD APIs.
 
 #### Advantages
 
