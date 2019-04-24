@@ -45,7 +45,7 @@ A list of data items connected with links.
 
 Types of linked list:
 
-- Simple Linked List
+- Singly Linked List
 - Doubly Linked List
 - Circular Linked List
 
@@ -55,9 +55,9 @@ When to use a linked list:
 - You need to do constant insertions and deletions.
 - You are not sure how many items will be in the list.
 
-#### Simple Linked List
+#### Singly Linked List
 
-![simple-linked-list.jpg](img/simple-linked-list.jpg)
+![singly-linked-list.jpg](img/singly-linked-list.jpg)
 
 - Advantages: insertion and deletion can be very quick.
   - insertion (prepend) - **O(1)**
@@ -181,10 +181,7 @@ Basic operations:
 
 Hashing is a technique to convert a key into an index of an array.
 
-两种说法：（都对）
-
-- key 进 hash function，直接得到 index of array。
-- key 进 hash code function，得到 hash code，再转成 index。可能用 index = hash code % size of array。
+- The key goes into hash code function, get hash code, then transfer to index. Maybe using `index = hashCode % sizeOfArray`.
 
 ![hash-function.jpg](img/hash-function.jpg)
 
@@ -197,6 +194,7 @@ Hashing is a technique to convert a key into an index of an array.
      - If the number of collisions is small, it is efficient.
      - :-1: The linked list may be very long. It will take time to find data with the same index.
      - :-1: If much data is stored in the linked list instead of array, the remaining of the array will be wasted.
+     - (When the number of entries in the linked list is 75% of bucket size, double size the bucket. Then re-allocate entries, which is costly.)
    - Chaining with balanced binary search trees: store collisions in a binary search tree.
      - rare approach
      - worst  lookup time O(log n)
