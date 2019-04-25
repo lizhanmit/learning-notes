@@ -304,3 +304,12 @@ Examples:
 - Azure Data Lake 
 - HDFS
 - S3
+
+
+---
+
+## Data Skew
+
+[什么是数据倾斜?如何解决数据倾斜? ](https://www.sohu.com/a/224276626_543508)
+
+[数据倾斜及其高效解决方法](https://blog.csdn.net/anshuai_aw1/article/details/84033160)
