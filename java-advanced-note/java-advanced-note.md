@@ -1116,3 +1116,11 @@ Using JDK or CGLIB dynamic proxy depends on:
 - `config.isOptimize()`: False by default.
 - `config.isProxyTargetClass()`: False by default.
 - `hasNoUserSuppliedProxyInterfaces(config)`: If target object has an interface, use JDK proxy. Otherwise, use CGLIB.
+
+---
+
+## JMM (Java Memory Model)
+
+[Java内存模型详解](https://blog.csdn.net/weixin_40096176/article/details/80497137)
+
+[全面理解Java内存模型](https://blog.csdn.net/suifeng3051/article/details/52611310)
