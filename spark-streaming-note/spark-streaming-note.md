@@ -256,8 +256,7 @@ Used for failure recovery.
 
 Spark Streaming allows you to recover an application by just restarting it.
 
-You **must** configure the application to use checkpointing and write-ahead logs, namely, configuring a query to write to a checkpoint
-location on a reliable file system (e.g. HDFS or S3).
+You **must** configure the application to use checkpointing and write-ahead logs, namely, configuring a query to write to a checkpoint location on a reliable file system (e.g. HDFS or S3).
 
 All streaming application relevant progress information and the current intermediate state values are saved to the checkpoint location.
 
