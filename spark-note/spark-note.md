@@ -113,7 +113,46 @@ There are lots of subclasses of RDD. You will likely only create two types:
 
 When to use RDDs: when you need fine-grained control over the physical distribution of data (custom partitioning of data).
 
-#### Partitioning
+#### Printing Elements of an RDD
+
+It is common to print out the elements of an RDD using `<rdd_var>.foreach(println)` or `<rdd_var>.map(println)`.
+
+- On a single machine, OK.
+- In cluster mode, the methods called by executors will print output on executors rather than the driver.
+
+To print all elements on the driver, you may use collect all RDDs to the driver firstly and then print: `<rdd_var>.collect().foreach(println)`.
+
+- This will cause the driver to run out of memory.
+- Thus, only print a few elements for testing: `<rdd_var>.take(<number_of_elements>).foreach(println)`.
+
+#### RDD Running Process
+
+![rdd-running-process.png](img/rdd-running-process.png)
+
+![rdd-running-process-2.png](img/rdd-running-process-2.png)
+
+![rdd-running-process-3.png](img/rdd-running-process-3.png)
+
+![spark-transformations-dag.png](img/spark-transformations-dag.png)
+
+
+#### Stage Division & Dependencies
+
+- Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1.
+- Wide dependencies: The relationship between RDDs is 1 : many or many : many.
+
+Create a new stage when it comes across wide dependencies.
+
+![stage-division-according-to-dependencies.png](img/stage-division-according-to-dependencies.png)
+
+Optimize for dependencies:  
+
+- Do as many narrow dependencies together before hitting a wide dependency.  
+- Try to group wide dependency transformations together, possibly inside a single function and do it once. 
+
+---
+
+### Partitioning
 
 If you often access a column when reading data, you can partition by it when writing the data for optimization. 
 
@@ -134,16 +173,21 @@ rdd.partitionBy(new RangePartitioner(<numberOfPartitions>, rdd))
 
 Get partition number of a Dataset or DataFrame: `<dataset_or_dataFrame>.rdd.partitions.size`.
 
-##### Downsides
+Get partition number of a RDD: 
+
+- `<rdd>.partitions.size`
+- `<rdd>.getNumPartitions`
+
+#### Downsides
 
 If you partition at too fine a granularity, it can result in many small files, and a great deal of overhead trying to list all the files in the storage system.
 
-##### Partitioning Rule
+#### Partitioning Rule
 
 - The number of partitions should be equal to the number or its integer multiple (2~3) of CPU cores in the cluster as possible.
 - Each partition is generally between 100 - 200 MB.
 
-##### Default Partition Number
+#### Default Partition Number
 
 Configure default partition number through set the parameter `spark.default.parallelism`.
 
@@ -151,7 +195,7 @@ Configure default partition number through set the parameter `spark.default.para
 - Mesos: 8.
 - Standalone or Yarn: Max value between number of CPU cores in the cluster and 2.
 
-##### Manually Configure Partition
+#### Manually Configure Partition
 
 RDD partitioning is automatic but can be done manually through programming.
 
@@ -159,11 +203,12 @@ RDD partitioning is automatic but can be done manually through programming.
   - By default, Spark creates one partition for each block of the file (blocks being 128MB by default in HDFS).
   - You cannot have fewer partitions than blocks.
 - When getting a new RDD by transformation, invoke `repartition(<partitionNum>)` method. For example, `rdd2 = rdd1.repartition(4)`. 4 partitions.
-  - Check number of partitions: `rdd2.partitions.size`.
 
-#### Partitioner
+---
 
-##### HashPartitioner
+### Partitioner
+
+#### HashPartitioner
 
 Default partitioner of Spark.
 
@@ -171,53 +216,37 @@ HashPartitioner works on Java’s `Object.hashcode()`. Objects which are equal s
 
 `partitionNo = hashCode % numberOfPartitions`
 
-##### RangePartitioner 
+Work for discrete values.
+
+#### RangePartitioner 
 
 RangePartitioner will sort the records in almost equal ranges based on the key and then it will divide the records into a number of partitions based on the given value. The ranges are determined by sampling the content of the RDD passed in.
 
-##### CustomPartitioner
+Work for continuous values.
+
+#### CustomPartitioner
 
 You can also customize the number of partitions you need and what should be stored in those partitions by extending the default Partitioner class in Spark.
 
-Specifying your own custom Partitioner can give you significant performance and stability improvements if you use it correctly.
+Specifying your own custom Partitioner can give you significant performance and stability improvements if you use it correctly. You control exactly how data is laid out on the cluster and manipulate that individual partition accordingly.
 
-#### Stage Division & Dependencies
+Do this **only** when you have lots of domain knowledge about your problem space. 
 
-- Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1.
-- Wide dependencies: The relationship between RDDs is 1 : many or many : many.
+Steps:
 
-Create a new stage when it comes across wide dependencies.
+1. Drop down to RDDs from the Structured APIs.
+2. Apply your custom partitioner.
+3. Convert it back to a DataFrame or Dataset.
 
-![stage-division-according-to-dependencies.png](img/stage-division-according-to-dependencies.png)
+Used to deal with data skew (some keys have many, many more values than other keys):
 
-Optimize for dependencies:  
+- break these keys
+- improve parallelism
+- prevent OutOfMemoryErrors
 
-- Do as many narrow dependencies together before hitting a wide dependency.  
-- Try to group wide dependency transformations together, possibly inside a single function and do it once.  
+---
 
-#### RDD Running Process
-
-![rdd-running-process.png](img/rdd-running-process.png)
-
-![rdd-running-process-2.png](img/rdd-running-process-2.png)
-
-![rdd-running-process-3.png](img/rdd-running-process-3.png)
-
-![spark-transformations-dag.png](img/spark-transformations-dag.png)
-
-#### Printing Elements of an RDD
-
-It is common to print out the elements of an RDD using `<rdd_var>.foreach(println)` or `<rdd_var>.map(println)`.
-
-- On a single machine, OK.
-- In cluster mode, the methods called by executors will print output on executors rather than the driver.
-
-To print all elements on the driver, you may use collect all RDDs to the driver firstly and then print: `<rdd_var>.collect().foreach(println)`.
-
-- This will cause the driver to run out of memory.
-- Thus, only print a few elements for testing: `<rdd_var>.take(<number_of_elements>).foreach(println)`.
-
-#### Bucketing
+### Bucketing
 
 - Bucketing create a certain number of files and organize your data into those "buckets".
 - Data with the same bucket ID will all be grouped together into one physical partition.
@@ -225,6 +254,52 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 - E.g. `<dataFrameName>.write.format("parquet")
 .bucketBy(<numberBuckets>, "<columnNameToBucketBy>").saveAsTable("<bucketedFilesName>")`.
 - It is supported only for Spark-managed tables.
+
+---
+
+### Coalesce VS Repartition
+
+#### Coalesce
+
+- Coalesce is fast in certain situations because it minimizes data movement.
+- No shuffle. Merge partitions on the same node into one partition.
+- Coalesce changes the number of nodes by moving data from some partitions to existing partitions. This algorithm obviously **cannot increase** the number of partitions.
+  - For example, `numbersDf.rdd.partitions.size` is 4. Even if you use `numbersDf.coalesce(6)`, it is still 4 rather than 6.
+- Avoids a full data shuffle.
+
+#### Repartition
+
+- Repartition can be used to either increase or decrease the number of partitions in a DataFrame.
+- Does a full data shuffle.
+- If there is only a little amount of data but the number of partitions is big, there will be many empty partitions.
+- You should only repartition when the future number of partitions is greater than the current number of partitions or when you are looking to partition by a set of columns.
+- If you are going to be filtering by a certain column often, it can be worth repartitioning based on that column. E.g. `df.repartition(col("<columnName>"))`, or `df.repartition(<numberOfPartitions>, col("<columnName>"))`.
+
+#### Real World Example
+
+1. Suppose you have a data lake that contains 2 billion rows of data (1TB) split in 13,000 partitions.
+2. You want to create a data puddle containing 2,000 rows of data for the purpose of development by random sampling of one millionth of the data lake.
+3. Write the data puddle out to S3 for easy access.
+
+```scala
+val dataPuddle = dataLake.sample(true, 0.000001)
+dataPuddle.write.parquet("s3a://my_bucket/puddle/")
+```
+
+4. Spark does not adjust the number of partitions, so the dataPuddle will also have 13,000 partitions, which means a lot of the partitions will be empty.
+5. Not efficient to read or write thousands of empty text files to S3. Improve by repartitioning.
+
+```scala
+val dataPuddle = dataLake.sample(true, 0.000001)
+val goodPuddle = dataPuddle.repartition(4)
+goodPuddle.write.parquet("s3a://my_bucket/puddle/")
+```
+
+6. **Why choosing 4 partitions here?** 13,000 partitions / 1,000,000 = 1 partition. Then `number_of_partitions = number_of_cpus_in_cluster * 4` (2, 3 or 4).
+7. **Why using repartition instead of coalesce here?** The data puddle is small. The repartition method returns equal sized text files, which are more efficient for downstream consumers.
+
+- **When filtering large DataFrames into smaller ones, you should almost always repartition the data.**
+- **If you are reducing the number of overall partitions, first try `coalesce`.**
 
 ---
 
@@ -323,6 +398,21 @@ When to cache data:
 
 ---
 
+### Checkpointing 
+
+Saving an RDD to disk. 
+
+Future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source.
+
+Not available in DataFrame API. 
+
+```scala
+spark.sparkContext.setCheckpointDir("/some/path/for/checkpointing")
+<rdd>.checkpoint()
+```
+
+---
+
 ### Shuffle
 
 A shuffle represents a physical repartitioning of the data.
@@ -335,8 +425,6 @@ A shuffle represents a physical repartitioning of the data.
 been shuffled does not rerun the "source" side of the shuffle.
 - By default, when we perform a shuffle, Spark outputs 200 shuffle partitions. You can specify it through `spark.conf.set("spark.sql.shuffle.partitions", "<number_of_shuffle_you_want>")`.
 - Use minimal shuffle as possible and do them in late stages for better performance.  
-- **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
-  - `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which will result in big overhead and transmission delay.
 
 No shuffle transformations:  
 
@@ -376,6 +464,12 @@ Starting this Python process and serializing the data to Python are expensive. *
 
 **Best practice**: define the return type for the UDF when you define it.
 
+Steps:
+
+1. Define a function.
+2. Convert the function into a UDF.
+3. Apply the UDF to DataFrame or Dataset.
+
 ---
 
 ### Lazy Evaluation
@@ -400,6 +494,60 @@ The difference between `foreach()` and `map()`:
 
 - `foreach()`: return void or no return value.
 - `map()`: return dataset object.
+
+`map()`: row based
+
+`mapPartitions()`: partition based
+
+`mapPartitionsWithIndex()`: The partition index is the partition number in the RDD.
+
+`glom()`: Take every partition in the dataset and convert each partition to an array. Collect the data to the driver.
+
+**DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
+
+- `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which result in big overhead and transmission delay. And each executor must hold all values for a given key in memory before applying the function to them. If you have massive key skew, you will get OutOfMemoryErrors.
+- But if you have consistent value sizes for each key and know that they will fit in the memory of a given executor, you are going to be just fine.
+
+![groupByKey.png](img/groupByKey.png)
+
+![reduceByKey.png](img/reduceByKey.png)
+
+Very rare, very low-level aggregation methods: 
+
+- aggregate
+- treeAggregate
+- aggregateByKey
+- combineByKey
+- foldByKey
+
+Used to combine RDDs:
+
+- cogroup
+- join
+- cartesian (**very dangerous**)
+- zip
+
+---
+
+### Serialization
+
+Any object that you hope to parallelize (or function) must be serializable.
+
+The default serialization is slow. 
+
+#### Kryo
+
+Spark can use the Kryo library (version 2) to serialize objects more quickly.
+
+Kryo is significantly faster and more compact than Java serialization (often as much as 10x).
+
+Does not support all serializable types.
+
+Need to register the classes you will use in the program in advance for best performance.
+
+**Recommend** trying it in any network-intensive application.
+
+Since Spark 2.0.0, we internally use Kryo serializer when shuffling RDDs with simple types, arrays of simple types, or string type.
 
 ---
 
