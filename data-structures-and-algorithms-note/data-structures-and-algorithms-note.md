@@ -311,6 +311,12 @@ Three types of traversal:
 
 A binary tree has a special condition that each node can have two children at maximum.
 
+#### Full Binary Tree
+
+If the height is N, the number of nodes is 2^N -1.
+
+![full-binary-tree.png](img/full-binary-tree.png)
+
 #### Binary Search Tree (BST)
 
 - A node's left child must have a value less than or equal to its parent's value.
@@ -521,6 +527,8 @@ Work better finding one match if there is no duplicates in the array.
 
 A comparison-based algorithm in which each pair of adjacent elements is compared and elements are swapped if they are not in order.
 
+N elements need N-1 loops.
+
 - time - O(n^2) - not suitable for large set of data. :-1:
 - space - O(1)
 
@@ -551,6 +559,8 @@ not stable
 4. 一趟loop完后，拿到min。这时将min和a[0]交换。再从a[1]开始重复这个过程。
 
 找min，一趟loop完后再做交换。
+
+More efficient than bubble sort. Less swap.
 
 #### Merge Sort
 
