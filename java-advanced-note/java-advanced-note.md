@@ -1,5 +1,11 @@
 # Java Advanced Note
 
+## Collections
+
+![collections.gif](img/collections.gif)
+
+---
+
 ## StringBuilder & StringBuffer
 
 StringBuilder and StringBuffer (older) essentially do the same thing.
@@ -16,6 +22,8 @@ StringBuffer
 - Multithreading
 
 **Generally we use StringBuilder** as long as we do not need multithreading.
+
+---
 
 ## Variable Arguments (VarArgs)
 
