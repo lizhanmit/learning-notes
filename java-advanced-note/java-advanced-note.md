@@ -1132,3 +1132,17 @@ Using JDK or CGLIB dynamic proxy depends on:
 [Java内存模型详解](https://blog.csdn.net/weixin_40096176/article/details/80497137)
 
 [全面理解Java内存模型](https://blog.csdn.net/suifeng3051/article/details/52611310)
+
+---
+
+## Java Memory Allocation
+
+[Java内存分配详解(堆内存、栈内存、常量池)](https://blog.csdn.net/jian_sheng_tan/article/details/78323327)
+
+---
+
+## GC (Garbage Collection)
+
+[What is Java Garbage Collection? How It Works, Best Practices](https://stackify.com/what-is-java-garbage-collection/)
+
+[五分钟了解JAVA垃圾回收](https://baijiahao.baidu.com/s?id=1610753983428990724&wfr=spider&for=pc)
