@@ -595,6 +595,17 @@ Divide and conquer approach. Divide the list in smaller "partitions" using "pivo
 3. Compare a[1] and pivot, a[n-1] and pivot. If a[1] < pivot, a[n-1] < pivot, compare a[2] and pivot. If a[2] > pivot, swap a[2] and a[n-1].
 4. When all elements <= pivot are at the left and all elements >= pivot are at the right (这里只是将array以pivot为基准分成大的小的两组，不一定是pivot左边的都小于pivot，右边的都大于pivot), split them as two sub-lists. Then do the above steps recursively until the sub-list cannot be split again.  
 
+Pivot selection:
+
+- If pick the last or first element as the pivot, susceptible to the worst case O(n^2).
+- In practice, "median-of-three" technique, use median of the front, middle, and tail of the sequence.
+
+Hybrid approach:
+
+- Quick sort has **good performance on large data sets**, but **high overhead on small data sets**. 
+- When the size of a subsequence falls below some threshold (perhaps 50 elements), use insertion sort. 
+
+
 [Good explanation](https://www.youtube.com/watch?v=SLauY6PpjW4&list=PLX6IKgS15Ue02WDPRCmYKuZicQHit9kFt&t=0s&index=20)
 
 ---
