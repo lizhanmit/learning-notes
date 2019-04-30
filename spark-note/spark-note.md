@@ -974,55 +974,64 @@ Feature transformation: transformation of label and index.
 
 ---
 
-## Metrics & Monitoring
+## Monitoring and Debugging
 
-### Monitoring API
+**Components you can monitor:** 
 
-#### Query Status
+- Spark Applications and Jobs (RDDs and query plans)
+  - tools:    
+    - Spark UI
+    - Spark logs
+- JVM
+  - JVM utilities: 
+    - jstack
+    - jmap
+    - jstat
+    - jconsole
+    - jvisualvm
+- OS/Machine (CPU, network, I/O)
+  - tools: 
+    - dstat
+    - iostat
+    - iotop
+- Cluster
+  - cluster-level monitoring tools:
+    - Ganglia
+    - Prometheus
 
-Most basic monitoring API
+**Two main things to monitor:** 
 
-Answer question: What processing is my stream performing right now?
-
-Get the status of a given query: `query.status`.
-
-#### Recent Progress
-
-Answer question: How fast are tuples arriving from the source?
-
-Get access to more time-based information like the processing rate and batch durations, and input sources and output sinks: `query.recentProgress`.
-
-
-When the input rate is much greater than the processing rate, it means the stream is falling behind. You need to scale the cluster up to handle the larger load.
-
-**Best practice**: visualize the changes in batch duration, and input and processing rates instead of simply reporting changes over time.
-
----
-
-### Alerting
-
-Automatic alerting 
-
-Building on the recent progress API to integrate existing alerting tools with Spark.
-
-Monitoring system:
-
-- Coda Hale Metrics library 
-- Prometheus
-- Splunk
+- processes
+  - driver (most important)
+  - executors (2nd most important)
+- queries
+  - jobs
+  - stages
+  - tasks
 
 ---
 
-### Advanced Monitoring
+### Spark Logs
 
-- lower-level
-- more powerful 
+It can help you know where jobs are failing or what is causing that failure.
 
-`StreamingQueryListener` class is used to receive asynchronous updates from the streaming query and automatically output this information to other systems.
+Python will **not** be able to integrate directly with Spark’s Java-based logging library.
 
-1. Develop your own object to extend
-`StreamingQueryListener`.
-2. Attach your custom listener with `sparkSession.streams.addListener()`.
+Change Spark's log level: `spark.sparkContext.setLogLevel("INFO")`.
+
+- Local mode: print logs to standard error.
+- Cluster mode: save to files by cluster manager. (typically, through cluster manager's web UI to find these log files)
+
+---
+
+### Spark UI
+
+Monitor applications at the Spark and JVM level.
+
+a SparkContext - a web UI
+
+- default port 4040
+- multiple applications, increase port numbers: 4041, 4042 ... 
 
 ---
 
