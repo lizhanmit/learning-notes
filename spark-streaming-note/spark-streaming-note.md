@@ -275,7 +275,7 @@ val query = streamingDF.writeStream
 
 ---
 
-### Updating Application
+## Updating Application
 
 #### Updating Streaming Application Code
 
@@ -290,6 +290,57 @@ Changing `spark.sql.shuffle.partitions` is not supported while a stream is curre
 The checkpoint format is designed to be forward-compatible (e.g. moving from Spark 2.2.0 to 2.2.1 to 2.2.2).
 
 It may be broken due to critical bug fixes that will be documented in release notes.
+
+---
+
+## Metrics & Monitoring
+
+### Monitoring API
+
+#### Query Status
+
+Most basic monitoring API
+
+Answer question: What processing is my stream performing right now?
+
+Get the status of a given query: `query.status`.
+
+#### Recent Progress
+
+Answer question: How fast are tuples arriving from the source?
+
+Get access to more time-based information like the processing rate and batch durations, and input sources and output sinks: `query.recentProgress`.
+
+**Best practice**: visualize the changes in batch duration, and input and processing rates instead of simply reporting changes over time.
+
+---
+
+### Alerting
+
+Automatic alerting 
+
+Building on the recent progress API to integrate existing alerting tools with Spark.
+
+Monitoring system:
+
+- Coda Hale Metrics library 
+- Prometheus
+- Splunk
+
+---
+
+### Advanced Monitoring
+
+- lower-level
+- more powerful 
+
+`StreamingQueryListener` class is used to receive asynchronous updates from the streaming query and automatically output this information to other systems.
+
+Steps:
+
+1. Develop your own object to extend
+`StreamingQueryListener`.
+2. Attach your custom listener with `sparkSession.streams.addListener()`.
 
 ---
 
