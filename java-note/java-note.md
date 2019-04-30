@@ -1178,6 +1178,17 @@ Using JDK or CGLIB dynamic proxy depends on:
 
 [Java内存分配详解(堆内存、栈内存、常量池)](https://blog.csdn.net/jian_sheng_tan/article/details/78323327)
 
+`java.lang.StackOverFlowError` from JVM: no space available in stack. 
+
+- `-Xss`: set java thread stack size
+
+`java.lang.OutOfMemoryError` from JVM: no space available in heap.
+
+- `-Xms`: set initial Java heap size. The default size is 2097152 (2MB). 
+- `-Xmx`: set maximum Java heap size. The default size is 64M. The maximum heap limit is about 2GB.
+
+![jvm-stack-and-heap.png](img/jvm-stack-and-heap.png)
+
 ---
 
 ## GC (Garbage Collection)
