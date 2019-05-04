@@ -1033,6 +1033,131 @@ a SparkContext - a web UI
 - default port 4040
 - multiple applications, increase port numbers: 4041, 4042 ... 
 
+#### Blue Boxes
+
+- Exchange - shuffle, e.g. repartition
+- Project - e.g. selecting/adding/filtering columns
+
+#### Spark History Server
+
+Used to reconstruct the Spark UI and REST API after your application crashes or ends.
+
+First need to configure the application to save an event log. 
+
+- Configure `spark.eventLog.enable`.
+- Configure the event log location `spark.eventLog.dir`.
+
+---
+
+### Debugging and Spark First Aid
+
+#### Debug Steps
+
+1. Add logging statements to figure out where your job is crashing and what type of data arrives at each stage.
+2. Isolate the problem to the smallest piece of code possible.
+3. For data skew issues, use Spark’s UI to get a quick overview of how much work each task is doing.
+
+#### Spark Jobs Not Starting
+
+**Signs and symptoms:**
+
+- Spark jobs do not start.
+- The Spark UI does not show any nodes on the cluster except the driver.
+- The Spark UI seems to be reporting incorrect information.
+
+**Possible causes:**
+
+- The cluster or application’s resource demands are not configured properly. Then the node that runs the driver cannot talk to the executors.
+- You did not specify what IP and port is open or did not open the correct one.
+- The application requested more resources (e.g. memory) per executor than your cluster manager currently has free, in which case the driver will be waiting forever for executors to be launched.
+
+**Potential treatments:**
+
+- You should open up all ports between the worker nodes unless you have more stringent security constraints.
+- Ensure that your Spark resource configurations are correct and that your cluster manager is properly set up for Spark. Try running a simple application first to see if that works.
+
+#### Slow Tasks or Stragglers
+
+One of the most difficult issues to debug, because of so many possible causes.
+
+**Signs and symptoms:**
+
+- Spark stages seem to execute until there are only a handful of tasks left. Those tasks then take a long time.
+- These slow tasks show up in the Spark UI and occur consistently on the same dataset(s).
+- These occur in stages, one after the other.
+- Scaling up the number of machines given to the Spark Application does not really help — some tasks still take much longer than others.
+- In the Spark metrics, certain executors are reading and writing much more data than others.
+
+**Possible causes:**
+
+- Data skew.
+- Hardware problem.
+- Most often, data is partitioned unevenly. (e.g. partitioning by a skewed ID column, or a column where many values are null)
+- You use a group-by-key operation and one of the keys just has more data than others. In Spark UI, the shuffle data for some nodes is much larger than for others.
+- When working with Datasets, a lot of object instantiation causes a lot of garbage collection.
+
+**Potential treatments:**
+
+- Try increasing the number of partitions.
+- Try repartitioning by another combination of columns.
+- First filter out the null values.
+- Try increasing the memory of executors.
+- Monitor the executor which might be unhealthy.
+- Check whether UDFs are wasteful in their object allocation or business logic. Try to convert them to DataFrame code if possible.
+- Ensure that UDFs or UDAFs are running on a small enough batch of data.
+- Turning on speculation through setting `spark.speculation` to true.
+- Look at the garbage collection metrics in the Spark UI to see if they are consistent with the slow tasks.
+- Check the Spark UI for imbalanced amounts of data across tasks.
+
+#### Driver OutOfMemoryError or Driver Unresponsive
+
+serious issue
+
+**Signs and symptoms:**
+
+- Spark Application is unresponsive or crashed.
+- OutOfMemoryErrors or garbage collection messages in the driver logs.
+- Commands take a very long time to run or do not run at all.
+- Interactivity is very low or non-existent.
+- Memory usage is high for the driver JVM.
+
+**Possible causes:**
+
+- Use `collect` to collect overly large dataset to the driver node.
+- The data to be broadcast is too big when using a broadcast join.
+- A long-running application generated a large number of objects on the driver and is unable to
+release them.
+- When using Python, data conversion requires too much memory in the JVM. 
+- Share a SparkContext with other users.
+
+**Potential treatments:**
+
+- Use Spark’s maximum broadcast join configuration to better control the size it will broadcast.
+- Use jmap tool to see what objects are filling most of the memory of your driver JVM by printing a histogram of the heap. **NOTE** that jmap will pause that JVM while running.
+- Increase the driver’s memory.
+- Write data to a file instead of bringing it back as in-memory objects.
+
+#### Executor OutOfMemoryError or Executor Unresponsive
+
+**Signs and symptoms:**
+
+- OutOfMemoryErrors or garbage collection messages in the executor logs. You can find these in the Spark UI.
+- Executors that crash or become unresponsive.
+- Slow tasks on certain nodes that never seem to recover.
+
+**Possible causes:**
+
+- Some of the tasks, especially UDFs, create lots of objects that need to be garbage collected.
+
+**Potential treatments:**
+
+- Try increasing the memory available to executors and the number of executors.
+- Repartition data to increase parallelism, and reduce the amount of records per task.
+- Ensure that null values are handled correctly instead of default value like " " or "EMPTY".
+- Use fewer UDFs and more of Spark’s structured operations. 
+- Use jmap tool to get a histogram of heap memory usage on your executors, and see which classes are taking up the most space.
+- Isolate Spark jobs from other jobs if executors are being placed on nodes that also have other workloads.
+
 ---
 
 ## System Scaling
