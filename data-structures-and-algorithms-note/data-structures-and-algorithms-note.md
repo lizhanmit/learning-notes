@@ -169,6 +169,23 @@ Basic operations:
       return false;
     ```
 
+O(1) time for both array-based and linkedList-based implementations. 
+ 
+Linked lists have a large number of primitive operations per call. **In practice, the linkedList method is more expensive than the array-based method.**
+
+#### Circular Queue
+
+Adapt the CircularlyLinkedList implementation.
+
+Use cases:
+
+- multiplayer, turn-based games 
+- round-robin scheduling of computing processes
+
+#### Deque (Double-Ended Queue)
+
+A doubly linked list is most appropriate for implementing all operations efficiently.
+
 ---
 
 ### Hash Table
