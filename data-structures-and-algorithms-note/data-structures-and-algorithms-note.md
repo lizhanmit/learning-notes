@@ -343,15 +343,7 @@ If the height is N, the number of nodes is 2^N -1.
 
 ![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
 
-Why do we want trees to be balanced?
-
-![balanced-vs-unbalanced-tree.png](img/balanced-vs-unbalanced-tree.png)
-
-#### Red-Black Tree
-
-[漫画：什么是红黑树？](https://zhuanlan.zhihu.com/p/31805309)
-
-#### AVL Tree
+#### AVL Tree (Self-Balancing  Binary Search Tree)
 
 - Height balancing binary search tree.
 
@@ -363,6 +355,14 @@ Rotation techniques to balance the tree:
 - Right rotation
 - Left-Right rotation
 - Right-Left rotation
+
+Why do we want trees to be balanced?
+
+![balanced-vs-unbalanced-tree.png](img/balanced-vs-unbalanced-tree.png)
+
+#### Red-Black Tree
+
+[漫画：什么是红黑树？](https://zhuanlan.zhihu.com/p/31805309)
 
 #### Spanning Tree
 
