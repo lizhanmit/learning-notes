@@ -38,6 +38,15 @@ Git cannot track the change of binary files, such as images, videos, and Microso
 
 ---
 
+## Tips
+
+Create .gitignore file in a folder on Windows: 
+
+1. Right click in the folder -> Git Bash Here
+2. In command line, type `touch .gitignore`. Then the file is create in the folder.
+
+---
+
 ## Useful Resources
 
 - [Fork a repo](https://help.github.com/articles/fork-a-repo/)
