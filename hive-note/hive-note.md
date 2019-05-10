@@ -2,8 +2,8 @@
 
 ## Basics
 
-- Hive is a **data warehousing** component which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
-- Hive is mostly used for data warehousing where you can perform analytics and data mining that does not require real time processing.
+- Hive is a **data warehousing** component based on Hadoop, which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
+- Enables users to do ad-hoc querying, summarization and data analysis and data mining easily that does not require real time processing.
 - Hive internally gets converted into **MapReduce** programs.
 - You can couple Hive with other tools to use it in many other domains. For example,
   - Tableau along with Apache Hive can be used for Data Visualization.
@@ -12,9 +12,17 @@
 
 ---
 
-### Partitions
+### Data Units
 
-- Each Table can have one or more partition Keys which determines how the data is stored.
+#### Databases
+
+Used to enforce security for a user or group of users.
+
+**Namespaces** are used to avoid naming conflicts for tables, views, partitions, columns, and so on.
+
+#### Partitions
+
+- Each Table can have one or more partition keys which determines how the data is stored.
 - Each unique value of the partition keys defines a partition of the Table.
 - Partitions allow the user to efficiently identify the rows that satisfy a specified criteria. You can run the query only on the relevant partition of the table, thereby speeding up the analysis.
 
@@ -23,23 +31,30 @@
 Example: 
 
 ```sql
-CREATE TABLE logs (timestamp BIGINT, line STRING)
-PARTITIONED BY (date STRING, country STRING);
+CREATE TABLE logs (time_stamp BIGINT, line STRING)
+PARTITIONED BY (dt STRING, country STRING);
 
 
 SHOW PARTITIONS logs;
 ```
 
-Directory structure of "logs" table:
+At the filesystem level, partitions are simply nested subdirectories of the table directory. Directory structure of "logs" table:
 
 ![logs-table-directory-structure.png](img/logs-table-directory-structure.png)
 
-The partition values are specified explicitly when loading data into a partitioned table. Datafiles do not
-contain values for partition columns.
+The partition values are specified explicitly when loading data into a partitioned table. Partition columns are virtual columns, they are not part of the data itself but are derived on load.
 
----
+Example: 
 
-### Buckets 
+```sql
+LOAD DATA LOCAL INPATH 'input/hive/partitions/file1'
+INTO TABLE logs
+PARTITION (dt='2001-01-01', country='GB');
+```
+
+Partitions are not divided by the value of the data, but specified by the user. In the above example, there could be no value of "dt" and "country" in the data.
+
+#### Buckets / Clusters
 
 Data in each partition may be subdivided further into Buckets based on the value of a hash function of some column of the Table.
 
@@ -67,12 +82,16 @@ CREATE TABLE bucketed_users (id INT, name STRING)
 CLUSTERED BY (id) SORTED BY (id ASC) INTO 4 BUCKETS;
 ```
 
-**It is advisable to get Hive to perform the bucketing**, because Hive does not check that the buckets in the datafiles on disk are consistent with the buckets in the table definition. 
+It is **advisable to get Hive to perform the bucketing**, because Hive does not check that the buckets in the datafiles on disk are consistent with the buckets in the table definition. 
 
 Populate the bucketed table:
 
-1. Set `hive.enforce.bucketing` property to `true`.
+1. Set `hive.enforce.bucketing` property to `true`. Then Hive knows to create the number of buckets declared in the table definition. 
 2. `INSERT OVERWRITE TABLE bucketed_users SELECT * FROM users;`
+
+Each bucket is just a file in the table (or partition) directory.
+
+The number of buckets in MapReduce output files is the same as reduce tasks.
 
 Example of sampling:
 
@@ -80,6 +99,31 @@ Example of sampling:
 -- sample 1/4
 SELECT * FROM bucketed_users TABLESAMPLE(BUCKET 1 OUT OF 4 ON id);
 ```
+
+Bucket numbering is 1-based.
+
+---
+
+### Data Types 
+
+#### String Types
+
+- STRING: sequence of characters in a specified character set.
+- VARCHAR: sequence of characters in a specified character set with a maximum length.
+- CHAR: sequence of characters in a specified character set with a defined length.
+
+Implicit conversion of STRING to DOUBLE is allowed.
+
+---
+
+### Storage Formats
+
+**Row format:** dictates how rows, and the fields in a particular row, are stored. Defined by a SerDe.
+
+- deserializer: querying a table
+- serializer: `INSERT` or `CREATE TABLE ... AS SELECT ...`
+
+**File format:** dictates the container format for fields in a row. The simplest format is a plain-text file.
 
 ---
 
@@ -190,11 +234,56 @@ Better manageability and security because the database tier can be completely fi
 
 ## Coding
 
+All Hive keywords, table names and column names are case-insensitive.
+
 - `show databases;`
 - `show tables;`
+- `show tables 'prefix.*';`: List tables with prefix 'prefix'. (Java regular expression syntax)
 - `show create table <table_name>;`: Show statement that creates the table.
 - `desc <table_name>;`: Show simple structure of the table.
+- `desc extended <table_name>;`: Show columns and all other properties of table.
 - `desc formatted <table_name>;`: Show formatted detailed info about the table.
+- `alter table <old_table_name> rename to <new_table_name>;`
+- `alter table <old_table_name> replace columns (<column_name> <column_type>, ...);`: Replace all the existing columns.
+- `alter table <old_table_name> add columns (<new_col_name> <new_col_type>);`
+- `drop table <table_name>;`
+- `alter table <table_name> drop partition (ds='2019-05-10');`: Drop a partition.
 - `! <command>`: In Hive shell, execute Linux commands. For instance, `! ls`.
 - Need alias when order by count. Otherwise, error "Not yet supported place for UDAF 'count'". For instance, `select count(*) as cnt, brand_id from user_log where action='2' group by brand_id order by cnt desc;`.
+
+### Load Data
+
+There are multiple ways to load data into Hive tables. 
+
+If there is already legacy data in HDFS, steps: 
+
+1. Copy a data file into the specified location using HDFS `put` or `copy` commands.
+2. Create an external table pointing to this location with all relevant row format info. 
+3. Transform or load data and insert into Hive tables.
+
+Example:
+
+```sql
+CREATE EXTERNAL TABLE page_view_stg(viewTime INT, userid BIGINT,
+                page_url STRING, referrer_url STRING,
+                ip STRING COMMENT 'IP Address of the User',
+                country STRING COMMENT 'country of origination')
+COMMENT 'This is the staging page view table'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '44' LINES TERMINATED BY '12'
+STORED AS TEXTFILE
+LOCATION '/user/data/staging/page_view';
+ 
+hadoop dfs -put /tmp/pv_2008-06-08.txt /user/data/staging/page_view
+ 
+FROM page_view_stg pvs
+INSERT OVERWRITE TABLE page_view PARTITION(dt='2008-06-08', country='US')
+SELECT pvs.viewTime, pvs.userid, pvs.page_url, pvs.referrer_url, null, null, pvs.ip
+WHERE pvs.country = 'US';
+```
+
+If loading data from a file in the local files system directly into a Hive table where the input data format is the same as the table format. 
+
+Example:
+
+`LOAD DATA LOCAL INPATH '/tmp/pv_2008-06-08_us.txt' INTO TABLE page_view PARTITION(date='2008-06-08', country='US')`
 
