@@ -656,6 +656,8 @@ Many programming languages implement recursion by means of stacks.
 **Disadvantages**:
 
 - Space complexity of recursive function may go higher than that of a function with iteration, because the system needs to store activation record each time a recursive call is made.
+- Time and space consumption: Every time the function is invoked, it needs to create space on stack to store parameters, returned address and temp variables; pushing and popping data also needs time.
+- If time of recursion is big, performance will be low. There can also be stack overflow problem because stack size is limited.
 
 #### Tower of Hanoi
 
