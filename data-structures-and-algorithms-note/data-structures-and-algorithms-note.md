@@ -509,6 +509,14 @@ Problems solved using dynamic programming approach:
 
 ### Searching Algorithms
 
+Options: 
+
+- linear search
+- binary search
+- hash table search
+- binary search tree search
+
+
 #### Linear Search  
 
 Find an item in a sequentially arranged data type. Compare expected data item with each of data items in list or array.
@@ -533,12 +541,20 @@ Work better finding one match if there is no duplicates in the array.
 
 ### Sorting Algorithms
 
-- In-place Sorting vs. Not-in-place Sorting
-- Stable vs. Not Stable Sorting
-  - Stable sorting sort repeated elements in the same order that they appear in the input.
-- Adaptive vs. Non-Adaptive Sorting
-  - Adaptive: if the source list has some element already sorted, it will try not to re-order them.
-  - Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
+In-place Sorting vs. Not-in-place Sorting
+
+Stable vs. Not Stable Sorting
+
+- Stable sorting sort repeated elements in the same order that they appear in the input.
+
+Adaptive vs. Non-Adaptive Sorting
+
+- Adaptive: if the source list has some element already sorted, it will try not to re-order them.
+- Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
+
+[排序算法总结](https://www.runoob.com/w3cnote/sort-algorithm-summary.html)
+
+[十种常见排序算法的思想、应用场景](https://blog.csdn.net/hairy_monsters/article/details/80154391)
 
 #### Bubble Sort
 
@@ -614,8 +630,8 @@ Divide and conquer approach. Divide the list in smaller "partitions" using "pivo
 
 Pivot selection:
 
-- If pick the last or first element as the pivot, susceptible to the worst case O(n^2).
-- In practice, "median-of-three" technique, use median of the front, middle, and tail of the sequence.
+- If pick the last or first element as the pivot, susceptible to the worst case O(n^2), most notably when the original sequence is already sorted, reverse sorted, or nearly sorted.
+- In practice, **"median-of-three"** technique, use median of the front, middle, and tail of the sequence.
 
 Hybrid approach:
 
@@ -636,6 +652,8 @@ Hybrid approach:
 ---
 
 ### Recursion
+
+If something is repeated, you should think about applying recursion algorithm to it.
 
 A recursive function is one which calls itself, directly or calls a function that in turn calls it.
 
@@ -684,11 +702,13 @@ Steps:
 
 #### Fibonacci Series
 
-$$
-F_n = F_{n-1} + F_{n-2}
-$$
+1,1,2,3,5,8,13,21 ...
+
+f(n) = f(n-1) + f(n-2)
 
 ```c
+// this code is just used to demonstrate recursion algorithm
+// should not be used in projects due to low performance
 int fibbonacci(int n) {
    if(n == 0) {
       return 0;
