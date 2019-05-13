@@ -599,6 +599,16 @@ RDDs can be converted to Datasets with `.toDF()`.
 - By specifying a function, you are forcing Spark to evaluate this function on every row in your Dataset. This can be very resource intensive. For simple filters it is always **preferred** to write
 SQL expressions.
 
+#### `joinWith()`
+
+DatasetA `joinWith` DatasetB end up with two nested Datasets. Each column represents one Dataset. 
+
+##### `join()` VS `joinWith()`
+
+![join-vs-joinWith.png](img/join-vs-joinWith.png)
+
+DataFrames can also join Datasets.
+
 ---
 
 ### DataFrames 
@@ -713,6 +723,12 @@ Different ways to construct or refer a column:
 
 ### Joins
 
+**Partition data correctly prior to a join.**
+
+If data from two different DataFrames is already located on the same machine, Spark can avoid the shuffle.
+
+[SparkSQL-有必要坐下来聊聊Join](http://hbasefly.com/2017/03/19/sparksql-basic-join/?cwrmhw=4wzjj2)
+
 Communication Strategies
 
 - Shuffle join
@@ -746,16 +762,6 @@ Steps:
 #### Small table–to–small table
 
 It is usually best to let Spark decide how to join them.
-
-### `joinWith()`
-
-DatasetA `joinWith` DatasetB end up with two nested Datasets. Each column represents one Dataset. 
-
-#### `join()` VS `joinWith()`
-
-![join-vs-joinWith.png](img/join-vs-joinWith.png)
-
-DataFrames can also join Datasets.
 
 ---
 
