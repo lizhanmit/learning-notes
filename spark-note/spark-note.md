@@ -513,6 +513,10 @@ The difference between `foreach()` and `map()`:
 
 ![reduceByKey.png](img/reduceByKey.png)
 
+- `groupBy`: returns RelationalGroupedDataset
+- `groupByKey`: returns KeyValueGroupedDataset
+
+
 Very rare, very low-level aggregation methods: 
 
 - aggregate
