@@ -72,7 +72,7 @@ Mechanism: Treats a live data stream as an unbounded input table that is being c
 
 ![structured-streaming-model.png](img/structured-streaming-model.png)
 
-- Micro-Batch processing： 100 milliseconds latencies, **exactly-once** guarantees. (by default)
+- Micro-Batch processing: 100 milliseconds latencies, **exactly-once** guarantees. (by default)
 - Continuous processing: 1 millisecond latencies, **at-least-once** guarantees. (since Spark 2.3)
 
 Structured Streaming does not let you perform schema inference without explicitly enabling it. Set the configuration `spark.sql.streaming.schemaInference` to true.
@@ -91,7 +91,7 @@ You can see a list of active streams through `spark.streams.active`.
 
 - append: default.
 - update: only the rows that are different from the previous write are written out to the sink. 
-    - If the query doesn’t contain aggregations, this is equivalent to append mode.
+    - If the query does not contain aggregations, this is equivalent to append mode.
 - complet: rewrite the full output.
     - The map operation does not allow complete mode.
     - Complete mode is not supported as it is infeasible to keep all unaggregated
@@ -123,7 +123,7 @@ streamingDF.writeStream
 
 #### Once Trigger
 
-Used to run the streaming job once. (e.g., import new data into a summary table just occasionally.)
+Used to run the streaming job once. (e.g. import new data into a summary table just occasionally.)
 
 Example:
 
@@ -194,11 +194,13 @@ events received, regardless of when they are received.
 
 ### Watermarking
 
+**Specifying watermark is somewhat a must.**
+
 You **must** specify watermark in order to age-out old data and state in the stream and not overwhelm the system over a long period of time. If you do not specify how late you think you will see data, then Spark will maintain that data in memory forever.
 
 Watermarks allow you to specify how late streaming systems expect to see data in event time, namely, how long they need to remember old data.
 
-Watermarks can also be used to control when to output a result for a particular event time window (e.g., waiting until the watermark for it has passed).
+Watermarks can also be used to control when to output a result for a particular event time window (e.g. waiting until the watermark for it has passed).
 
 - You can define the watermark of a query by specifying the event time column and the threshold on how late the data is expected to be in terms of event time.
 - For example, `words.withWatermark("timestamp", "10 minutes").groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word").count()`.  Late data within 10 mins will be aggregated, but data later than 10 mins will start getting dropped. **But it is not guaranteed to be dropped; it may or may not get aggregated.**
