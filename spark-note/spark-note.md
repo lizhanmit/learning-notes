@@ -43,14 +43,6 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 
 ---
 
-### Deployment of Spark Applications
-
-#### Execution Modes
-
-[Spark Modes of Deployment – Cluster Mode and Client Mode](https://techvidvan.com/tutorials/spark-modes-of-deployment/)
-
----
-
 ### Life Cycle of a Spark Application
 
 #### Outside Spark (cluster mode)
@@ -443,6 +435,10 @@ Shuffle transformations:
 - join  
 - countByValue
 - ...
+
+#### External Shuffle Service
+
+Used for storing shuffle blocks (outputs) so that they are available to all executors. Then you can arbitrarily kill executors and still have their shuffle outputs available to other applications.
 
 ---
 
@@ -1088,6 +1084,24 @@ Three ways:
 - Java system properties
 - Hardcoded configuration files
 
+#### Application Properties
+
+They define basic application metadata and some execution characteristics.
+
+Can set through: 
+
+- "conf/spark-defaults.conf" file
+- from `spark-submit`
+- when creating the Spark application, SparkConf, for instance: 
+
+```scala
+val spark = SparkSession.builder
+.master(local[*]")
+.appName("my app")
+.config("<property>", "<value>")
+.getOrCreate()
+```
+
 You can ensure that you have correctly set application properties by checking the application’s web UI on port 4040 of the driver on the "Environment" tab.
 
 #### Execution Properties
@@ -1103,7 +1117,9 @@ The most common configurations:
 
 #### Environmental Variables
 
-- standalone and Mesos modes, in "conf/spark-env.sh" file.
+They are used to configure certain Spark settings.
+
+- Standalone and Mesos modes, in "conf/spark-env.sh" file.
 - On YARN in cluster mode, use `spark.yarn.appMasterEnv.[EnvironmentVariableName]` property in "conf/spark-defaults.conf" file. But "conf/spark-env.sh" file does not work.
 
 #### Job Scheduling
@@ -1120,6 +1136,156 @@ Spark’s scheduler is fully thread-safe.
     - Create a high-priority pool for more important jobs.
     - Group the jobs of each user together and give users equal shares.
     - Set job pools for per thread: `spark.sparkContext.setLocalProperty("spark.scheduler.pool", "<pool_name>")`. Clear the pool, set it to `null`.
+
+#### Application Scheduling
+
+If multiple users share your cluster and run different Spark applications, different options to manage allocation: 
+
+##### Static Allocation 
+
+Each application is given a maximum amount of resources, and holds onto those resources for the entire duration.
+
+- simplest option 
+- available on all cluster managers
+
+##### Dynamic Allocation
+
+Dynamically adjust the resources your application occupies based on the workload.
+
+- available on all coarse-grained cluster managers: standalone, YARN, and Mesos coarse-grained mode
+- disabled by default
+
+Steps to use:
+
+1. Set `spark.dynamicAllocation.enabled` to true.
+2. Set up an external shuffle service on each worker node in the same cluster.
+3. Set `spark.shuffle.service.enabled` to true.
+
+The external shuffle service is to allow executors to be removed without deleting shuffle files written by them.
+
+---
+
+## Deploying Spark 
+
+### Execution Modes
+
+[Spark Modes of Deployment – Cluster Mode and Client Mode](https://techvidvan.com/tutorials/spark-modes-of-deployment/)
+
+#### Cluster Mode
+
+- The most commonly used.
+- Spark driver process runs on a worker node inside the cluster.
+- Reduces chance of network disconnection between "driver" and "spark infrastructure", then reduces the chance of job failure.
+- Cluster manager is responsible for maintaining all Spark Application–related processes.
+- Client can exit after creating the Spark application.
+- Libraries and external jars must be distributed manually or through the `--jars` command-line argument.
+
+When to use:
+
+When job submitting machine is remote from "spark infrastructure". Since, within "spark infrastructure", "driver" component will be running. Thus, it reduces data movement between job submitting machine and "spark infrastructure". In such case, This mode works totally fine.
+
+#### Client Mode 
+
+- Spark driver remains on the client machine that submitted the application.
+- Client machine is responsible for maintaining the Spark driver process.
+
+When to use:
+
+When job submitting machine is within or near to "spark infrastructure". Since there is no high network latency of data movement for final result generation between "spark infrastructure" and "driver", then, this mode works very fine.
+
+#### Local Mode
+
+- Runs the entire Spark Application on a single machine.
+- Achieves parallelism through threads on that single machine.
+- Used for learning and testing.
+
+### Where to Deploy
+
+- on-premises cluster
+- public cloud
+
+#### On-Premises Cluster
+
+Pros: 
+
+- Full control.
+- You can optimize performance for your specific workload.
+
+Cons: 
+
+- Cluster is fixed in size. This is adverse when it comes to data analytics workloads like Spark, which are elastic.
+  - Solution: Use a cluster manager that allows you to run many Spark applications and dynamically reassign resources between them, or even allows non-Spark applications on the same cluster. (Yarn, Mesos)
+- You need to select and operate your own storage system, (e.g. HDFS and Apache Cassandra), which includes setting up georeplication and disaster recovery if required.
+  - When selecting, recommend evaluating the performance of its Spark connector and evaluating the available management tools.
+
+#### Public Cloud
+
+Pros: 
+
+- Resources are elastic.
+- Low-cost, georeplicated storage is included.
+  - All major cloud providers include managed Hadoop clusters for their customers, which provide HDFS for storage as well as Apache Spark. This is actually **NOT** a great way to run Spark in the cloud.
+  - Instead,** better to decouple computing and storage**. Use global storage systems that are decoupled from a specific cluster, such as Amazon S3, Azure Blob Storage, or Google Cloud Storage. You will be able to pay for computing resources only when needed, scale them up dynamically, and mix different hardware types.
+  - Do not need to migrating an on-premises installation to virtual machines, instead you can run Spark natively against cloud storage.
+  - Several companies provide "cloud-native" Spark-based services, e.g. Databricks. 
+
+### Cluster Managers
+
+#### Standalone
+
+A lightweight platform built specifically for Apache Spark workloads. 
+
+Cons: 
+
+- Your cluster can only run Spark.
+
+Two ways to start the cluster: 
+
+- by hand
+- using built-in scripts
+
+#### Yarn
+
+Spark will find the YARN configuration files using the environment variable `HADOOP_CONF_DIR` or `YARN_CONF_DIR`.
+
+`spark-submit --master yarn`
+
+**Best practice** of Hadoop configurations: 
+
+Include two Hadoop configuration files on Spark’s classpath by setting `HADOOP_CONF_DIR` in $SPARK_HOME/spark-env.sh to a location containing the configuration files. 
+  - hdfs-site.xml
+  - core-site.xml
+
+Pros:
+
+- Great for HDFS-based applications.
+
+Cons:
+
+- Not commonly used for much else.
+- Not well designed to support the cloud.
+- Compute and storage is largely coupled together.
+
+#### Mesos
+
+Apache Mesos abstracts CPU, memory, storage, and other compute resources away from machines (physical or virtual).
+
+- The heaviest-weight cluster manager.
+- Intends to be a datacenter scale-cluster manager.
+- Use it **ONLY IF** your organization already has a large-scale deployment of Mesos.
+- Supports a wide range of application types.
+
+Coarse-grained mode: each Spark executor runs as a single Mesos task.
+
+Fine-grained mode: deprecated.
+
+### Secure Deployment Configurations
+
+(Refer to Spark official website.)
+
+### Cluster Networking Configurations
+
+(Refer to Spark official website.)
 
 ---
 
