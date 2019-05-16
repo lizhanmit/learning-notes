@@ -39,7 +39,7 @@ Using Kafka as a hub:
 ### Log
 
 - Log: The source of the truth.
-- When systems make changes, it creates events or changes. A log is like a never ending stream of thses changes to a specific category or entity.
+- When systems make changes, it creates events or changes. A log is like a never ending stream of these changes to a specific category or entity.
   - Changes:
     - update to customer info
     - new orders
