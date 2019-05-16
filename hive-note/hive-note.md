@@ -118,12 +118,12 @@ Implicit conversion of STRING to DOUBLE is allowed.
 
 ### Storage Formats
 
-**Row format:** dictates how rows, and the fields in a particular row, are stored. Defined by a SerDe.
+**Row format:** how rows, and the fields in a particular row, are stored. Defined by a SerDe.
 
 - deserializer: querying a table
 - serializer: `INSERT` or `CREATE TABLE ... AS SELECT ...`
 
-**File format:** dictates the container format for fields in a row. The simplest format is a plain-text file.
+**File format:** the container format for fields in a row. The simplest format is a plain-text file.
 
 ---
 
@@ -281,7 +281,7 @@ SELECT pvs.viewTime, pvs.userid, pvs.page_url, pvs.referrer_url, null, null, pvs
 WHERE pvs.country = 'US';
 ```
 
-If loading data from a file in the local files system directly into a Hive table where the input data format is the same as the table format. 
+If loading data from a file in the local files system directly into a Hive table where the input data format is the same as the table format, you can do it like the following: 
 
 Example:
 
