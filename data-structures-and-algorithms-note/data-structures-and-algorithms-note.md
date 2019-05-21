@@ -195,12 +195,21 @@ A doubly linked list is most appropriate for implementing all operations efficie
 - Insertion and search operations are very fast.
 - Hard to order.
 - Do not need to search through the array when finding a value.
+- Conceptualize hash table as a bucket array.
 
-Hashing is a technique to convert a key into an index of an array.
+![bucket-array.png](img/bucket-array.png)
 
-- The key goes into hash code function, get hash code, then transfer to index. Maybe using `index = hashCode % sizeOfArray`.
+Hashing is a technique to convert a key into an index of an array. Steps:
+
+1. The key is passed into hash code function, and get hash code. 
+2. The hash code is passed into compression function and get the index of the bucket array. Maybe using `index = hashCode % sizeOfArray`.
 
 ![hash-function.jpg](img/hash-function.jpg)
+
+A good hash function: 
+
+- sufficiently minimize collisions
+- fast and easy to compute
 
 1. There are key-value pair data.
 2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array.
