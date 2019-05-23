@@ -854,10 +854,12 @@ public boolean equals(Object obj) {
 
 `==`表示的是变量值完成相同：
 
-- 对于基础类型，地址中存储的是值。
-- 引用类型则存储指向实际对象的地址。
+- 对于基础类型，地址中存储的是值。值相同，才是相同。
+- 引用类型则存储指向实际对象的地址。地址相同，才是相同。
 
 **A convention in Java: if you override `equals()` method, you must override `hashCode()` method.**
+
+When overriding `equals()` method, we want it to compare the content of the objects rather than the reference address of the objects.
 
 ---
 
