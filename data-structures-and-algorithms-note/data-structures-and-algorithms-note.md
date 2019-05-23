@@ -190,70 +190,111 @@ A doubly linked list is most appropriate for implementing all operations efficie
 
 ### Hash Table
 
-- One common implementation: based on arrays.
-- Use hash technique to generate an index where an element is to be inserted or is to be located from.
-- Insertion and search operations are very fast.
-- Hard to order.
-- Do not need to search through the array when finding a value.
-- Conceptualize hash table as a bucket array.
+![hash-table.png](img/hash-table.png)
+
+![hash-table-complexity.png](img/hash-table-complexity.png)
+
+Conceptualize hash table as a bucket array.
 
 ![bucket-array.png](img/bucket-array.png)
 
+Advantages: 
+
+- Insertion and search operations are very fast.
+- Do not need to search through the array when finding a value.
+
+Disadvantages: 
+
+- Hard to order.
+
+#### Hashing
+
+Use hashing technique to generate an index where an element is to be inserted or is to be located from.
+
 Hashing is a technique to convert a key into an index of an array. Steps:
 
-1. The key is passed into hash code function, and get hash code. 
-2. The hash code is passed into compression function and get the index of the bucket array. Maybe using `index = hashCode % sizeOfArray`.
-
+1. The key is passed into **hash code function**, and get hash code. 
+2. The hash code is passed into **compression function** and get the index of the bucket array. 
+    - Maybe using `index = hashCode % N`, where `N` is commonly chosen as size of the bucket array.
+    - If `sizeOfBucketArray` is a prime number, then the compression function
+is good. If not, greater risk of causing collisions.
+    
 ![hash-function.jpg](img/hash-function.jpg)
 
 A good hash function: 
 
 - sufficiently minimize collisions
 - fast and easy to compute
+- The probability any two different keys collide is 1/sizeOfBucketArray. 
+
+#### Collision
 
 1. There are key-value pair data.
 2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array.
-3. The index may be repeated, which is called collision. Ways to solve collision:
+3. The index may be repeated, which is called collision. 
+
+Ways to solve collision:
+
+- Separate chaining 
    - Chaining with linked lists: store data with the same hash code in linked lists. So, the whole data structure will be array of linked lists.
      - **the most common** approach
      - worst lookup time O(n)
      - If the number of collisions is small, it is efficient.
      - :-1: The linked list may be very long. It will take time to find data with the same index.
-     - :-1: If much data is stored in the linked list instead of array, the remaining of the array will be wasted.
-     - (When the number of entries in the linked list is 75% of bucket size, double size the bucket. Then re-allocate entries, which is costly.)
+     - :-1: If much data is stored in the linked list instead of bucket array, the remaining of the array will be wasted.
+     - (When the number of entries in the linked list is 75% of bucket array size, double size the bucket array. Then re-allocate entries, which is costly.)
    - Chaining with balanced binary search trees: store collisions in a binary search tree.
      - rare approach
-     - worst  lookup time O(log n)
+     - worst lookup time O(log n)
      - for extremely non-uniform distribution
      - 👍 Potentially using less space, since no longer allocate a large array.
      - 👍 Can iterate through the keys in order.
-   - Linear probing: search the next empty location in the array to store the data. Probe distance is 1 or another fixed value.
+- Open addressing   
+   - Linear probing: search the next empty location in the bucket array to store the data. Probe distance is 1 or another fixed value.
      - If the number of collisions is small, it is efficient.
-     - 👎 Size of array is limited.
+     - 👎 Size of bucket array is limited.
      - 👎 Data may be stored one next to one another, which causes clustering.  
    - Quadratic probing: increase the probe distance quadratically.
+     - Complicates removal operation.
+     - Causes secondary clustering.
+     - Not guaranteed to find an empty slot once the table becomes at least half full, or if N is not a prime number. 
    - Double hashing: use a second hash function to determine the probe distance.
+     - N should be a prime.
+     - Can avoid clustering.
+
+Disadvantage of separate chaining: 
+
+- Requires the use of an auxiliary data structure to hold entries.
+- Not good if space is at a premium (e.g. writing a program for a small hand-
+held device).
+
+#### Load Factors
+
+Load factor (λ) = n / N
+
+n: number of data inserted into the bucket array. 
+
+N: commonly use size of the bucket array. 
+
+You should maintain λ < 0.9 for hash tables with separate chaining. < 0.5 for linear probing, and a bit higher for other open addressing schemes.
+
+By default, Java’s implementation uses separate chaining with λ < 0.75.
+
+Lower load factor indicates lower possibility of collision. 
+
+#### Resize
+
+Rule of thumb: once load factor >= 0.7, resize the bucket array to double size.
+
+The new bucket array’s size is good to be a prime number approximately double the previous size.
 
 
-Load factor = number of data inserted into the array / size of the array. Lower load factor indicates lower possibility of collision.
-
-Rule of thumb: once load factor >= 0.7, resize the array to double size.
-
-![hash-table.png](img/hash-table.png)
-
-![hash-table-complexity.png](img/hash-table-complexity.png)
-
-Applications:
+#### Applications
 
 - Phone directory: Name is the key and phone number is the value.
 - Domain Name System (DNS): Domain name is the key and IP address is the value.
 - Vote: Check if voters have voted already.
 - Cache on web server. Cache web pages. URL is the key and web page is the value.
-
-Implementation in programming languages:
-
-- Java: Map.
-- Python: Dictionary.
 
 ---
 
