@@ -1475,6 +1475,41 @@ release them.
 
 ---
 
+## GraphX
+
+GraphX is a new component in Spark for graphs and graph-parallel computation. GraphX extends the Spark RDD by introducing a new Graph abstraction: a directed multigraph with properties attached to each vertex and edge.
+
+Multigraph: Graph with potentially multiple parallel edges sharing the same source and destination vertex. 
+
+Parallel edges: Multiple relationships (e.g. co-worker and friend) between the same vertices.
+
+### Basics 
+
+#### Property Graphs
+
+Each vertex is keyed by a unique 64-bit long identifier (VertexId). 
+
+GraphX optimizes the representation of vertex and edge types when they are primitive data types (e.g., int, double, etc…) reducing the in memory footprint by storing them in specialized arrays.
+
+Property graphs are immutable, distributed, and fault-tolerant.
+
+The graph is partitioned across the executors using a range of vertex partitioning heuristics.
+
+VertexRDD: `RDD[(vertexId, VD)]`
+
+EdgeRDD: `RDD[Edge[ED]]`
+
+The graph class contains members to access the vertices and edges of the graph: 
+
+```scala
+class Graph[VD, ED] {
+  val vertices: VertexRDD[VD]
+  val edges: EdgeRDD[ED]
+}
+```
+
+---
+
 ## System Scaling
 
 ### Scale Kafka Connect  
