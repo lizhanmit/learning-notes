@@ -212,3 +212,13 @@ Take "student" table as an example:
 5. `put 'student', '2', 'info:name', 'Lisi'`
 6. `put 'student', '2', 'info:gender', 'M'`
 7. `put 'student', '2', 'info:age', '24'`
+
+---
+
+## Integration with Spark
+
+1 HBase Connection - 1 Spark Executor
+
+Spark Executors can be on the same nodes as the Region Servers or on different nodes.
+
+[Spark-on-HBase: DataFrame based HBase connector](https://hortonworks.com/blog/spark-hbase-dataframe-based-hbase-connector/)
