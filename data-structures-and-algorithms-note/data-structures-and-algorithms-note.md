@@ -547,6 +547,29 @@ Problems solved using dynamic programming approach:
 
 ---
 
+### Bit Operations 
+
+`<<`: left shift
+
+`>>`: signed right shift
+
+`>>>`: unsigned right shift, pad 0 for both positive and negative numbers.
+
+Example: 
+
+`00001010 << 2 = 00101000`
+
+For signed right shift, 
+
+- if the number is unsigned, pad 0 at the most left side. E.g., `00001010 >> 2 = 00000010`.
+- if the number is signed and negative, pad 1 at the most left side. E.g., `10001010 >> 3 = 11110001`.
+
+How to figure out whether the most right side is 1 or not: do xor between this number and 1. If the result is 1, yes; if 0, no.
+
+For positive numbers, mathematically, `>> 1` is the same as `/ 2` and `<< 1` is the same as `* 2`, but with better performance. **Recommend** using this one in practice.
+
+---
+
 ### Expression Parsing
 
 - Infix Notation - human readable
@@ -581,7 +604,20 @@ Work better finding all matched values in an array.
 
 Select the middle which splits the entire list into two parts. Compare the target value to the mid of the list.
 
-Ο(log n)
+```java
+// commonly used, but bad
+// because if the values low and high are big, may overflow
+int mid = (low + high) / 2;
+
+// better way
+int mid = (high - low) / 2 + low;
+
+// mathematically, >> 1 is the same as / 2, but better performance
+// better way
+int mid = ((high - low) >> 1) + low;
+```
+
+Time complexity: Ο(log n)
 
 Work better finding one match if there is no duplicates in the array.
 
