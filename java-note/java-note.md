@@ -43,6 +43,8 @@ Interfaces can have properties, but they must be `public static final`.
 
 ![collections.gif](img/collections.gif)
 
+![map-inheritance.jpg](img/map-inheritance.jpg)
+
 ---
 
 ## StringBuilder & StringBuffer
@@ -1198,3 +1200,29 @@ Using JDK or CGLIB dynamic proxy depends on:
 [What is Java Garbage Collection? How It Works, Best Practices](https://stackify.com/what-is-java-garbage-collection/)
 
 [五分钟了解JAVA垃圾回收](https://baijiahao.baidu.com/s?id=1610753983428990724&wfr=spider&for=pc)
+
+---
+
+## Tips
+
+### Big Number Problem
+
+If a number is too big, even bigger than long type, use a string or array to store it.
+
+### Char
+
+The value of any char equals the ASCII of the result of this char minus '0'. 
+
+Example:
+
+The value of '4' is 4, which equals the ASCII of `('4' - '0')`.
+
+### Compare Double Type
+
+You cannot use `d1 == d2` to compare two double type values because of precision problem. Instead, set an acceptable error and use `Math.abs(d1 - d2) < error` to determine if d1 and d2 are equal or not.
+
+### Error Handling Options
+
+![three-error-handling-options-comparison.png](img/three-error-handling-options-comparison.png)
+
+---
