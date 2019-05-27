@@ -1207,7 +1207,7 @@ Using JDK or CGLIB dynamic proxy depends on:
 
 ### Big Number Problem
 
-If a number is too big, even bigger than long type, use a string or array to store it.
+If a number is too big, even bigger than long type, use a string or an array to store it.
 
 ### Char
 
@@ -1224,5 +1224,3 @@ You cannot use `d1 == d2` to compare two double type values because of precision
 ### Error Handling Options
 
 ![three-error-handling-options-comparison.png](img/three-error-handling-options-comparison.png)
-
----
