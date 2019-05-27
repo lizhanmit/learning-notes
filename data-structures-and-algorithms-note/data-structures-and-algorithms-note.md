@@ -568,6 +568,8 @@ How to figure out whether the most right side is 1 or not: do xor between this n
 
 For positive numbers, mathematically, `>> 1` is the same as `/ 2` and `<< 1` is the same as `* 2`, but with better performance. **Recommend** using this one in practice.
 
+`(<number> & 1) == 1` can be used to determine whether a number is odd or not. (instead of using `% 2 == 1`)
+
 ---
 
 ### Expression Parsing
@@ -818,22 +820,3 @@ int factorial(int n) {
    }
 }
 ```
-
----
-
-## Interview Questions
-
-Q1: What is data structure?
-
-- Data structure is a structural & systematic way to of defining, storing & retrieving of data. A data structure may contain different type of data items.
-
-Q2: What is algorithm?
-
-- Algorithm is a step by step procedure, which defines a set of instructions to be executed in a certain order to get the desired output.
-
-Q3: Insertion sort vs. selection sort
-
-- Both maintain two sub-lists, sorted and unsorted.
-- Both take one element at a time and place it into sorted sub-list.
-- Insertion sort works on the current element in hand and places it in the sorted list at appropriate location maintaining the properties of insertion sort.
-- Selection sort searches the minimum from the unsorted sub-list and replaces it with the current element in hand.
