@@ -1510,6 +1510,11 @@ class Graph[VD, ED] {
 
 ---
 
+You must call `Graph.partitionBy` before calling `Graph.groupEdges`.
+
+
+---
+
 ## System Scaling
 
 ### Scale Kafka Connect  
