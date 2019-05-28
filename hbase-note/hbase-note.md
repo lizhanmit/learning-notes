@@ -4,8 +4,8 @@ HBase is a NoSQL database, a distributed, scalable, **column-oriented** database
 
 When to use: 
 
-- HBase is used to host very large tables - billions of rows X millions of columns. You should have enough data. Otherwise, use RDBMS for a few thousand/million rows.
-- Use HBase when you need random, real-time read/write access to your Big Data. 
+- HBase is used to host very large tables - **billions of rows * millions of columns**. You should have enough data. Otherwise, use RDBMS for a few thousand/million rows.
+- Use HBase when you need **random, real-time read/write** access to your Big Data. 
 - A great amount of data is stored redundantly for performant analysis.
 - HBase is not relational. Does not support SQL. Use it if you do not need some RDBMS features (e.g. typed columns, secondary indexes, transactions, advanced query languages, etc.).
 - When you have enough hardware. HDFS does not do well with anything less than 5 DataNodes plus a NameNode.
@@ -30,13 +30,13 @@ It is used for multi-tenancy related features:
 
 The timestamp is auto-assigned by HBase at the time of cell insertion.
 
-A cell’s content is an uninterpreted array of bytes.
+A cell’s content is an uninterpreted **array of bytes**.
 
 #### Rows
 
 Rows are sorted by row key. The sort is byte-ordered.
 
-Row keys are byte arrays, so anything can serve as a row key.
+Row keys are **byte arrays**, so anything can serve as a row key.
 
 Row updates are atomic.
 
@@ -44,9 +44,9 @@ Row updates are atomic.
 
 Format: `<column_family>:<qualifier>`
 
-Column families must be specified up front as part of the table schema definition, but new column family members (qualifiers) can be added on demand.
+Column families must be specified up front as part of the table schema definition, but new qualifiers can be added on demand.
 
-All column family members are stored together on the filesystem.
+All qualifiers are stored together on the filesystem.
 
 Tuning and storage specifications are done at the column family level.
 
@@ -69,6 +69,7 @@ For HBase,
 - **Does not support secondary indexes (indexing of other columns).**
 - commodity hardware
 - fault tolerance
+- strict consistency
 
 For RDBMS, 
 
