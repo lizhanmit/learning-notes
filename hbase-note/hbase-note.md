@@ -44,16 +44,16 @@ Row updates are atomic.
 
 Format: `<column_family>:<qualifier>`
 
-Column families must be specified up front as part of the table schema definition, but new qualifiers can be added on demand.
+Column families must be specified up front as part of the table schema definition, but new column family members (qualifiers) can be added on demand.
 
-All qualifiers are stored together on the filesystem.
+All column family members are stored together on the filesystem.
 
 Tuning and storage specifications are done at the column family level.
 
 Column family attributes: 
 
 - Whether the family content should be compressed on the filesystem.
-- How many versions of a cell to keep. 
+- How many versions of a cell to keep by specifying `ColumnFamilyDescriptorBuilder.setMaxVersions(int versions)`. The default value is 1.
 
 
 #### HBase VS RDBMS
@@ -61,35 +61,27 @@ Column family attributes:
 For HBase,
 
 - Distribution is intrinsic.
-- column-oriented
-- horizontally partitioned and replicated
+- Column-oriented： entries in a column are stored in contiguous locations on disks.
+- Horizontally partitioned and replicated
 - Cells are versioned. 
 - Rows are sorted. 
 - Columns can be added on the fly by the client as long as the column family they belong to preexists.
 - **Does not support secondary indexes (indexing of other columns).**
-- commodity hardware
-- fault tolerance
-- strict consistency
+- Commodity hardware
+- Fault tolerance
+- Strict consistency
 
 For RDBMS, 
 
-- fixed-schema
-- row-oriented
+- Fixed-schema
+- Row-oriented
 - ACID properties
-- secondary indexes
-- complex queries
-- complex inner and outer joins
-- costly hardware
+- Secondary indexes
+- Complex queries
+- Complex inner and outer joins
+- Costly hardware
 
-#### Regions
-
-Tables are automatically partitioned horizontally by HBase into regions.
-
-Initially, a table comprises a single region, but as the region grows it eventually crosses a configurable size threshold, at which point it splits at a row boundary into two new regions of approximately equal size. 
-
-Regions are the units that get distributed over an HBase cluster. Each node hosts a subset of the table’s total regions.
-
-### Column- VS Row-Oriented
+##### Column- VS Row-Oriented
 
 Column-oriented: analytical application, high data compression ratio
 
@@ -103,20 +95,36 @@ Row-oriented: more transactional operations, low data compression ratio
 
 ![hbase-architecture-2.png](img/hbase-architecture-2.png)
 
+![hbase-architecture-3.png](img/hbase-architecture-3.png)
+
 ![hbase-access-interface.png](img/hbase-access-interface.png)
 
-### HBase Master
+### Region
+
+Tables are automatically partitioned horizontally by HBase into regions.
+
+Initially, a table comprises a single region, but as the region grows it eventually crosses a configurable size threshold, at which point it splits at a row boundary into two new regions of approximately equal size. 
+
+Regions are the units that get distributed over an HBase cluster. Each node hosts a subset of the table’s total regions.
+
+A region has a default size of 256MB which can be configured. 
+
+### HBase Master (HMaster)
 
 lightly loaded
 
 - Bootstrap a virgin install.
 - Assign regions to registered regionservers.
+- Provide an interface for creating, deleting and updating tables.
+- The active HMaster sends heartbeats to the Zookeeper while the inactive HMaster listens for the notification send by active HMaster. If the active HMaster fails to send a heartbeat the session is deleted and the inactive HMaster becomes active.
 
-### Regionservers
+### RegionServer
 
 - Handle client read/write requests.
 - Manage region splits.
 - Communicate with HBase master.
+
+A Region Server can serve approximately 1000 regions to the client.
 
 ### ZooKeeper
 
@@ -124,6 +132,8 @@ lightly loaded
   - location of the `hbase:meta` catalog table
   - address of the current cluster master
 - Assignment of regions is mediated via ZooKeeper, which hosts the assignment transaction state in and makes it recovery.
+- Every Region Server along with HMaster Server sends continuous heartbeat at regular interval to Zookeeper and it checks which server is alive and available.
+- Provide server failure notifications so that, recovery measures can be executed.
 
 ### HDFS
 
@@ -150,39 +160,109 @@ Example: `TestTable,xyz,1279729913622.1b6e176fb8d8aa88fd4ab6bc80247ece.`
 
 Locations and user-space region start and stop rows are cached, so clients do not need to go back to the `hbase:meta` table to figure out hosting regions every time, until there is a failure.
 
-### Operations
+### Write-Ahead Log (WAL)
 
-#### New Client Connection
+(Prior to 2.0, the interface for WALs in HBase was named HLog. In 0.94, HLog was the name of the implementation of the WAL.)
+
+Stores the new data that has not been persisted or committed to the permanent storage.
+
+WAL is hosted on HDFS, so **fault tolerant**.
+
+### MemStore
+
+MemStore is the write cache.
+
+Stores all the incoming data in sorted manner before committing it to the disk or permanent memory.
+
+MemStore commits the data to HFile when the size of MemStore (`hbase.hregion.memstore.flush.size`) exceeds.
+
+One MemStore for each column family in a region.
+
+### HFile
+
+Stores the actual cells on the disk. 
+
+---
+
+## Operations
+
+**What makes HBase faster fir search while reading and writing? **
+
+- The writes are placed sequentially on the disk. Therefore, the movement of the disk’s read-write head is very less.
+- The HFile indexes are loaded in memory whenever an HFile is opened.
+- Bloom Filter helps in searching key value pairs. It skips the file which does not contain the required rowkey. 
+- Timestamp helps in searching a version of the file. It helps in skipping the data.
+
+### New Client Connection
 
 Steps:
 
 1. Connect to ZooKeeper to learn the location of `hbase:meta`.
-2. Look up hosting user-space region and its location. 
+2. Look up hosting user-space region and its location in BlockCache. 
 3. Interact directly with the hosting regionserver.
 
-#### Write Data
+### Write Data
+
+![hbase-write-data.png](img/hbase-write-data.png)
 
 Steps:  
 
-1. Append new data to a commit log.
+1. Append new data to a commit log (WAL).
 2. Add to an in-memory "memstore".
-3. When a memstore is full, flush content to the filesystem.
+3. Once the data is placed in MemStore, then the client receives the acknowledgment.
+4. When a memstore is full, flush content to the filesystem (HFile).
 
-Commit log is hosted on HDFS, so fault tolerant.
-
-#### Read Data
+### Read Data
 
 Steps:
 
-1. Region's memstore is consulted. If sufficient versions are found
-reading memstore alone, the query completes there. 
+1. Region's memstore is consulted. If sufficient versions are found reading memstore alone, the query completes there. 
 2. Otherwise, flush files are consulted in order, from newest to oldest. Result: found or not found.
 
-#### Compaction 
+### Compaction 
 
-A background process compacts flush files once their number has exceeded a threshold, rewriting many files as one.
+A background process compacts flush files once their number has exceeded a threshold, rewriting many files as one, in order to increase performance on read operations. 
 
-The process cleans out versions beyond the schema-configured maximum and removes deleted and expired cells.
+Compactions can be resource-intensive to perform.
+
+**Write amplification**: During compactions, input-output disks and network traffic might get congested. So, compaction is generally scheduled during low peak load timings.
+
+#### Minor Compaction
+
+Select a small number of small, adjacent StoreFiles and rewrite them as a single StoreFile (a facade of HFile).
+
+The end result of a minor compaction is fewer, larger StoreFiles for a given Store.
+
+#### Major Compaction
+
+- Cleans out versions beyond the schema-configured maximum. 
+- Removes deleted and expired cells.
+
+The end result of a major compaction is a single StoreFile per Store.
+
+In a default configuration, major compactions are scheduled automatically to run once in a 7-day period. This is sometimes inappropriate for systems in production.
+
+#### Compaction & Deletions
+
+When an explicit deletion occurs in HBase, the data is not actually deleted. 
+
+Instead, a **tombstone marker** is written. The tombstone marker prevents the data from being returned with queries. 
+
+During a major compaction, the data is actually deleted, and the tombstone marker is removed from the StoreFile. 
+
+#### Compaction & Versions
+
+If more versions than the specified maximum exist, the excess versions are filtered out and not written back to the compacted StoreFile.
+
+---
+
+## Failure Recovery
+
+Whenever a Region Server fails, ZooKeeper notifies to the HMaster about the failure.
+
+Then HMaster distributes and allocates the regions of crashed Region Server to many active Region Servers. To recover the data of the MemStore of the failed Region Server, the HMaster distributes the WAL to all the Region Servers.
+
+Each Region Server re-executes the WAL to build the MemStore for that failed region’s column family.
 
 ---
 
