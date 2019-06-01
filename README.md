@@ -61,6 +61,7 @@
 
 ---
 
+- [Agile](https://github.com/lizhanmit/learning-notes/blob/master/agile-note/agile-note.md)
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [CI CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
 - [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
