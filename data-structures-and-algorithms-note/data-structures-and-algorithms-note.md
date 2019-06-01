@@ -298,6 +298,23 @@ The new bucket array’s size is good to be a prime number approximately double 
 
 ---
 
+### Skip List
+
+![skip-list.png](img/skip-list.png)
+
+- Used to store key-value pair.
+- Randomly decide to store duplicate elements on each level using `java.util.Random.nextBoolean()`, 1/2 possibility.
+- Time complexity of search, insertion, removal: O(log n)
+
+Optimization:
+
+- For the horizontal axes, it is possible to keep the list singly linked.
+- Do not need to store references to values at the levels of the skip list above the bottom level.
+- Faster than AVL trees and other balanced
+search trees.
+
+---
+
 ### Graph
 
 A pictorial representation of a set of objects where some pairs of objects are connected by links. Objects are represented by points termed as vertices, and the links that connect the vertices are called edges.
