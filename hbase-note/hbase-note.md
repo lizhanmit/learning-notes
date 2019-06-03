@@ -302,4 +302,6 @@ Take "student" table as an example:
 
 Spark Executors can be on the same nodes as the Region Servers or on different nodes.
 
-[Spark-on-HBase: DataFrame based HBase connector](https://hortonworks.com/blog/spark-hbase-dataframe-based-hbase-connector/)
+[Hortonworks Spark-on-HBase: DataFrame based HBase connector](https://hortonworks.com/blog/spark-hbase-dataframe-based-hbase-connector/)
+
+[Cloudera Spark2使用HBase-Spark访问HBase](https://cloud.tencent.com/developer/article/1399924)
