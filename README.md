@@ -48,6 +48,10 @@
   - [Data Visualization](https://github.com/lizhanmit/sparktrain#data-visualization)
 - [ZooKeeper](https://github.com/lizhanmit/learning-notes/blob/master/zooKeeper-note/zooKeeper-note.md)
 
+### Articles
+
+[如何快速全面建立自己的大数据知识体系？](http://www.woshipm.com/data-analysis/714937.html)
+
 ---
 
 ## Java
