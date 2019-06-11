@@ -1495,10 +1495,6 @@ Property graphs are immutable, distributed, and fault-tolerant.
 
 The graph is partitioned across the executors using a range of vertex partitioning heuristics.
 
-VertexRDD: `RDD[(vertexId, VD)]`
-
-EdgeRDD: `RDD[Edge[ED]]`
-
 The graph class contains members to access the vertices and edges of the graph: 
 
 ```scala
@@ -1508,10 +1504,33 @@ class Graph[VD, ED] {
 }
 ```
 
+#### Vertex RDDs
+
+`VertexRDD[VD]` extends `RDD[(VertexId, VD)]` and represents a set of vertices each with an attribute of type `VD`. 
+
+Internally, vertex attributes are stored in a reusable hash-map data-structure. As a consequence if two `VertexRDD`s are derived from the same base `VertexRDD` (e.g., by `filter` or `mapValues`) they can be joined in constant time without hash evaluations. (**index reuse**, fast)
+
+#### Edge RDDs
+
+`EdgeRDD[ED]` extends `RDD[Edge[ED]]` and organizes the edges in blocks partitioned using one of the various partitioning strategies defined in `PartitionStrategy`. 
+
+Within each partition, edge attributes and adjacency structure, are stored separately enabling maximum **reuse** when changing attribute values.
+
 ---
 
-You must call `Graph.partitionBy` before calling `Graph.groupEdges`.
+### Optimized Representation
 
+GraphX partitions the graph along vertices which can reduce both the communication and storage overhead.
+
+![vertex-cut.png](img/vertex-cut.png)
+
+It assigns edges to machines and allows vertices to span multiple machines. The exact method of assigning edges depends on the `PartitionStrategy`.
+
+Users can choose between different strategies by repartitioning the graph with the `Graph.partitionBy` operator. 
+
+The `groupEdges` operator merges parallel edges (i.e., duplicate edges between pairs of vertices) in the multigraph. 
+
+You must call `Graph.partitionBy` before calling `Graph.groupEdges` because it requires the graph to be repartitioned and it assumes identical edges will be colocated on the same partition.
 
 ---
 
