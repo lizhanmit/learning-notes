@@ -642,6 +642,10 @@ Work better finding one match if there is no duplicates in the array.
 
 **The array must be sorted in advance.**
 
+#### Inverted Index
+
+[什么是倒排索引？](https://www.cnblogs.com/zlslch/p/6440114.html)
+
 ---
 
 ### Sorting Algorithms
