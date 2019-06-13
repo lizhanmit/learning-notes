@@ -60,12 +60,11 @@ Using Kafka as a hub:
 
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
 
-- Lead partition: handle writing data to the topic.
-  - Will be written firstly.
-- Other slave partitions: handle reading data from the topic.
-  - Will be written after lead partition.
-- Different topics can have different configurations of the amount of partitions.
-- If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer.
+Different topics can have different configurations of the amount of partitions.
+
+If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer.
+
+Each server acts as a leader for some of its partitions and a follower for others so load is well balanced within the cluster.
 
 ### Broker
 
@@ -82,6 +81,14 @@ If Broker 3 goes down,
 ![broker-3-goes-down.png](img/broker-3-goes-down.png)
 
 Multiple brokers: split topics across brokers into partitions. (replication for fault tolerance)
+
+### Write & Read
+
+**The leader handles all read and write requests** for the partition while the followers passively replicate the leader. 
+
+Only committed messages are ever given out to the consumer. 
+
+For producers, they have the option of either waiting for the message to be committed or not, depending on their preference for tradeoff between latency and durability.
 
 ---
 
