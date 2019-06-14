@@ -16,3 +16,12 @@ Two strategies for the production deployment:
 
 - Using branches and pull requests: suited for teams that have special release branches that can be mapped to a deployment.
 - Using custom pipelines and manual triggers: great for teams that are practicing trunk-based development.
+
+---
+
+## Jenkins 
+
+Complete integrated system automation:
+
+![complete-integrated-system-automation.png](img/complete-integrated-system-automation.png)
+
