@@ -25,3 +25,4 @@ Complete integrated system automation:
 
 ![complete-integrated-system-automation.png](img/complete-integrated-system-automation.png)
 
+[Building a Continuous Delivery Pipeline Using Jenkins](https://dzone.com/articles/building-a-continuous-delivery-pipeline-using-jenk)
