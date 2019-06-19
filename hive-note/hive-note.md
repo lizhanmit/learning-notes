@@ -118,12 +118,23 @@ Implicit conversion of STRING to DOUBLE is allowed.
 
 ### Storage Formats
 
-**Row format:** how rows, and the fields in a particular row, are stored. Defined by a SerDe.
+#### Row Format
+
+Row format: how rows, and the fields in a particular row, are stored. Defined by a SerDe.
 
 - deserializer: querying a table
 - serializer: `INSERT` or `CREATE TABLE ... AS SELECT ...`
 
-**File format:** the container format for fields in a row. The simplest format is a plain-text file.
+#### File Format
+
+File format: the container format for fields in a row.
+
+Hive supports 4 file formats: 
+
+- TEXTFILE (plain-text file, simplest one)
+- SEQUENCEFILE
+- ORC 
+- RCFILE 
 
 ---
 
@@ -152,7 +163,7 @@ Traditional database:
 
 Hive: 
 
-- Schema on read: does not verify the data when it is loaded.
+- Schema on read only: does not verify the data when it is loaded.
 - Very fast initial load, since the data does not have to be read, parsed, and serialized to disk in the database’s internal format. 
 
 ---
@@ -221,13 +232,62 @@ Better manageability and security because the database tier can be completely fi
 
 ---
 
+### Job Execution Flow
+
+![job-execution-flow.png](img/job-execution-flow.png)
+
+1. Executing Query from the UI (User Interface).
+2. The driver is interacting with Compiler for getting the plan. (Here plan refers to query execution, process and its related metadata information gathering.)
+3. The compiler creates the plan for a job to be executed. Compiler communicating with Meta store for getting metadata request.
+4. Meta store sends metadata information back to compiler.
+5. Compiler communicating with Driver with the proposed plan to execute the query.
+6. Driver Sending execution plans to Execution engine.
+7. Execution Engine (EE) acts as a bridge between Hive and Hadoop to process the query. For DFS operations.
+    - EE should first contacts Name Node and then to Data nodes to get the values stored in tables.
+    - EE is going to fetch desired records from Data Nodes. The actual data of tables resides in data node only. While from Name Node it only fetches the metadata information for the query.
+    - It collects actual data from data nodes related to mentioned query.
+    - Execution Engine (EE) communicates bi-directionally with Meta store present in Hive to perform DDL (Data Definition Language) operations. Here DDL operations like CREATE, DROP and ALTERING tables and databases are done. Meta store will store information about database name, table names and column names only. It will fetch data related to query mentioned.
+    - Execution Engine (EE) in turn communicates with Hadoop daemons such as Name node, Data nodes, and job tracker to execute the query on top of Hadoop file system.
+8. Fetching results from driver.
+9. Sending results to Execution engine. Once the results fetched from data nodes to the EE, it will send results back to driver and to UI (front end).
+
+---
+
+### Mode of Hive
+
+Hive can operate in two modes depending on the size of data nodes in Hadoop.
+
+By default, Map Reduce mode.
+
+Set to local mode: `SET mapred.job.tracker=local;`
+
+#### Local Mode
+
+When to use:
+
+- If the Hadoop installed under pseudo mode with having one data node.
+- If the data size is smaller in term of limited to single local machine.
+
+Processing will be very fast on smaller data sets present in the local machine.
+
+
+#### Map Reduce Mode
+
+When to use:
+
+- If Hadoop is having multiple data nodes and data is distributed across different node.
+- It will perform on large amount of data sets and query going to execute in parallel way.
+
+Processing of large data sets with better performance can be achieved through this mode.
+
+---
+
 ## Limitations
 
 - As Hadoop is intended for long sequential scans and Hive is based on Hadoop, you would expect queries to have a very high latency. (Response time: several minutes)
 - Hive is **read-based** and therefore **not appropriate for transaction processing** that typically involves a high percentage of write operations.
 - Not designed for OLTP. Only used for OLAP.
-- Supports overwriting or apprehending data, but not updates and deletes.
-- Sub queries are not supported in Hive.
+- Supports overwriting or apprehending data, but not updates and deletes (below version 0.13). Supports update and delete since version 0.14.
 - Index is less used in Hive, which is different with traditional DB.
 
 ---
