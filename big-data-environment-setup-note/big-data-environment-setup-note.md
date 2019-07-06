@@ -29,10 +29,11 @@ A FTP tool (e.g. WinSCP, FileZilla) is necessary to transfer files.
 - Flume: `flume-ng version` 
 - Python: `python3 --version` 
 - Hadoop: `hadoop version`  
-- Spark: `spark-shell –version` 
+- Spark: `spark-shell –-version` 
 - Kafka: go to kafka/libs installation directory to check. 
 - Maven: `mvn –v` 
 - Hbase: go into hbase shell, `version` 
+- Hive: `hive --version`
 
 #### Start & Stop
 
