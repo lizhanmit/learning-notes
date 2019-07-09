@@ -32,6 +32,8 @@ Java的“类加载”是一个类从被加载到虚拟机内存中开始，到�
 
 Interfaces can have properties, but they must be `public static final`.  
 
+**It is common to provide both an interface and an abstract class.**
+
 ### Interface Naming Conventions
 
 - Interface should be a good object name.
