@@ -372,7 +372,8 @@ For instance,
 - By default, each transformed RDD may be recomputed each time you run an action on it.
 - Cache or persist datasets in memory on nodes.
 - Future actions are faster (often by more than 10x).
-- `<rdd_var>.cache()` for default storage level - `MEMORY_ONLY`.
+- `<rdd_var>.cache()` for default storage level - `MEMORY_ONLY`, which stores the
+rdd as unserialized Java objects.
 - Or `<rdd_var>.persist()` with a specified StorageLevel parameter.
 - Spark removes cached data automatically in a least-recently-used (LRU) fashion.
 - Or use `<rdd_var>.unpersist()` if you want manually.
@@ -383,6 +384,9 @@ When to cache data:
 - When querying a small “hot” dataset.
 - Cache for iterative algorithm like PageRank.
 - Generally, **DO NOT** use for input data as input data is too large.
+- Likely to be referenced by multiple actions.
+- Relatively small compared to the amount of memory/disk.
+- Expensive to regenerate.
 
 #### Storage Level
 
@@ -1724,9 +1728,26 @@ When coding in IDE, you will be choosing to create a Scala Object or a Scala App
 
 ---
 
-### Read CSV File as Dataset
+### Read Files
+
+#### Read CSV File as Dataset
 
 When reading a CSV file as a Dataset with a case class, make sure headers of the CSV file matches fields of the case class. If they are not the same, use code to modify the header after converting the CSV file to DataFrame, e.g. removing spaces and lowering case the first character, and then convert to Dataset.   
+
+---
+
+### Write Files
+
+By default, Spark will throw an error if you try to save a data frame to a file that
+already exists.
+
+You can control Spark's behavior by specifying `SaveMode`:
+
+- `Overwrite`
+- `Append`
+- `Ignore`
+
+`df.write.mode(SaveMode.Ignore).parquet("file.parquet")`
 
 ---
 
@@ -1789,3 +1810,5 @@ Two things you can do with null values:
 
 - Sometimes it is advisable to sort within each partition using `sortWithinPartitions` before another set of transformations.
     - E.g. `spark.read.format("json").load("filePath").sortWithinPartitions("<columnName>")`.
+- When reading a csv file as DataFrame, if you can know the schema ahead of time and use `StructType` rather than `option("inferSchema", "true")`, there will be a significant performance benefit when the data set is very large, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
+
