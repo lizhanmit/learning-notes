@@ -897,7 +897,11 @@ It is compulsory to add Hive support for Spark in order to access Hive using Spa
 
 Pre-compile version Spark from official site generally does not contain Hive support. You need to compile the source code.
 
-Spark SQL can connect to Hive metastores. To connect to the Hive metastore, there are several properties that you will need to specify.
+Spark SQL can connect to Hive metastores. To connect to the Hive metastore, there are several properties that you will need to specify:
+
+- `spark.sql.hive.metastore.version`: default value is 1.2.1
+- `spark.sql.hive.metastore.jars`
+- `spark.sql.hive.metastore.sharedPrefixes`
 
 ---
 
@@ -1695,6 +1699,7 @@ distinctElementsRDD.collect
 - `myDF.filter(myDF("someFieldName") > 200)`
 - `myDF.groupBy(myDF("someFieldName")).mean()`
 - `myDF.rdd().map(<mapperFunction>)`
+- `df.describe().show()`: fast summary statistics for non-null values.
 
 #### UDF
 
