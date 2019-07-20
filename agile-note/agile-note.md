@@ -68,7 +68,7 @@ Scrum is centered around continuous improvement, which is a core principle of ag
   - Closely partner with the business and the team to ensure everyone understands the work items in the product backlog.
   - Give the team clear guidance on which features to deliver next.
   - Decide when to ship the product with a predisposition towards more frequent delivery.
-  - **It is important that the product owner be an individual.**
+  - **It is important that the product owner is an individual.**
 - Scrum master
   - Coach teams, product owners, and the business on the scrum process.
   - As the facilitator-in-chief, he/she schedules the needed resources (both human and logistical) for scrum ceremonies.
