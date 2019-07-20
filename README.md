@@ -65,7 +65,6 @@
 
 ---
 
-- [Agile](https://github.com/lizhanmit/learning-notes/blob/master/agile-note/agile-note.md)
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [CI CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
 - [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
@@ -76,6 +75,13 @@
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Scala](https://github.com/lizhanmit/scala-tutorial)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
+
+---
+
+## Non Tech
+
+- [Agile](https://github.com/lizhanmit/learning-notes/blob/master/agile-note/agile-note.md)
+- [OKR](https://github.com/lizhanmit/learning-notes/blob/master/okr-note/okr-note.md)
 
 ---
 
