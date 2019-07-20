@@ -162,6 +162,35 @@ Rebase is used to reconstruct the branch commit history, making it look pretty.
 7. Check commit history again. Looks good.
 8. Push local to remote again.
 
+
+### Tag
+
+Each tag is bound with a commit. If this commit exists in multiple branches, you can see this tag in all of them.
+
+1. Check out the branch that you want to tag.
+2. Tag the HEAD. `git tag <tag_name>`, e.g. `git tag v1.0`.
+3. Delete a local tag. `git tag -d v1.0`.
+4. Push a tag to remote. `git push origin <tag_name>`.
+5. Push all tags to remote. `git push origin --tags`.
+6. Delete a remote tag. First use step 3 to delete locally. Then `git push origin :refs/tags/<tag_name>`.
+
+- Tag with message. `git tag -a <tag_name> -m "<message>"`.
+- Tag a specific commit. `git tag <tag_name> <commit_id>`.
+- Check tags. `git tag`.
+- Check tag info. `git show <tag_name>`.
+
+---
+
+## GitHub
+
+If you participate an open source project, and you want to do contribution, steps:
+
+1. Fork the project to your own repo.
+2. Clone the project from your own repo. (**NOTE: not from the original repo.**)
+3. Fix bugs or add new features.
+4. Push to your own remote repo.
+5. Raise a pull request to the original repo. Then wait for the project owner's reply (accept or not).
+
 ---
 
 ## Tips
@@ -170,6 +199,8 @@ Create .gitignore file in a folder on Windows:
 
 1. Right click in the folder -> Git Bash Here
 2. In command line, type `touch .gitignore`. Then the file is create in the folder.
+
+[A collection of useful .gitignore templates](https://github.com/github/gitignore)
 
 ---
 
