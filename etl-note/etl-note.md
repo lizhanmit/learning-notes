@@ -2,7 +2,7 @@
 
 [TOC]
 
-Tutorial: [Microsoft: DAT217xImplementing ETL with SQL Server Integration Services](https://courses.edx.org/courses/course-v1:Microsoft+DAT217x+2T2018/course/)
+Tutorial: [Microsoft: DAT217xImplementing ETL with SQL Server Integration Services](https://courses.edx.org/courses/course-v1:Microsoft+DAT217x+2T2018/course/)
 
 Download [code](https://github.com/MicrosoftLearning/Implementing-ETL).
 
@@ -384,7 +384,7 @@ Connection types:
 - OLE DB connection manager 
   - more generic
   - most versatile and easy to use
-  - but not as fast as an ADO.NET connection manager in some cases
+  - but not as fast as an ADO.NET connection manager in some cases
 - ADO.NET  connection manager
   - good for connecting Microsoft Technology like SQL Server 
 
@@ -418,7 +418,7 @@ The Execute SQL Tasks can be used for the following:
 
 **Note:** If you use stored procedures for Execute SQL Tasks, when configuring it, make sure set "SQL Statement" as the name of the stored procedure only without ";" or spaces, and set "IsQueryStoredProcedure" as "True". Otherwise, there will be errors. 
 
-#### Reset the Database to a Preload State  
+#### Reset the Database to a Preload State  
 
 Two methods:
 
@@ -448,7 +448,7 @@ Connection Manager Page -> Data access modes:
 
 - OLE DB destination: most commonly used. 
 - ADO.NET destination: better performance than OLE DB destinations. 
-- SQL Server destination: best performance for Microsoft SQL Server database. When using this option, be sure to transform all of the data types appropriately, to avoid incurring data type conversion errors. 
+- SQL Server destination: best performance for Microsoft SQL Server database. When using this option, be sure to transform all of the data types appropriately, to avoid incurring data type conversion errors. 
 
 Connection Manager Page -> Data access modes:
 
@@ -517,7 +517,7 @@ Steps:
 
 ---
 
- ## SQL Knowledge Refresher 
+## SQL Knowledge Refresher 
 
 Making data types and character lengths more consistent can assist other developers using this code.
 
@@ -689,70 +689,6 @@ Why you should use views and stored procedures?
 ### Backing-up or Restoring a Database with SQL Code
 
 ![backing-up-or-restoring-a-database-with-sql-code.png](img/backing-up-or-restoring-a-database-with-sql-code.png)
-
----
-
-### Data Warehouse 
-
-A data warehouse is a subject-oriented, integrated, time-variant, and nonvolatile collection of data in support of management's decision-making process.  
-
-Data warehouse (DWH) is not loaded every time when new data is added into transaction database. 
-
-![data-warehouse-architecture.png](img/data-warehouse-architecture.png)
-
-#### Surrogate Key
-
-Advantages:
-
-- Natural key may be long, and not suitable for Indexing. 
-- A single Integer surrogate key is able to save a substantial amount of storage space.
-- Improve join performance, since joining two Integer columns works faster. 
-- Fastening data retrieval and lookup in the ETL performance.
-
-Disadvantages:
-
-- Over usage of SKs lead to the problem of disassociation. 
-- The generation and attachment of SK creates unnecessary ETL burden.
-
-It is a **best practice** to create new **artificial surrogate key** values in the data warehouse tables, in addition to the original ID columns used to connect tables in the source database. 
-
-![a-typical-set-of-fact-and-dimension-tables.png](img/a-typical-set-of-fact-and-dimension-tables.png)
-
-#### OLTP vs. OLAP
-
-**OLTP**
-
-- OLTP (Online Transaction Processing) is where information systems facilitate and manage transaction-oriented applications, typically for data entry and retrieval transaction processing rather than for the purpose of business intelligence or reporting.  
-- In OLTP database there is detailed and current data, and schema used to store transactional databases is the entity model (usually 3NF).
-
-**OLAP**
-
-- OLAP (Online Analytical Processing) is a technology that organizes large business databases and supports complex analysis. It can be used to perform ad hoc multi-dimensional analytical queries without negatively affecting transactional systems. 
-- OLAP is characterized by relatively low volume of transactions. Queries are often very complex and involve aggregations. 
-- Consist of three basic analytical operations: 
-  - Consolidation (**roll-up**) - aggregation of data that can be accumulated and computed in one or more dimensions. For example, all sales offices are rolled up to the sales department or sales division to anticipate sales trends.
-  - **Drill-down** - navigate through the details. For instance, users can view the sales by individual products that make up a region's sales. 
-  - **Slicing and dicing** - users can take out (slicing) a specific set of data of the OLAP cube and view (dicing) the slices from different viewpoints.
-- Core of OLAP: **multidimensional** cube. 
-- View selection problem: The problem of deciding which aggregations (views) to calculate. 
-  - Because usually there are many aggregations that can be calculated, often only a predetermined number are fully calculated; the remainder are solved on demand. 
-  - The objective of view selection is typically to minimize the average time to answer OLAP queries. 
-
-![oltp-vs-olap.png](img/oltp-vs-olap.png)
-
-#### Data Mart 
-
-Small version of data warehouse which deals with a single subject, focuses on one area.  
-
-![data-warehouse-vs-data-mart.png](img/data-warehouse-vs-data-mart.png)
-
-![types-of-data-mart.png](img/types-of-data-mart.png)
-
-#### Snowflake vs. Star Schema
-
-The snowflake schema is similar to the star schema. However, in the snowflake schema, dimensions are normalized into multiple related tables, whereas the star schema's dimensions are denormalized with each dimension represented by a single table. 
-
-![snowflake-vs-star-schema.png](img/snowflake-vs-star-schema.png)
 
 ---
 
