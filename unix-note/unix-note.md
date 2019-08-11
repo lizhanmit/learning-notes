@@ -1,5 +1,24 @@
 # Unix Note
 
+## User Roles
+
+Users' files are kept separate.
+
+Two types of users: 
+
+- normal user: modify only own files; cannot make system changes.
+- superuser (root)
+
+Swith between users: `su <user_name>`
+
+Normal users can be granted temporarily superuser's privileges through `sudo <command>`. Then give up privileges through `sudo -k`.
+
+Fully switch to root user: `su -s`
+
+Switch back to normal user: `exit`
+
+---
+
 ## apt (advanced package tool)
 
 Make sure updated versions of software packages are available:`sudo apt-get update`. **Run this command before installing any package.**
@@ -11,6 +30,8 @@ Uninstall a package while keeping config files: `sudo apt-get remove <packagenam
 Uninstall a package without keeping config files: `sudo apt-get remove --purge <packagename>`
 
 Search a package: `apt-cache search <packagename>`
+
+Install git software package: `sudo apt install git`
 
 ---
 
@@ -55,6 +76,35 @@ To create a script, the **shebang** line should be put firstly in the script fil
 **Make the script executable**: `chmod +x <filename>.sh`
 
 Execute the script which is in the current directory: `./<filename>.sh`
+
+Changes user password: `passwd`
+
+Print all environment variables: `printenv`
+
+Print a specific environment variable: `printenv <env_variable_name>`
+
+Displays all system processes: `top`. Use **Ctrl + C** to exit. 
+
+Lists logged-in users: `who`
+
+Upgrade pip3: `pip3 install --upgrade pip`
+
+When `cd`ing a path, if the path contains "space", use `\` to escape it, e.g. `cd my\ path`.
+
+`man`: open manual pages.
+
+`man <command>`: open doc for the specific command.
+
+`apropos "<command_description>"` find the command with this description.
+
+### Shortcuts
+
+- `Ctrl + a`: move curse to the beginning of command line.
+- `Ctrl + e`: move curse to the end of command line.
+- `Ctrl + u`: crop command before the curse.
+- `Ctrl + k`: crop command after the curse.
+- `Ctrl + y`: paste the cropped command.
+- `Ctrl + r`: search command history.
 
 ### Scalar Variables 
 
@@ -410,17 +460,11 @@ Remove the definition of a function from the shell: `unset .f function_name`
 
 ---
 
-### Manpage Help
-
-Get help documentation of a command: `man <command>`
-
----
-
 ## File Management
 
 All data in Unix is organized into files.
 
-### Metacharacters
+### Wildcard
 
 `*`: 0 or more characters 
 
@@ -442,6 +486,10 @@ Create an empty file:
 List all files including hidden files: `ls -a`
 
 List all files (including hidden files) in long listing format: `ls -al`
+
+List files with human readable size: `ls -h`
+
+Find files and folders with specific name: `find <dir> -name "<target_name>"`
 
 When using `cat` to see the content of a file, display line numbers: `cat -b filename`
 
@@ -494,9 +542,13 @@ Display the content of a compressed file: `zcat filename`
 
 ![linux-file-structure.png](img/linux-file-structure.png)
 
+Go to home folder: `cd`
+
 Go in your last directory: `cd -`
 
 List files in a directory: `ls dirname`
+
+List files in a directory and sub-directories: `ls -R dirname` ("-R" stands for Recursive)
 
 Create multiple directories: `mkdir dirname1 dirname2 dirname3` 
 
@@ -509,6 +561,10 @@ Delete a non-empty directory: `rm -R dirname`
 ---
 
 ## File Permission 
+
+![file-permission-explanation.jpg](img/file-permission-explanation.jpg)
+
+Default permission of a new file: `644` or `rw-r--r--`.
 
 ### Changing Permissions  
 
@@ -527,11 +583,9 @@ Example
 - `o`: others 
 - `u`: owner 
 - `g`: group  
-
-+ `+`: add permission  
-
+- `a`: all of the above
+- `+`: add permission  
 - `-`: remove permission  
-
 - `=`: set permission  
 
 Example 
@@ -658,22 +712,6 @@ Get information about a specific user available on the local machine: `finger <u
 Check all the logged-in users on the remote machine: `finger @<remote_host_name>`
 
 Get the information about a specific user available on the remote machine: `finger <username>@<remote_host_name>`
-
----
-
-## Misc 
-
-Changes user password: `passwd`
-
-Print all environment variables: `printenv`
-
-Print a specific environment variable: `printenv <env_variable_name>`
-
-Displays all system processes: `top`. Use **Ctrl + C** to exit. 
-
-Lists logged-in users: `who`
-
-Upgrade pip3: `pip3 install --upgrade pip`
 
 ---
 
