@@ -21,9 +21,11 @@ Switch back to normal user: `exit`
 
 ## apt (advanced package tool)
 
-Make sure updated versions of software packages are available:`sudo apt-get update`. **Run this command before installing any package.**
+Make sure updated versions of software packages are available:`sudo apt-get update`. **Run this command before installing or upgrading any package.**
 
 Install a new package: `sudo apt-get install <packagename>`
+
+Upgrade all packages: `sudo apt upgrade`
 
 Uninstall a package while keeping config files: `sudo apt-get remove <packagename>`
 
@@ -35,16 +37,15 @@ Install git software package: `sudo apt install git`
 
 ---
 
-## vi
+## Text Editors
+
+### vi
 
 Create a file or open a file: `vi <filename>`
 
 - Enter into insert mode: press the key **i**.
-
 - Come out of insert mode: press the key **esc**.
-
 - Save the file and quit: Press two keys **Shift + ZZ** or `:wq`
-
 - Save the file: `:w`
 - Quit vi: `:q`
 - Quit vi without saving: `:q!`
@@ -56,11 +57,18 @@ Create a file or open a file: `vi <filename>`
 - Switches the case of the character under the cursor: `~`
 - Find a string: `/`. Find next: `n`
 - Replace an item in the current line: `:s/<replace_target>/<substitute>`
-- Replace all items in the current line: `:s/<replace_target>/<substitute>/g` (**g** stands for globally)
+- Replace all items in the current line: `:s/<replace_target>/<substitute>/g` (**g** stands for **globally**)
 - Do not know which mode you are in: press key **esc** twice.
 - Run commands in vi: `:! <command>`
+- Open a file in read-only mode: `vi -R <filename>`
 
-Open a file in read-only mode: `vi -R <filename>`
+### vim
+
+A improved version of vi.
+
+### nano
+
+A lightweight version of vi.
 
 ---
 
@@ -377,11 +385,15 @@ Special characters could be quoted by preceding it with a backslash `\` or betwe
 
 Most special characters between **double quotes** `" "` lose their special meaning with some exceptions.
 
-### Input/Output Redirections
+### Input/Output Redirection
 
 Use `>` to redirect standard output into a file. (replace content)
 
 Example:`echo "test" > test.txt` Output "test" to test.txt file. 
+
+Redirect stdout: `<command> 1> <file_name>`
+
+Redirect stderr: `<command> 2> <file_name>`
 
 Use `>>` to append standard output in a file. 
 
@@ -483,15 +495,41 @@ Create an empty file:
 - `touch filename`
 - `vi filename`
 
+#### ls
+
 List all files including hidden files: `ls -a`
 
 List all files (including hidden files) in long listing format: `ls -al`
 
 List files with human readable size: `ls -h`
 
+#### find 
+
 Find files and folders with specific name: `find <dir> -name "<target_name>"`
 
-When using `cat` to see the content of a file, display line numbers: `cat -b filename`
+#### Display File Content 
+
+When using `cat` to see the content of a file, display line numbers: `cat -b <file_name>` or `cat -n <file_name>`
+
+Display the first 10 lines of a file: `head <file_name>`
+
+Display the first x lines of a file: `head -nx <file_name>`
+
+Display the last 10 lines of a file: `tail <file_name>`
+
+Display the last x lines of a file: `tail -nx <file_name>`
+
+Display content of a file with pagination: `less <file_name>`
+ 
+- Press `f` to go forward.
+- Press `b` to go backward.
+- Press "enter" to see the next line.
+- Press "space" to see the next page.
+- Press `q` to quit.
+
+#### Word Count 
+
+Explanation of output of `wc`: number_of_lines number_of_words number_of_file_size
 
 Count the total number of lines, words, and size in a file: `wc filename`
 
@@ -505,7 +543,11 @@ Count words in multiple files: `wc filename1 filename2 filename3`
 
 Copy a file: `cp source_file destination_file`
 
+#### Rename
+
 Rename a file: `mv old_file new_file`
+
+#### Delete
 
 Delete a file: `rm filename`
 
@@ -513,30 +555,41 @@ Delete multiple files: `rm filename1 filename2 filename3`
 
 Delete a file with prompt: `rm -i filename`
 
+#### Comparison
+
 Compare two files: `cmp filename1 filename2`
 
 Find differences between two files: `diff filename1 filename2`
 
-`tar `
+### Archive
 
-- `-c`: package without compression
+`tar ` 
+
+- `-c`: package without compression ("c" stands for "create")
 - `-x`: extract  
 - `-z`: compress
-- `-f`: specify the package name
 
-Compress a **.gz** file using gzip: `gzip filename`
+`.tar` format is just a package without compression.
+
+Compress a **.gz** file using gzip: `gzip filename` (the original file will not be kept)
 
 Uncompress a **.gz** file using gunzip: `gunzip filename`
 
 Package a **.tar** file: `tar -cvf packagename filename`
 
-Unpackage a **.tar** file: `tar -xvf filename`
+Unpackage a **.tar** file: `tar -xvf packagename`
 
 Compress a **.tar.gz** file: `tar -zcvf packagename filename`
 
-Uncompress a **.tar.gz** file: `tar -zxvf filename`
+Uncompress a **.tar.gz** file: `tar -zxvf packagename`
+
+Compress a **.zip** file: `zip -r packagename foldername` (does not work without `-r`)
+
+Uncompress a **.zip** file: `unzip packagename`
 
 Display the content of a compressed file: `zcat filename`
+
+---
 
 ## Directory Management
 
@@ -557,6 +610,75 @@ Create parent directories: `mkdir -p /parentdir/childdir`
 Delete an empty directory: `rmdir dirname` 
 
 Delete a non-empty directory: `rm -R dirname`
+
+Delete a folder which contains subfolders and files without prompt: `rm -rf <folder_name>` 
+
+---
+
+## Link
+
+### Hard Link
+
+- Points to data on the disk (inode).
+- Create a hard link: `ln <original_file_name> <link_name>`
+
+### Soft link (symlink, symbolic link)
+
+- Points to a file on the disk (relative path).
+- If the original file moved, the link breaks.
+- Create a soft link: `ln -s <original_file_name> <link_name>`
+
+---
+
+## Pipes and Filters
+
+Pipes: Take the output of one command and send it to another. 
+
+Commands linked by pipe signs have order.
+
+### grep
+
+`grep`: **globally** search for a **regular expression** and **print** all lines containing it.
+
+`grep <pattern> <file_name>`: display lines in "file_name" that contain "pattern".
+
+`grep` is case sensitive. For insensitive, use `grep -i <pattern> <file_name>`.
+
+`grep -v <pattern> <file_name>`: display lines in "file_name" that do not contain "pattern".
+
+`grep -E <regex> <file_name>`: display lines in "file_name" that match "regex".
+
+Example
+
+`cat test.txt | grep "hi"`: print all lines containing "hi" in test.txt file. 
+
+`ls -l | grep "test"`: list all files or directories that contain "test". 
+
+### sort 
+
+`sort`: arranges lines of text alphabetically or numerically. 
+
+![sort-command-options.png](img/sort-command-options.png)
+
+Example
+
+Sorts all files in the current directory modified in August by the order of size:
+
+```shell
+$ls -l | grep "Aug" | sort +4n
+-rw-rw-r--  1 carol doc      1605 Aug 23 07:35 macros
+-rw-rw-r--  1 john  doc      2488 Aug 15 10:51 intro
+-rw-rw-rw-  1 john  doc      8515 Aug  6 15:30 ch07
+-rw-rw-rw-  1 john  doc     11008 Aug  6 14:10 ch02
+```
+
+### rev
+
+Print text in reverse sequence.
+
+### tac
+
+`tac <file_name>`: Print file content in reverse line by line.
 
 ---
 
@@ -602,6 +724,10 @@ Change the group of filename to the username: `chgrp groupname filename`
 
 ## Environment
 
+Print out environment variables: `env`
+
+Find location of a command: `which <command>`
+
 Set an environment variable: `ENVVAR="test"` (**Note**: do not contain space.)
 
 Access an environment variable: `echo $ENVVAR `
@@ -617,38 +743,6 @@ Set command prompt to show user name, machine name and working directory: `PS1="
 Check PATH variable: `echo $PATH`
 
 Modify PATH variable: `export PATH=$PATH:<new_path>`
-
----
-
-## Pipes and Filters
-
-#### grep
-
-`grep`: **globally** search for a **regular expression** and **print** all lines containing it.
-
-Example
-
-`cat test.txt | grep "hi"`: print all lines containing "hi" in test.txt file. 
-
-`ls -l | grep "test"`: list all files or directories that contain "test". 
-
-#### sort 
-
-`sort`: arranges lines of text alphabetically or numerically. 
-
-![sort-command-options.png](img/sort-command-options.png)
-
-Example
-
-Sorts all files in the current directory modified in August by the order of size:
-
-```shell
-$ls -l | grep "Aug" | sort +4n
--rw-rw-r--  1 carol doc      1605 Aug 23 07:35 macros
--rw-rw-r--  1 john  doc      2488 Aug 15 10:51 intro
--rw-rw-rw-  1 john  doc      8515 Aug  6 15:30 ch07
--rw-rw-rw-  1 john  doc     11008 Aug  6 14:10 ch02
-```
 
 ---
 
@@ -715,7 +809,28 @@ Get the information about a specific user available on the remote machine: `fing
 
 ---
 
+## Package Managers
+
+![package-managers.jpg](img/package-managers.jpg)
+
+---
+
 ## Ubuntu 
 
 Display hidden files in File Explorer: Ctrl + h. 
 
+---
+
+## Exercise
+
+Challenge objectices: 
+
+Given a auth.log file, 
+
+1. Look for unauthorized connection attempts. 
+2. Extract the username an attacker tried to use.
+3. Create a file containing these names (and make it organized).
+
+Solution: 
+
+`cat auth.log | grep "input_userauth_request" | awk '{print $9}' | sort -u > users.txt`
