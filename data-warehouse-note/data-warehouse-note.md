@@ -59,6 +59,22 @@ It is a **best practice** to create new **artificial surrogate key** values in t
 
 ![a-typical-set-of-fact-and-dimension-tables.png](img/a-typical-set-of-fact-and-dimension-tables.png)
 
+### Fact Tables VS Dimension Tables
+
+Fact tables can become extremely large. Often have over 100 columns, sometimes several hundred, trillions of rows and petabytes of data.
+
+Dimension tables are usually much smaller (millions of rows).
+
+### Schemas
+
+#### Snowflake vs. Star Schema
+
+The snowflake schema is similar to the star schema. However, in the snowflake schema, dimensions are normalized into multiple related tables, whereas the star schema's dimensions are denormalized with each dimension represented by a single table. 
+
+**Star schemas are often preferred** because they are simpler for analysts to work with.
+
+![snowflake-vs-star-schema.png](img/snowflake-vs-star-schema.png)
+
 ---
 
 ## Architecture
@@ -105,10 +121,3 @@ The implementation cycle of a data mart is measured in short periods of time, i.
 
 ---
 
-## Schemas
-
-### Snowflake vs. Star Schema
-
-The snowflake schema is similar to the star schema. However, in the snowflake schema, dimensions are normalized into multiple related tables, whereas the star schema's dimensions are denormalized with each dimension represented by a single table. 
-
-![snowflake-vs-star-schema.png](img/snowflake-vs-star-schema.png)
