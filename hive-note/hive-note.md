@@ -152,6 +152,8 @@ Which one to use?
 - Not many differences in general. So, it depends on personal preference.
 - Practical experience: If all processes involve Hive, create managed tables. Otherwise, use external tables.
 
+How to check a table is managed or external: `desc formatted <table_name>`. See "table type" in output.
+
 ---
 
 ### Traditional DB VS Hive
