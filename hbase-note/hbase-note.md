@@ -186,7 +186,7 @@ Stores the actual cells on the disk.
 
 ## Operations
 
-**What makes HBase faster fir search while reading and writing? **
+**What makes HBase faster for search while reading and writing?**
 
 - The writes are placed sequentially on the disk. Therefore, the movement of the disk’s read-write head is very less.
 - The HFile indexes are loaded in memory whenever an HFile is opened.
