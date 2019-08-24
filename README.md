@@ -6,7 +6,9 @@
 
 - [Apache Airflow](https://github.com/lizhanmit/learning-notes/blob/master/apache-airflow-note/apache-airflow-note.md)
 - [Architecting Big Data Applications](https://github.com/lizhanmit/learning-notes/blob/master/architecting-big-data-applications-note/architecting-big-data-applications-note.md)
+- [Big Data Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/big-data-algorithms-note/big-data-algorithms-note.md)
 - [Big Data Environment Setup](https://github.com/lizhanmit/learning-notes/blob/master/big-data-environment-setup-note/big-data-environment-setup-note.md)
+- [Data Warehouse](https://github.com/lizhanmit/learning-notes/blob/master/data-warehouse-note/data-warehouse-note.md)
 - [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
 - [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
 - [Flume](https://github.com/lizhanmit/learning-notes/blob/master/flume-note/flume-note.md)
@@ -70,6 +72,7 @@
 - [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
+- [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
 - [Git](https://github.com/lizhanmit/learning-notes/blob/master/git-note/git-note.md)
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
