@@ -100,6 +100,12 @@ Push other branches to remote origin repo. `git push origin <branch_name>`. Then
 
 Clone dev branch from remote to local machine. `git checkout -b dev origin/dev`.
 
+Compare a local branch with its corresponding remote branch:
+
+1. `git branch -a`: list all branches including remote ones.
+2. `git fetch`
+3. `git diff <local_branch_name> <remote>/<remote_branch_name>`, e.g. `git diff master origin/master`: compare local master and remote master branch.
+
 ### Branch Management 
 
 1. Create a new branch and switch to it. `git checkout -b <branch_name>`. Same as: 
@@ -112,9 +118,10 @@ Clone dev branch from remote to local machine. `git checkout -b dev origin/dev`.
 2. Check what the current branch is. `git branch`.
 3. Develop. Add and commit.
 4. Switch back to master branch. `git checkout master`.
-5. Merge the new branch to master. `git merge <branch_name>`.
-6. Delete the new branch. `git branch -d <branch_name_to_delete>`.
-7. Check graphic and brief git log. `git log --graph --pretty=oneline --abbrev-commit`.
+5. Compare two branches: `git diff <branch_1_name> <branch_2_name>`. Only show file name without content, add `--name-only`.
+6. Merge the new branch to master. `git merge <branch_name>`.
+7. Delete the new branch. `git branch -d <branch_name_to_delete>`.
+8. Check graphic and brief git log. `git log --graph --pretty=oneline --abbrev-commit`.
 
 By default, Git uses "fast forward" mode to merge different branches. But you will lose branch info after deleting it in this way. You can forbid "fast forward" mode by `git merge --no-ff -m "<message>" <branch_name_to_merge>`.
 
