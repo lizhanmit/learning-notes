@@ -375,10 +375,14 @@ For instance,
 - `<rdd_var>.cache()` for default storage level - `MEMORY_ONLY`, which stores the
 rdd as unserialized Java objects.
 - Or `<rdd_var>.persist()` with a specified StorageLevel parameter.
+- When Spark estimates that a partition will not fit in memory, it simply will not store it. 
+
+#### Remove Cache
+
 - Spark removes cached data automatically in a least-recently-used (LRU) fashion.
 - Or use `<rdd_var>.unpersist()` if you want manually.
 
-When to cache data:
+#### When to Cache Data
 
 - When doing data validation and cleansing.
 - When querying a small “hot” dataset.
@@ -1700,6 +1704,7 @@ distinctElementsRDD.collect
 - `myDF.groupBy(myDF("someFieldName")).mean()`
 - `myDF.rdd().map(<mapperFunction>)`
 - `df.describe().show()`: fast summary statistics for non-null values.
+- `df.where("<column_name> = true")` is equivalent to `df.filter($"<column_name>" === true)`
 
 #### UDF
 
@@ -1738,6 +1743,8 @@ When coding in IDE, you will be choosing to create a Scala Object or a Scala App
 #### Read CSV File as Dataset
 
 When reading a CSV file as a Dataset with a case class, make sure headers of the CSV file matches fields of the case class. If they are not the same, use code to modify the header after converting the CSV file to DataFrame, e.g. removing spaces and lowering case the first character, and then convert to Dataset.   
+By default, every column in a CSV file is treated as a string type, and the column
+names default to `_c0`, `_c1`, `_c2`, … 
 
 ---
 
