@@ -1715,7 +1715,7 @@ val myNewDF = myDF.withColumn("newColumnName", myUDF('columnName'))
 
 ---
 
-### `import spark.implicts._`
+### `import spark.implicits._`
 
 When to use:
 
@@ -1795,8 +1795,8 @@ Take Amazon EMR (Elastic MapReduce) as an example.
 - **DO NOT** recommend using `toDF` on `Seq` type for production, because it does not play well with null types.
     - E.g. `val myDF = Seq(("Hello", 2, 1L)).toDF("col1", "col2", "col3")`.
 - Spark’s TimestampType class supports only second-level precision. If you are going to be working with milliseconds, use `LongType`.
-- Recommend parsing dates, timestamps and nulls explicitly instead of relying on implicit conversions.
-- When performing grouping sets, if you do not filter out null values, you will get incorrect results. This applies to cubes, rollups, and grouping sets.
+- **Recommend** parsing dates, timestamps and nulls explicitly instead of relying on implicit conversions.
+- **When performing grouping sets, if you do not filter out null values, you will get incorrect results.** This applies to cubes, rollups, and grouping sets.
 
 #### Count
 
