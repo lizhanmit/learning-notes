@@ -1068,7 +1068,7 @@ What to test:
 
 - Input data resilience
 - Business logic resilience and evolution
-  - Do not write a bunch of "Spark Unit Tests" that just test Spark’s functionality; instead test complex business pipeline.
+  - **DO NOT** write a bunch of "Spark Unit Tests" that just test Spark’s functionality; instead test complex business pipeline.
 - Resilience in output and atomicity
   - Most of Spark pipelines are probably feeding other Spark pipelines.
   - Ensure that downstream understands the "state" of the output data.
@@ -1079,14 +1079,19 @@ What to test:
 How:
 
 - Managing SparkSessions
-  - Use unit test framework (e.g. JUnit or ScalaTes).
-  - Initialize the SparkSession only once and pass it around to relevant functions and classes at runtime. 
+  - Use unit test framework (e.g. JUnit or ScalaTest).
+  - **Initialize the SparkSession only once** and pass it around to relevant functions and classes at runtime. 
   - Create and clean up a SparkSession for each test.
 - Connecting to data sources
   - Make sure testing code does not connect to production data sources.
   - Have all business logic functions take DataFrames or Datasets as input
 instead of directly connecting to various sources.
   - Load from small text file and then register some dummy datasets as table names.
+
+Testing libraries: 
+
+- [spark-fast-tests](https://github.com/MrPowers/spark-fast-tests)
+- [spark-testing-base](https://github.com/holdenk/spark-testing-base)
 
 ### Configuring
 
@@ -1100,19 +1105,20 @@ Three ways:
 
 They define basic application metadata and some execution characteristics.
 
-Can set through: 
+You can set through (precedence from high to low): 
 
-- "conf/spark-defaults.conf" file
-- from `spark-submit`
-- when creating the Spark application, SparkConf, for instance: 
+- when creating the Spark application, `SparkConf`, for instance: 
 
 ```scala
 val spark = SparkSession.builder
-.master(local[*]")
+.master("local[*]")
 .appName("my app")
 .config("<property>", "<value>")
 .getOrCreate()
 ```
+
+- from `spark-submit` or `spark-shell`
+- in "conf/spark-defaults.conf" file
 
 You can ensure that you have correctly set application properties by checking the application’s web UI on port 4040 of the driver on the "Environment" tab.
 
@@ -1792,7 +1798,7 @@ Take Amazon EMR (Elastic MapReduce) as an example.
 
 ### Tips
 
-- **DO NOT** recommend using `toDF` on `Seq` type for production, because it does not play well with null types.
+- **DO NOT** recommend using `toDF` on `Seq` type for production, because it allows columns to be null. If you do not want this, there will be problems. 
     - E.g. `val myDF = Seq(("Hello", 2, 1L)).toDF("col1", "col2", "col3")`.
 - Spark’s TimestampType class supports only second-level precision. If you are going to be working with milliseconds, use `LongType`.
 - **Recommend** parsing dates, timestamps and nulls explicitly instead of relying on implicit conversions.
