@@ -14,8 +14,6 @@ A Stage gets broken into multiple Tasks that are distributed to nodes on the clu
 
 ![spark-architecture.png](img/spark-architecture.png)
 
-![img/spark-hdfs-architecture.png](img/spark-hdfs-architecture.png)
-
 ![spark-architecture-2.png](img/spark-architecture-2.png)
 
 There is a **BlockManager** storage module in **Executor**, which uses both RAM and disk as storage devices in order to reduce IO overhead effectively.
@@ -89,10 +87,10 @@ launch Spark executor processes across the cluster.
 
 - A RDD (Resilient Distributed Dataset) is essentially a **read-only** immutable, partitioned collection of records.
 - Each record is just a Scala, Java or Python object.
-- Each RDD can be divided into multiple partitions. Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
-- Virtually everything in Spark is built on top of RDDS.
+- **Each RDD can be divided into multiple partitions.** Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
+- **Virtually everything in Spark is built on top of RDDs.**
 - RDD API is similar to the Dataset, except that RDDs are not stored in, or manipulated with, the structured data engine.
-- One thing that you might use RDDs for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
+- **One thing that you might use RDDs** for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
 - Read a text file line by line: `spark.sparkContext.textFile("<directory>")`. Each line corresponds to each record in a RDD. 
 - Read text files, each text file becomes a record: `spark.sparkContext.wholeTextFiles("<directory>")`.
     - The 1st object is the name of the file.
@@ -103,7 +101,7 @@ There are lots of subclasses of RDD. You will likely only create two types:
 - generic RDD type
 - key-value RDD 
 
-When to use RDDs: when you need fine-grained control over the physical distribution of data (custom partitioning of data).
+**When to use RDDs:** when you need fine-grained control over the physical distribution of data (custom partitioning of data).
 
 #### Printing Elements of an RDD
 
@@ -146,12 +144,15 @@ Optimize for dependencies:
 
 ### Partitioning
 
-If you often access a column when reading data, you can partition by it when writing the data for optimization. 
+**If you often access a column when reading data, you can partition by it when writing the data for optimization.**
 
 As you do this, you encode this column as a folder. When you read data later, it allows you to skip lots of data and only read in relevant data instead of having to scan the complete dataset. E.g. `<dataFrameName>.write.format("parquet").partitionBy("<columnName>").save("<filePath>")`.
 
 It is supported for all file-based data sources.
 
+Sometimes it is **advisable** to sort within each partition using `sortWithinPartitions` before another set of transformations.
+    - E.g. `spark.read.format("json").load("filePath").sortWithinPartitions("<columnName>")`.
+  
 If there is no partitioner, the partitioning is not based upon characteristic of data but distribution is random and uniformed across nodes.
 
 ```scala
@@ -172,7 +173,7 @@ Get partition number of a RDD:
 
 #### Downsides
 
-If you partition at too fine a granularity, it can result in many small files, and a great deal of overhead trying to list all the files in the storage system.
+If you partition at too fine a granularity, it can result in many small files (**small file problem**), and a great deal of overhead trying to list all the files in the storage system.
 
 #### Partitioning Rule
 
@@ -243,8 +244,7 @@ Used to deal with data skew (some keys have many, many more values than other ke
 - Bucketing create a certain number of files and organize your data into those "buckets".
 - Data with the same bucket ID will all be grouped together into one physical partition.
 - The data is pre-partitioned according to how you expect to use that data later on, which avoids shuffles later when you go to read the data.
-- E.g. `<dataFrameName>.write.format("parquet")
-.bucketBy(<numberBuckets>, "<columnNameToBucketBy>").saveAsTable("<bucketedFilesName>")`.
+- E.g. `<dataFrameName>.write.format("parquet").bucketBy(<numberBuckets>, "<columnNameToBucketBy>").saveAsTable("<bucketedFilesName>")`.
 - It is supported only for Spark-managed tables.
 
 ---
@@ -254,22 +254,22 @@ Used to deal with data skew (some keys have many, many more values than other ke
 #### Coalesce
 
 - Coalesce is fast in certain situations because it minimizes data movement.
-- No shuffle. Merge partitions on the same node into one partition.
+- **No shuffle.** Merge partitions on the same node into one partition.
 - Coalesce changes the number of nodes by moving data from some partitions to existing partitions. This algorithm obviously **cannot increase** the number of partitions.
   - For example, `numbersDf.rdd.partitions.size` is 4. Even if you use `numbersDf.coalesce(6)`, it is still 4 rather than 6.
-- Avoids a full data shuffle.
+- **Avoids a full data shuffle.**
 
 #### Repartition
 
 - Repartition can be used to either increase or decrease the number of partitions in a DataFrame.
-- Does a full data shuffle.
+- Does a **full data shuffle**.
 - If there is only a little amount of data but the number of partitions is big, there will be many empty partitions.
-- You should only repartition when the future number of partitions is greater than the current number of partitions or when you are looking to partition by a set of columns.
+- You should **only** repartition when the future number of partitions is greater than the current number of partitions or when you are looking to partition by a set of columns.
 - If you are going to be filtering by a certain column often, it can be worth repartitioning based on that column. E.g. `df.repartition(col("<columnName>"))`, or `df.repartition(<numberOfPartitions>, col("<columnName>"))`.
 
 #### Real World Example
 
-1. Suppose you have a data lake that contains 2 billion rows of data (1TB) split in 13,000 partitions.
+1. Suppose you have a data lake that contains 2 billion (2x10^9) rows of data (1TB) split in 13,000 partitions.
 2. You want to create a data puddle containing 2,000 rows of data for the purpose of development by random sampling of one millionth of the data lake.
 3. Write the data puddle out to S3 for easy access.
 
@@ -287,8 +287,8 @@ val goodPuddle = dataPuddle.repartition(4)
 goodPuddle.write.parquet("s3a://my_bucket/puddle/")
 ```
 
-6. **Why choosing 4 partitions here?** 13,000 partitions / 1,000,000 = 1 partition. Then `number_of_partitions = number_of_cpus_in_cluster * 4` (2, 3 or 4).
-7. **Why using repartition instead of coalesce here?** The data puddle is small. The repartition method returns equal sized text files, which are more efficient for downstream consumers.
+6. **Why choosing 4 partitions here?** 2x10^9 rows with 13,000 partitions. Thus, 2,000 rows with: 13,000 partitions / 1,000,000 ≈ 1 partition. Then `number_of_partitions = number_of_cpus_in_cluster * 4` (2, 3 or 4).
+7. **Why using repartition instead of coalesce here?** The data puddle is small, so a full data shuffle is not expensive. The repartition method returns equal sized text files, which are more efficient for downstream consumers.
 
 - **When filtering large DataFrames into smaller ones, you should almost always repartition the data.**
 - **If you are reducing the number of overall partitions, first try `coalesce`.**
@@ -404,7 +404,7 @@ Saving an RDD to disk.
 
 Future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source.
 
-Not available in DataFrame API. 
+**Not available in DataFrame API.** 
 
 ```scala
 spark.sparkContext.setCheckpointDir("/some/path/for/checkpointing")
@@ -595,8 +595,6 @@ Two ways to create a Dataset:
 - from Hadoop InputFormats (such as HDFS files).
 - by transforming other Datasets.
 
-RDDs can be converted to Datasets with `.toDF()`.
-
 ![when-to-use-datasets.png](img/when-to-use-datasets.png)
 
 #### Disadvantages
@@ -607,7 +605,7 @@ SQL expressions.
 
 #### `joinWith()`
 
-DatasetA `joinWith` DatasetB end up with two nested Datasets. Each column represents one Dataset. 
+DatasetA `joinWith` DatasetB ends up with two nested Datasets. Each column represents one Dataset. 
 
 ##### `join()` VS `joinWith()`
 
@@ -634,12 +632,15 @@ DataFrames can also join Datasets.
 
 #### RDD VS DataFrame VS Dataset
 
-![rdd-dataframe-dataset.png](img/rdd-dataframe-dataset.png)
+- For RDD, columns are accessed with position number: `rdd.filter(line => line.split(",")(1) == "Alice")`
+- For DataFrame, columns are accessed by column name: `df.filter(df("name") === "Alice")`
+- For Dataset, columns are accessed by object attribute: `ds.filter(obj => obj.name == "Alice")`
 
-- DataFrame maps to a collection of Row-type objects. 
-- Dataset maps to a collection of objects. 
-- DataFrames schema is inferred at **runtime**; but a Dataset can be inferred at **compile time**.
-  - faster detection of errors and better optimization
+DataFrame maps to a collection of Row-type objects. 
+
+Dataset maps to a collection of objects. 
+
+DataFrames schema is inferred at **runtime**; but a Dataset can be inferred at **compile time**, which implies faster detection of errors and better optimization.
 
 [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
 
@@ -1824,7 +1825,5 @@ Two things you can do with null values:
 
 #### Optimization
 
-- Sometimes it is advisable to sort within each partition using `sortWithinPartitions` before another set of transformations.
-    - E.g. `spark.read.format("json").load("filePath").sortWithinPartitions("<columnName>")`.
 - When reading a csv file as DataFrame, if you can know the schema ahead of time and use `StructType` rather than `option("inferSchema", "true")`, there will be a significant performance benefit when the data set is very large, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
 
