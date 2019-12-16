@@ -103,7 +103,9 @@ When `cd`ing a path, if the path contains "space", use `\` to escape it, e.g. `c
 
 `man <command>`: open doc for the specific command.
 
-`apropos "<command_description>"` find the command with this description.
+`apropos "<command_description>"`: find the command with this description.
+
+`whereis`: find the location of binary file, source code file and manual pages, e.g. `whereis ls`.
 
 ### Shortcuts
 
