@@ -697,7 +697,7 @@ Spark performs further optimizations at runtime, generating native Java bytecode
 - Schema-on-read
   - Infer schema automatically.
   - Inaccurate, precision issues.
-- Define schema manually through StructType and StructField
+- Define schema manually through `StructType` and `StructField`.
   - Use this in production especially for untyped sources like CSV and JSON files.
 
 #### Column
@@ -805,7 +805,7 @@ When writing, the destination directory is actually a folder with numerous files
 
 Advantages: 
 
-- Storage optimizations, columnar compression.
+- Storage optimizations, **columnar** compression.
 - When reading, it allows for reading individual columns instead of entire files.
 - Supports complex types (array, map, struct), which would fail with a CSV file.
 
@@ -813,7 +813,7 @@ Advantages:
 
 #### ORC
 
-A self-describing, type-aware columnar file format designed for Hadoop workloads.
+A self-describing, type-aware **columnar** file format designed for Hadoop workloads.
 
 - optimized for large streaming reads
 - finding required rows quickly
@@ -877,20 +877,20 @@ Using `SparkSession`, you can
 
 SparkContext focuses on more fine-grained control of Spark’s central abstractions.
 
-You should not need to explicitly initialize a SparkContext through `new SparkContext`, but use the following way:
+You should **not** need to explicitly initialize a SparkContext through `new SparkContext`, but use the following way:
 
 ```scala
 import org.apache.spark.SparkContext
 val sc = SparkContext.getOrCreate()
 ```
 
-**You should never need to use the SQLContext.**
+You should **rarely need to use the SparkContext.**
 
 #### SQLContext
 
 SQLContext focuses on the higher-level tools like Spark SQL.
 
-**You should rarely need to use the SparkContext.**
+You should **never need to use the SQLContext.**
 
 ---
 
