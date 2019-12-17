@@ -47,7 +47,9 @@ Using Kafka as a hub:
     - scanning products
 - When one system updates the log, other systems can read from that log to sync themselves.
 
-### Topic
+### Topic & Partition & Message
+
+![topic-partition-message.png](img/topic-partition-message.png)
 
 - Kafka splits a topic into partitions.
 - Each partition is an ordered immutable sequence of messages.
@@ -64,7 +66,7 @@ Different topics can have different configurations of the amount of partitions.
 
 If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer.
 
-Each server acts as a leader for some of its partitions and a follower for others so load is well balanced within the cluster.
+Each server acts as a leader for some of its partitions and a follower for others, so load is well balanced within the cluster.
 
 ### Broker
 
@@ -102,7 +104,7 @@ Flume is designed to stream messages to a sink such as HDFS or HBase.
 
 ## Hardware Recommendations
 
-It is not common to have Kafka running actively across multiple data centers due to latency and throughput issues.  
+It is **not** common to have Kafka running actively across multiple data centers due to latency and throughput issues.  
 
 Hardware recommendations for machines running Kafka.
 
@@ -133,7 +135,7 @@ Network
 
 ## Kafka Monitor
 
-Use Kafka Monitor to run long-running tests to monitor the Kafka cluster.
+Use Kafka Monitor to run **long-running tests** to monitor the Kafka cluster.
 
 ![kafka-monitor.png](img/kafka-monitor.png)
 
