@@ -1591,6 +1591,7 @@ You must call `Graph.partitionBy` before calling `Graph.groupEdges` because it r
 ## Features & Versions
 
 - Write Ahead Logs (WAL): introduced in Spark Streaming 1.2.
+- DataFrame was introduced in Spark 1.3.
 - Direct approach of Spark Streaming and Kafka integration: introduced in Spark 1.3.
 - `SparkSession` interface: introduced in Spark 2.0.
 - Dataset: introduced in Spark 1.6.
@@ -1708,7 +1709,7 @@ distinctElementsRDD.collect
 - `myDF.filter(myDF("someFieldName") > 200)`
 - `myDF.groupBy(myDF("someFieldName")).mean()`
 - `myDF.rdd().map(<mapperFunction>)`
-- `df.describe().show()`: fast summary statistics for non-null values.
+- `df.describe().show()`: **fast summary statistics for non-null values.**
 - `df.where("<column_name> = true")` is equivalent to `df.filter($"<column_name>" === true)`
 
 #### UDF
@@ -1724,7 +1725,6 @@ val myNewDF = myDF.withColumn("newColumnName", myUDF('columnName'))
 
 When to use:
 
-- when creating a Dataset.
 - when using `$<columnName>` to convert a string to a column.
 
 ---
@@ -1748,8 +1748,19 @@ When coding in IDE, you will be choosing to create a Scala Object or a Scala App
 #### Read CSV File as Dataset
 
 When reading a CSV file as a Dataset with a case class, make sure headers of the CSV file matches fields of the case class. If they are not the same, use code to modify the header after converting the CSV file to DataFrame, e.g. removing spaces and lowering case the first character, and then convert to Dataset.   
+
 By default, every column in a CSV file is treated as a string type, and the column
 names default to `_c0`, `_c1`, `_c2`, … 
+
+For instance, 
+
+```scala
+val df = spark.read.
+    .option("header", true)
+    .option("inferSchema", true)
+    .option("nullValue", "?")  // declares that "?" in the file represents a null value
+    .csv("/file/path")
+```
 
 ---
 
@@ -1764,7 +1775,7 @@ You can control Spark's behavior by specifying `SaveMode`:
 - `Append`
 - `Ignore`
 
-`df.write.mode(SaveMode.Ignore).parquet("file.parquet")`
+For instance, `df.write.mode(SaveMode.Ignore).parquet("file.parquet")`
 
 ---
 
