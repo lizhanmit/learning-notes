@@ -2,15 +2,22 @@
 
 Apache Kafka is publish-subscribe, high-throughput, distributed messaging system. 
 
----
+Kafka scales very well in a horizontal way without compromising speed and efficiency.
 
-## Application Scenarios
+Kafka is distributed, partitioned, replicated, and commit-log-based.
+
+Two directives or purposes of Kafka: 
+
+- Not block the producers (in order to deal with the back pressure).
+- Isolate producers and consumers. 
+
+Application scenarios:
 
 - messaging system
 - web analytics - clickstream
-- operational monitoring - e.g. manufacturing facility, sensor data
+- operational monitoring - e.g. manufacturing facility, sensor data.
 - log collection
-- stream processing - e.g. alerting abnormal usage when using credit card
+- stream processing - e.g. alerting abnormal usage when using credit card.
 
 ---
 
@@ -31,6 +38,23 @@ Using Kafka as a hub:
 ![kafka-architecture-2.png](img/kafka-architecture-2.png)
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
+
+Three types of Kafka clusters:
+
+- Single node–single broker
+- Single node–multiple broker
+- Multiple node–multiple broker
+
+Three ways to deliver messages:
+
+- Never redelivered: The messages may be lost.
+- May be redelivered: The messages are never lost. 
+- Delivered once: The message is delivered exactly once. There is zero loss of any message.
+
+The message log can be compacted in two ways:
+
+- Coarse-grained: Log compacted by time
+- Fine-grained: Log compacted by message
 
 ---
 
@@ -55,7 +79,7 @@ Using Kafka as a hub:
 - Each partition is an ordered immutable sequence of messages.
 - Messages are byte arrays of data with String, JSON, and Avro being the most common.
 - Messages are replicated across the cluster and persisted to disk.
-- Each message is assigned a unique sequential identifier or key called offset. Messages with the same key arrive at the same partition.
+- Each message is assigned a unique sequential identifier or key called **offset**. Messages with the same key arrive at the same partition.
 - Each message consists of a key, a value and a timestamp.
 - Kafka retains all messages for a configurable period of time.
 - Kafka's performance is effectively constant with respect to data size.
