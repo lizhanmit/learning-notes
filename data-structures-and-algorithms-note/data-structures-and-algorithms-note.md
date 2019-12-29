@@ -514,7 +514,7 @@ Asymptotic Notations:
 
 #### Big O Cheat Sheet
 
-![big-o-cheat-sheet.jpg](img/big-o-cheat-sheet.jpg)
+![big-o-cheat-sheet.png](img/big-o-cheat-sheet.png)
 
 #### Approaches to Develop Algorithms
 
