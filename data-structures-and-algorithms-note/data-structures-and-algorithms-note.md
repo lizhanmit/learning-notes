@@ -373,7 +373,7 @@ A tree is a minimally connected graph having no loops and circuits.
 
 Three types of traversal:
 
-- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. Prefer this one, as nodes can be printed in order for binary search tree.
+- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. **Prefer this one**, as nodes can be printed in order for binary search tree.
 
 ![tree-in-order-traversal.jpg](img/tree-in-order-traversal.jpg)
 
@@ -385,11 +385,11 @@ Three types of traversal:
 
 ![tree-post-order-traversal.jpg](img/tree-post-order-traversal.jpg)
 
-如何记忆：pre, in, post 是指root 的被访问顺序。
+How to remember："pre", "in", "post" represent the sequence of visiting root.
 
-- pre: 先root -> left -> right
-- in: left -> 中间root -> right
-- post: left -> right -> 最后root
+- pre: root -> left -> right
+- in: left -> root -> right
+- post: left -> right -> root
 
 #### Binary Tree
 
@@ -435,11 +435,7 @@ Why do we want trees to be balanced?
 
 A spanning tree is a subset of Graph G, which has all the vertices covered with minimum possible number of edges.
 
-A complete undirected graph can have maximum 
-$$
-n^{n-2}
-$$
-number of spanning trees, where n is the number of nodes.  
+A complete undirected graph can have maximum n^(n-2) number of spanning trees, where n is the number of nodes.  
 
 - Removing one edge from the spanning tree will make the graph disconnected, i.e. the spanning tree is **minimally connected**.
 - Adding one edge to the spanning tree will create a circuit or loop, i.e. the spanning tree is **maximally acyclic**.
@@ -468,11 +464,11 @@ Heap is a special case of balanced binary tree data structure where root-node ke
 
 The value of the parent node is greater than or equal to either of its children.
 
-**Max Heap Construction**
+Max Heap Construction:
 
 ![max-heap-constructure.gif](img/max-heap-constructure.gif)
 
-**Max Heap Deletion**
+Max Heap Deletion:
 
 ![max-heap-deletion.gif](img/max-heap-deletion.gif)
 
