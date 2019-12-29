@@ -88,8 +88,6 @@ The message log can be compacted in two ways:
 
 Different topics can have different configurations of the amount of partitions.
 
-If all the consumers subscribing to a topic belong to the same consumer group, each message is delivered to only one consumer.
-
 Each server acts as a leader for some of its partitions and a follower for others, so load is well balanced within the cluster.
 
 ### Broker
