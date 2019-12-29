@@ -69,13 +69,7 @@ launch Spark executor processes across the cluster.
 
 ---
 
-### Optimization
-
-#### Spark SQL Optimization
-
-![spark-sql-optimization.jpg](img/spark-sql-optimization.jpg)
-
-#### Pipelining
+### Pipelining
 
 - Spark performs as many steps as it can at one point in time before writing data to memory or disk.
 - It occurs at and below the RDD level.
@@ -85,9 +79,12 @@ launch Spark executor processes across the cluster.
 
 ### RDDs
 
-- A RDD (Resilient Distributed Dataset) is essentially a **read-only** immutable, partitioned collection of records.
-- Each record is just a Scala, Java or Python object.
+- A RDD (Resilient Distributed Dataset) is essentially a **read-only** immutable, partitioned collection of records. Each record is just a Scala, Java or Python object.
 - **Each RDD can be divided into multiple partitions.** Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
+
+![rdd-partition-record.png](img/rdd-partition-record.png)
+
+- RDDs are stored in the executors or on worker nodes.
 - **Virtually everything in Spark is built on top of RDDs.**
 - RDD API is similar to the Dataset, except that RDDs are not stored in, or manipulated with, the structured data engine.
 - **One thing that you might use RDDs** for is to parallelize raw data that you have stored in memory on the driver machine. For instance, `spark.sparkContext.parallelize(Seq(1,2,3)).toDF()`.
@@ -860,6 +857,12 @@ When writing files, you can control file sizes by controlling the number of reco
 ### Spark SQL Thrift JDBC/ODBC Server
 
 ![sparkSQL-shell-access.png](img/sparkSQL-shell-access.png)
+
+---
+
+### Spark SQL Optimization
+
+![spark-sql-optimization.jpg](img/spark-sql-optimization.jpg)
 
 ---
 
@@ -1836,5 +1839,5 @@ Two things you can do with null values:
 
 #### Optimization
 
-- When reading a csv file as DataFrame, if you can know the schema ahead of time and use `StructType` rather than `option("inferSchema", "true")`, there will be a significant performance benefit when the data set is very large, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
+- When reading a csv file as DataFrame, if you can know the schema ahead of time and **use `StructType` rather than `option("inferSchema", "true")`**, there will be a significant performance benefit when the data set is very large, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
 
