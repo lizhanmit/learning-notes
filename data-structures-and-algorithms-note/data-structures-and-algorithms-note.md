@@ -229,7 +229,7 @@ A good hash function:
 
 #### Collision
 
-1. There are key-value pair data.
+1. There is key-value pair data.
 2. Use a hash function with key as input parameter to get the the index of the array where to store data. Make sure the index is within bound of size of the array.
 3. The index may be repeated, which is called collision. 
 
