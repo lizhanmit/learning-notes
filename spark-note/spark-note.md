@@ -437,6 +437,8 @@ Shuffle transformations:
 - reduceByKey
 - join  
 - countByValue
+- sort
+- sortByKey
 - ...
 
 #### External Shuffle Service
