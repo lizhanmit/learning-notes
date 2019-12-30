@@ -814,7 +814,7 @@ f(n) = f(n-1) + f(n-2)
 ```c
 // this code is just used to demonstrate recursion algorithm
 // should not be used in projects due to low performance
-int fibbonacci(int n) {
+int fibonacci(int n) {
    if(n == 0) {
       return 0;
    } else if(n == 1) {
