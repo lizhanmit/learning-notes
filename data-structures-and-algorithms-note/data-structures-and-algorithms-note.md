@@ -188,6 +188,38 @@ A doubly linked list is most appropriate for implementing all operations efficie
 
 ---
 
+### Priority Queue (PQ)
+
+![node-index.png](img/node-index.png)
+
+Generally implemented in heap because of better time performance.
+
+When to use: 
+
+- Used in certain implementation of Dijkstra's Shortest Path algorithm to fetch the next node to explore. 
+- Anytime you need to dynamically fetch the "next best" or "next worst" element.
+- Used in Huffman coding (which is often used for lossless data compression).
+- Used in BFS algorithms to continuously grab the next most promising node.
+- Used in Minimum Spanning Tree algorithms. 
+
+Turn Min PQ to Max PQ: Change the sign of all elements to its opposite. Poll them out one by one and change the sign back. For instance, given a Min PQ 1, 2, 3, 4, 5, change to -1, -2, -3, -4, -5, then poll out as -5, -4, -3, -2, -1, then change back 5, 4, 3, 2, 1. 
+
+Insert an element into a binary heap:
+
+1. Insert the new element at the last position.
+2. Adjust the heap to satisfy heap invariant.
+
+Remove an element from a binary heap O(n):
+
+1. Linear search the element you want to remove.
+2. Switch this element with the last element.
+3. Remove it.
+4. Adjust the heap to satisfy heap invariant.
+
+Remove an element from a binary heap (**optimized** - O(log n)): use Hashtable to store the node value as the key and the node index as the value (the value is implemented using Set or Tree Set because the node value can be repeated).
+
+---
+
 ### Hash Table
 
 ![hash-table.png](img/hash-table.png)
@@ -331,7 +363,6 @@ Traverse a graph in a depthward motion. Use stack to remember to get the next ve
 
 1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Push it in a stack.
 2. If no adjacent vertex is found, pop up a vertex from the stack. (It will pop up all the vertices from the stack, which do not have adjacent vertices.)
-
 3. Repeat Rule 1 and Rule 2 until the stack is empty.
 
 ![graph-depth-first-search.png](img/graph-depth-first-search.png)
@@ -349,7 +380,6 @@ Traverse a graph in a breadthward motion. Use a queue to remember to get the nex
 
 1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Insert it in a queue.
 2. If no adjacent vertex is found, remove the first vertex from the queue.
-
 3. Repeat Rule 1 and Rule 2 until the queue is empty.
 
 ![graph-breadth-first-search.png](img/graph-breadth-first-search.png)
