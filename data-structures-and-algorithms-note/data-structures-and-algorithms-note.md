@@ -220,6 +220,30 @@ Remove an element from a binary heap (**optimized** - O(log n)): use Hashtable t
 
 ---
 
+### Heap
+
+Heap is a special case of balanced binary tree data structure where root-node key is compared with its children are arranged accordingly.
+
+Heap property / invariant: For min priority queue, the value in any node is less than the value in either of the children. 
+
+#### Max Heap
+
+The value of the parent node is greater than or equal to either of its children.
+
+Max Heap Construction:
+
+![max-heap-constructure.gif](img/max-heap-constructure.gif)
+
+Max Heap Deletion:
+
+![max-heap-deletion.gif](img/max-heap-deletion.gif)
+
+#### Min Heap
+
+The value of the parent node is less than or equal to either of its children.
+
+---
+
 ### Hash Table
 
 ![hash-table.png](img/hash-table.png)
@@ -250,6 +274,7 @@ Hashing is a technique to convert a key into an index of an array. Steps:
     - Maybe using `index = hashCode % N`, where `N` is commonly chosen as size of the bucket array.
     - If `sizeOfBucketArray` is a prime number, then the compression function
 is good. If not, greater risk of causing collisions.
+    - If choosing a non-prime number as hash table size N, certain patterns can occur. If N is a multiple of 3, then the hash values will be multiple of 3. If N is a multiple of 6, these issues occur for hash values having multiple of 2 as well as 3. To prevent this, the simplest way is to use a prime number as the hash table size. If you need a hash table size of around N, choose the largest prime <= N.
     
 ![hash-function.jpg](img/hash-function.jpg)
 
@@ -403,7 +428,7 @@ A tree is a minimally connected graph having no loops and circuits.
 
 Three types of traversal:
 
-- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. **Prefer this one**, as nodes can be printed in order for binary search tree.
+- **In-order Traversal**: the left subtree is visited first, then the root and later the right sub-tree. **Prefer this one, as nodes can be printed in order for binary search tree.**
 
 ![tree-in-order-traversal.jpg](img/tree-in-order-traversal.jpg)
 
@@ -486,29 +511,11 @@ Minimum Spanning Tree algorithms:
 - Kruskal's Algorithm
 - Prim's Algorithm
 
-#### Heap
-
-Heap is a special case of balanced binary tree data structure where root-node key is compared with its children are arranged accordingly.
-
-##### Max Heap
-
-The value of the parent node is greater than or equal to either of its children.
-
-Max Heap Construction:
-
-![max-heap-constructure.gif](img/max-heap-constructure.gif)
-
-Max Heap Deletion:
-
-![max-heap-deletion.gif](img/max-heap-deletion.gif)
-
-##### Min Heap
-
-The value of the parent node is less than or equal to either of its children.
-
 ---
 
 ## Algorithms
+
+An integer division costs about 9 times as much as a multiplication and 25 times as much as an integer addition and logic operation.
 
 ### Basic Concepts
 
@@ -522,16 +529,10 @@ Two main factors decide the efficiency of algorithm:
 
 Refers to computing the running time of any operation in mathematical units of computation.
 
-The time required by an algorithm falls under three types:
-
-- Best Case - minimum time required for program execution.
-- Average Case - average time required for program execution.
-- Worst Case - maximum time required for program execution.
-
 Asymptotic Notations:
 
-- Omega Notation **Ω(n)** - measures the **best case** time complexity or the best amount of time.
-- Big O Notation **Ο(n)** - measures the **worst case** time complexity or the longest amount of time.
+- Omega Notation **Ω(n)** - measures the **best case** time complexity or the minimum amount of time.
+- Big O Notation **Ο(n)** - measures the **worst case** time complexity or the maximum amount of time.
 - Theta Notation **θ(n)** - **average case**, express both the lower bound and the upper bound of an algorithm's running time.
 
 #### Big O Complexity Chart
@@ -541,6 +542,12 @@ Asymptotic Notations:
 #### Big O Cheat Sheet
 
 ![big-o-cheat-sheet.png](img/big-o-cheat-sheet.png)
+
+#### Classic Examples
+
+- Finding all subsets of a set: O(2^n)
+- Finding all permutation of a string: O(n!)
+- Sorting using merge sort: O(n log n)
 
 #### Approaches to Develop Algorithms
 
