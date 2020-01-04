@@ -18,6 +18,8 @@
 
 ---
 
+## Q & A
+
 ### 100亿数据找出最大的1000个数字（top K问题）
 
 在大规模数据处理中，经常会遇到的一类问题：在海量数据中找出出现频率最好的前k个数，或者从海量数据中找出最大的前k个数，这类问题通常被称为top K问题。例如，在搜索引擎中，统计搜索最热门的10个查询词；在歌曲库中统计下载最高的前10首歌等。
@@ -49,3 +51,7 @@ e、合并大分区。我们有1000个大分区，上一步已找出每个大分
 4、Hash法。如果这1亿个数里面有很多重复的数，先通过Hash法，把这1亿个数字去重复，这样如果重复率很高的话，会减少很大的内存用量，从而缩小运算空间，然后通过分治法或最小堆法查找最大的10000个数。
 
 **对于海量数据处理，思路基本上是：必须分块处理，然后再合并起来。**
+
+### Dectect cycle in a linked list.
+
+Take two pointers - a fast pointer which moves forward two steps once and a slow pointer which moves forward one step once. Initially they are at the beginning node. If there is cycle in the linked list, these two pointers must meet somewhere.
