@@ -386,6 +386,8 @@ Edges - represent them using a two-dimensional array.
 
 Traverse a graph in a depthward motion. Use stack to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
 
+The simplest algorithm for traversing a tree is the depth first traversal.
+
 1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Push it in a stack.
 2. If no adjacent vertex is found, pop up a vertex from the stack. (It will pop up all the vertices from the stack, which do not have adjacent vertices.)
 3. Repeat Rule 1 and Rule 2 until the stack is empty.
@@ -420,6 +422,8 @@ Applications:
 - Cycle detection in undirected graph.
 - Path finding.
 
+---
+
 ### Tree
 
 A tree is a minimally connected graph having no loops and circuits.
@@ -452,14 +456,17 @@ A binary tree has a special condition that each node can have two children at ma
 
 #### Full Binary Tree
 
-If the height is N, the number of nodes is 2^N -1.
+If the height is N, the number of nodes is 2^N -1, the number of nodes at the deepest level is 2^(N-1). 
+
+Full binary tree is a particular case of complete binary tree.
 
 ![full-binary-tree.png](img/full-binary-tree.png)
 
 #### Binary Search Tree (BST)
 
-- A node's left child must have a value less than or equal to its parent's value.
+- A node's left child must have a value less than its parent's value.
 - A node's right child must have a value greater than its parent's value.
+- **There must be no duplicate nodes.**
 - Each node has a key and an associated value.
 - Binary search tree is a special binary tree.
 
@@ -468,7 +475,6 @@ If the height is N, the number of nodes is 2^N -1.
 #### AVL Tree (Self-Balancing  Binary Search Tree)
 
 - Height balancing binary search tree.
-
 - Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1. Otherwise, the tree is unbalanced.
 
 Rotation techniques to balance the tree:
