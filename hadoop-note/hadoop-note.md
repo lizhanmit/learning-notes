@@ -195,3 +195,9 @@ If the workload of the reducer is too large, it would be good to set combiners b
 ![hadoop-cluster-nameNode-hardware-specification.png](img/hadoop-cluster-nameNode-hardware-specification.png)
 
 ![hadoop-cluster-scale.png](img/hadoop-cluster-scale.png)
+
+---
+
+## Hadoop Ecosystem
+
+![hadoop-ecosystem.png](img/hadoop-ecosystem.png)
