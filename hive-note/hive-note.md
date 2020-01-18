@@ -4,13 +4,12 @@
 
 - Hive is a **data warehousing** component based on Hadoop, which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
 - Enables users to do ad-hoc querying, summarization and data analysis and data mining easily that does not require real time processing.
+- Hive's query response time is typically much faster than others on the same volume of big datasets.
 - Hive internally gets converted into **MapReduce** programs.
 - You can couple Hive with other tools to use it in many other domains. For example,
   - Tableau along with Apache Hive can be used for Data Visualization.
   - Apache Tez integration with Hive will provide you real time processing capabilities.
 - Stores data in HDFS by default. Also supports Amazon S3.
-
----
 
 ### Data Units
 
@@ -165,7 +164,7 @@ Traditional database:
 
 Hive: 
 
-- Schema on read only: does not verify the data when it is loaded.
+- **Schema on read only**: does not verify the data when it is loaded.
 - Very fast initial load, since the data does not have to be read, parsed, and serialized to disk in the database’s internal format. 
 
 ---
@@ -195,13 +194,20 @@ Appropriate for low-cardinality columns (such as gender or country).
 
 ---
 
+### Hive Web UI
+
+Hive has its own built-in web IDE,
+Hive Web Interface. However, it is not powerful and seldom used. 
+
+Instead, both Ambari Hive View and Hue (http:/​/​gethue.​com/​) are popular, user-friendly, and powerful web IDEs for the Hadoop and Hive ecosystem. 
+
+---
+
 ## Architecture
 
 ![hive-architecture.png](img/hive-architecture.png)
 
 ![data-processing-model.png](img/data-processing-model.png)
-
----
 
 ### Metastore
 
@@ -216,7 +222,7 @@ Appropriate for low-cardinality columns (such as gender or country).
 By default, the metastore service runs in the same JVM as the Hive service and contains an embedded Derby database instance backed by the local disk.
 
 However, only one embedded Derby database can access the database files on disk at any one time,
-which means you can have only one Hive session open at a time that accesses the same metastore.
+which means you can have only one Hive session open at a time that accesses the same metastore. By contrast, configured relational database offers a shared service so that all hive users can see the same metadata set.
 
 #### Local Metastore Configuration
 
@@ -231,6 +237,8 @@ MySQL is a popular choice for the standalone metastore.
 One or more metastore servers run in separate processes to the Hive service.
 
 Better manageability and security because the database tier can be completely firewalled off, and the clients no longer need the database credentials.
+
+**In the real production environment, it always configures an external relational database as the Hive metastore.**
 
 ---
 
@@ -267,8 +275,8 @@ Set to local mode: `SET mapred.job.tracker=local;`
 
 When to use:
 
-- If the Hadoop installed under pseudo mode with having one data node.
-- If the data size is smaller in term of limited to single local machine.
+- when the Hadoop installed under pseudo mode with having one data node.
+- when the data size is smaller in term of limited to single local machine.
 
 Processing will be very fast on smaller data sets present in the local machine.
 
@@ -277,10 +285,29 @@ Processing will be very fast on smaller data sets present in the local machine.
 
 When to use:
 
-- If Hadoop is having multiple data nodes and data is distributed across different node.
-- It will perform on large amount of data sets and query going to execute in parallel way.
+- when Hadoop is having multiple data nodes and data is distributed across different node.
+- It will perform on large amount of data sets and query is going to execute in parallel way.
 
 Processing of large data sets with better performance can be achieved through this mode.
+
+---
+
+## Hive 2
+
+Hive2 architecture:
+
+![hive2-architecture.png](img/hive2-architecture.png)
+
+hiveserver2 has an enhanced server designed for multiple client concurrency and improved authentication.
+
+**Recommend** using `beeline` as the major Hive CLI instead of the `hive` command.
+
+The primary difference between two version: 
+
+- `hive` is an Apache-Thrift-based
+client. The `hive` command directly connects to the Hive
+drivers, so we need to install the Hive library on the client. 
+- `beeline` is a JDBC client, which connects to hiveserver2 through JDBC connections without installing Hive libraries on the client. That means we can run `beeline` remotely from outside the cluster.
 
 ---
 
@@ -294,9 +321,27 @@ Processing of large data sets with better performance can be achieved through th
 
 ---
 
+## Spark x Hive
+
+### Spark on Hive
+
+Spark can leverage the Hive metastore to write or query data in Hive.
+
+1. Copy the `hive-site.xml` to
+the `${SPARK_HOME}/conf` directory.
+2. Run `spark-sql` command. Then you can write SQL to query Hive tables.
+
+### Hive over Spark
+
+Hive can use Spark as an alternative engine. 
+
+Requires the Yarn `FairScheduler` and set `hive.execution.engine=spark`. 
+
+---
+
 ## Coding
 
-All Hive keywords, table names and column names are case-insensitive.
+All Hive keywords, table names and column names are **case-insensitive**.
 
 - `show databases;`
 - `show tables;`
@@ -349,3 +394,10 @@ Example:
 
 `LOAD DATA LOCAL INPATH '/tmp/pv_2008-06-08_us.txt' INTO TABLE page_view PARTITION(date='2008-06-08', country='US')`
 
+### beeline
+
+![beeline-command.png](img/beeline-command.png)
+
+`dfs` command may be disabled in beeline for permissions control in some Hadoop distributions.
+
+`!history`: show the command's history.
