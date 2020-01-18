@@ -1,5 +1,11 @@
 # Unix Note
 
+## File Structure
+
+![file-structure.png](img/file-structure.png)
+
+File `~/.bashrc` is used to store environment variables. After modifying this file, run command `source ~/.bashrc` to take effect.
+
 ## User Roles
 
 Users' files are kept separate.
@@ -106,6 +112,8 @@ When `cd`ing a path, if the path contains "space", use `\` to escape it, e.g. `c
 `apropos "<command_description>"`: find the command with this description.
 
 `whereis`: find the location of binary file, source code file and manual pages, e.g. `whereis ls`.
+
+Wrap the command to the new line in the terminal: type `\`.
 
 ### Shortcuts
 
