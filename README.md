@@ -7,6 +7,7 @@
 - [Apache Airflow](https://github.com/lizhanmit/learning-notes/blob/master/apache-airflow-note/apache-airflow-note.md)
 - [Architecting Big Data Applications](https://github.com/lizhanmit/learning-notes/blob/master/architecting-big-data-applications-note/architecting-big-data-applications-note.md)
 - [Big Data Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/big-data-algorithms-note/big-data-algorithms-note.md)
+- [Big Data Basics](https://github.com/lizhanmit/learning-notes/blob/master/big-data-basics-note/big-data-basics-note.md)
 - [Big Data Environment Setup](https://github.com/lizhanmit/learning-notes/blob/master/big-data-environment-setup-note/big-data-environment-setup-note.md)
 - [Data Warehouse](https://github.com/lizhanmit/learning-notes/blob/master/data-warehouse-note/data-warehouse-note.md)
 - [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
