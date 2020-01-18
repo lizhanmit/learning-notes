@@ -41,8 +41,12 @@ A FTP tool (e.g. WinSCP, FileZilla) is necessary to transfer files.
   - `start-hbase.sh`
   - `stop-hbase.sh`
   - login HBase shell: `hbase shell`
-- Hive: (start MySQL first, then Hadoop)
+- Hive: (start MySQL first, then Hadoop and Yarn)
   - login Hive shell: `hive`
+  - or login beeline shell: 
+      1. `hive --service metastore`
+      2. `hive --service hiveserver2`
+      3. `beeline -u "jdbc:hive2://localhost:10000"`
 - HDFS: 
   - `start-dfs.sh`
   - `stop-dfs.sh`
@@ -52,7 +56,7 @@ A FTP tool (e.g. WinSCP, FileZilla) is necessary to transfer files.
   - start Kafka in background: `kafka-server-start.sh -daemon config/server.properties`
 - MySQL service: 
   - `service mysql start`
-  - login: `mysql -u <username> -p <password>` (username is root by default)
+  - login: `mysql -u <username> -p` (username is root by default), then enter password.
 - Spark: 
   - start Spark shell: `spark-shell`
   - quit Spark shell: `:quit`
