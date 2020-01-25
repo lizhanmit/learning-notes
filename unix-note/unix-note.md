@@ -2,7 +2,7 @@
 
 ## File Structure
 
-![file-structure.png](img/file-structure.png)
+![linux-file-structure.png](img/linux-file-structure.png)
 
 File `~/.bashrc` is used to store environment variables. After modifying this file, run command `source ~/.bashrc` to take effect.
 
@@ -602,8 +602,6 @@ Display the content of a compressed file: `zcat filename`
 ---
 
 ## Directory Management
-
-![linux-file-structure.png](img/linux-file-structure.png)
 
 Go to home folder: `cd`
 
