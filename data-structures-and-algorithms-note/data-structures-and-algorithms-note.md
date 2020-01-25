@@ -472,7 +472,15 @@ Full binary tree is a particular case of complete binary tree.
 
 ![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
 
-#### AVL Tree (Self-Balancing  Binary Search Tree)
+#### Self-Balancing  Binary Search Tree
+
+Why do we want trees to be balanced?
+
+![balanced-vs-unbalanced-tree.png](img/balanced-vs-unbalanced-tree.png)
+
+![rotation-of-a-binary-search-tree.png](img/rotation-of-a-binary-search-tree.png)
+
+#### AVL Tree
 
 - Height balancing binary search tree.
 - Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1. Otherwise, the tree is unbalanced.
@@ -484,14 +492,34 @@ Rotation techniques to balance the tree:
 - Left-Right rotation
 - Right-Left rotation
 
-Why do we want trees to be balanced?
+![avl-tree-double-rotation.png](img/avl-tree-double-rotation.png)
 
-![balanced-vs-unbalanced-tree.png](img/balanced-vs-unbalanced-tree.png)
+Rotation steps:
+
+1. Define child, grandchild, and parent.
+2. Detach the grandchild.
+3. Detach the child.
+4. Detach the current node.
+5. Set the current node as the child of child note.
+6. Set grandchild as the child of the current node.
+7. Set child as the child of parent.
+
+**Disadvantages**: AVL tree makes a lot of rotations. Since it is too quick to rotate, it may make very frequent rotation in opposite directions even when it would be unnecessary, had it been waiting for the future values to be inserted.
+
+This can be avoided using red-black tree which knows when to rotate a subtree.
 
 #### Red-Black Tree
 
 [漫画：什么是红黑树？](https://zhuanlan.zhihu.com/p/31805309)
 
+In red-black tree, leaves are nodes with null value.
+
+Conditions: 
+
+- The root has to be black.
+- Both children of a red node are black.
+- Every path from a given node to any of its descendant NIL nodes contains the same number of black nodes.
+  
 #### Spanning Tree
 
 A spanning tree is a subset of Graph G, which has all the vertices covered with minimum possible number of edges.
