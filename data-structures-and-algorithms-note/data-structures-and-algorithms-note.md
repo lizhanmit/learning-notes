@@ -2,24 +2,51 @@
 
 ## Data Structures
 
+[Data Structures for Coding Interviews](https://www.interviewcake.com/article/java/data-structures-coding-interview)
+
+A trend in data structures: to get a nice property, you will often have to lose something.
+
 ### Array
+
+cache-friendly
+
+O(1) fast lookup capability is the **most important** property of arrays.
 
 If arrays are fixed length, when an array is full, a typical implementation is to double in size. Each doubling takes O(n) time. Amortized insertion time is still O(1).
 
 ```java
-  ArrayList<String> merge(String[] words, String[] more) {
-    ArrayList<String> sentence = new ArrayList<String>();
-    for (String w : words) {
-      sentence.add(w);
-    }
-    for (String w : more) {
-      sentence.add(w);
-    }
-    return sentence;
+ArrayList<String> merge(String[] words, String[] more) {
+  ArrayList<String> sentence = new ArrayList<String>();
+  for (String w : words) {
+    sentence.add(w);
   }
+  for (String w : more) {
+    sentence.add(w);
+  }
+  return sentence;
+}
 ```
 
 [Find the index of an element in an array in Java.](https://www.techiedelight.com/find-index-element-array-java/)
+
+---
+
+### Dynamic Array
+
+Steps of appending: 
+
+1. Make a new, bigger array. Usually twice as big - doubling append.
+2. Copy each element from the old array into the new array.
+3. Free up the old array. 
+4. Append your new item.
+
+Average or amortized time cost of appending: O(1)
+
+The worst-case of appending: O(n)
+
+Advantage over array: Do not have to specify the size ahead of time.
+
+Disadvantage: Some appends can be expensive.
 
 ---
 
@@ -43,6 +70,8 @@ String joinWords(String[] words) {
 
 A list of data items connected with links.
 
+not cache-friendly
+
 Types of linked list:
 
 - Singly Linked List
@@ -65,6 +94,28 @@ When to use a linked list:
 - Disadvantages
   - Slow to access an element. **O(n)**
   - Memory is a concern. Require data and pointers.
+
+```java
+public LinkedListNode getIthItemInLinkedList(LinkedListNode head, int i) {
+  if (i < 0) {
+    throw new IllegalArgumentException(String.format("The index i (%d) cannot be negative.", i));
+  }
+
+  LinkedListNode currentNode = head;
+  int currentPosition = 0;
+
+  while (currentNode != null) {
+    if (currentPosition == i) {
+      return currentNode;
+    }
+
+    currentNode = currentNode.next;
+    currentPosition++;
+  }
+
+  throw new IllegalArgumentException(String.format("%d exceeds the length of the linked list.", i));
+}
+```
 
 #### Doubly Linked List
 
