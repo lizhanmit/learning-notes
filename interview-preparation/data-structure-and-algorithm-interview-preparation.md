@@ -52,6 +52,6 @@ e、合并大分区。我们有1000个大分区，上一步已找出每个大分
 
 **对于海量数据处理，思路基本上是：必须分块处理，然后再合并起来。**
 
-### Dectect cycle in a linked list.
+### Detect cycle in a linked list.
 
 Take two pointers - a fast pointer which moves forward two steps once and a slow pointer which moves forward one step once. Initially they are at the beginning node. If there is cycle in the linked list, these two pointers must meet somewhere.
