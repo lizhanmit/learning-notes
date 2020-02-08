@@ -149,12 +149,23 @@ When you are doing development and you have unstaged and uncommited changes, if 
 
 #### Collaboration
 
-When you push your local dev branch to remote origin/dev, if there is a conflict, which means you are behind the remote, you should pull the remote first, then fix conflict, then push again. Steps: 
+When you pushing your local dev branch to remote origin/dev, if there is a conflict, which means you are behind the remote, you should pull the remote first, then fix conflict, then push again. Steps: 
 
 1. If getting "no tracking information" message, you need to set up linkage between local dev branch and remote dev. `git branch --set-upstream-to=origin/dev dev`.
 2. Pull the remote to local. `git pull`.
 3. Fix conflict. Add and commit.
 4. Push again. `git push origin dev`.
+
+When you are going to merge your feature branch to develop branch, follow the below steps: 
+
+1. Check out your feature branch.
+2. `git pull origin develop` in terminal.
+3. If there are conflicts, in Intellij IDEA, click "Version Control" tab at the bottom. 
+4. Click "Resolve" -> "Merge" button.
+5. Select what you want to accept. 
+6. Commit.
+7. Push.
+8. Merge or pull request on GitHub.
 
 #### Rebase
 
