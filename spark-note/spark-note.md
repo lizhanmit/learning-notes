@@ -1717,6 +1717,10 @@ distinctElementsRDD.collect
 - `df.describe().show()`: **fast summary statistics for non-null values.**
 - `df.where("<column_name> = true")` is equivalent to `df.filter($"<column_name>" === true)`
 
+#### Null Value
+
+Add a new string type column to dataframe with null value: `df.withColumn("columnName", lit(null).cast("string"))`
+
 #### UDF
 
 ```scala
@@ -1818,6 +1822,7 @@ Take Amazon EMR (Elastic MapReduce) as an example.
 - Spark’s TimestampType class supports only second-level precision. If you are going to be working with milliseconds, use `LongType`.
 - **Recommend** parsing dates, timestamps and nulls explicitly instead of relying on implicit conversions.
 - **When performing grouping sets, if you do not filter out null values, you will get incorrect results.** This applies to cubes, rollups, and grouping sets.
+- When joing two dataframes using `Seq`, e.g. `val resultDF = df1.join(df2, Seq("colA"))`, only `colA` in `df1` will be kept in `resultDF`, `colA` in `df2` will not.
 
 #### Count
 
