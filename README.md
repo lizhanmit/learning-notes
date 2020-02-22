@@ -18,6 +18,7 @@
 - [HBase](https://github.com/lizhanmit/learning-notes/blob/master/hbase-note/hbase-note.md)
 - [Hive](https://github.com/lizhanmit/learning-notes/blob/master/hive-note/hive-note.md)
 - [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
+- [Pig](https://github.com/lizhanmit/learning-notes/blob/master/pig-note/pig-note.md)
 - [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
 - [Spark](https://github.com/lizhanmit/learning-notes/blob/master/spark-note/spark-note.md)
 - [Spark Coding](https://github.com/lizhanmit/spark-coding-tutorial)
