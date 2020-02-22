@@ -1848,3 +1848,100 @@ Two things you can do with null values:
 
 - When reading a csv file as DataFrame, if you can know the schema ahead of time and **use `StructType` rather than `option("inferSchema", "true")`**, there will be a significant performance benefit when the data set is very large, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
 
+---
+
+# High Performance Spark Note
+
+Spark version 2.0.1. 
+
+## How Spark Works
+
+Three major features:
+
+- lazy evaluation
+- in-memory computation / persistence
+- immutability
+
+Using the Standalone manager requires installing Spark on each node of the cluster.
+
+Spark SQL is a very important component for Spark performance.
+
+Spark ML provides a higher-level API than MLlib. Spark MLlib is primarily built on top of RDDs and uses functions from Spark Core, while ML is built on top of Spark SQL DataFrames. Eventually, MLlib -> ML.
+
+Actions trigger the scheduler, which builds a DAG.
+
+### Lazy Evaluation
+
+**Not all transformations are 100% lazy.** `sortByKey` needs to evaluate the RDD to determine the range of data, so it involves both a transformation and an action. 
+
+Most distributed computing paradigms that allow users to work with **mutable** objects provide fault tolerance by logging updates or duplicating data across machines.
+
+The RDD itself contains all the dependency information needed to replicate each of its partitions. Thus, if a partition is lost, the RDD has enough information about its lineage to recompute it, and that computation can be parallelized to make recovery faster.
+
+Word count example with stop words (words that you do not want to count) filtered:
+
+```scala
+def wordCountWithStopWordsFiltered(rdd: RDD[String], illegalTokens: Array[Char], stopWords: Set[String]): RDD[(String, Int)] = {
+    val separators = illegalTokens ++ Array[Char](" ")
+    val tokens: RDD[String] = rdd.filterMap(_.split(separators).map(_.trim.toLowerCase))
+    val words = tokens.filter(token => !stopWords.contains(token) && (token.length > 0))
+    val wordPairs = words.map((_, 1))
+    val wordCounts = wordPairs.reduceByKey(_ + _)
+    wordCounts
+}
+```
+
+### In-Memory Persistence and Memory Management
+
+Compared with MapReduce, the performance increase of Spark is due to its in-memory persistence. 
+
+Three options for memory management: 
+
+- in-memory as deserialized data
+  - Fastest but may not be the most memory efficient.
+  - Default for `persist()` function.
+- in-memory as serialized data.
+  - Slower, more CPU-intensive, but more memory efficient.
+  - Kyro is better than Java serialization.
+- on disk
+  - More fault-tolerant for long sequences of transformations and feasible for enormous computations.
+
+When persisting RDDs and the memory space is not enough, by default, use **LRU caching**. But you can change the priority with `persistencPriority()` function in RDD class.
+
+### RDD
+
+RDDs can be created in 3 ways:
+
+- by transforming an existing RDD.
+- using a `SparkContext` from a local Scala object (using the `makeRDD` or `parallelize` methods).
+- converting a DataFrame or Dataset.
+
+Spark uses 5 main properties to represent an RDD: 
+
+- the list of partition objects that make up the RDD. (required) - `partitions()`
+- a function for computing an iterator of each partition. (required) - `iterator(p, parentIters)` (p: partition)
+- a list of dependencies on other RDDs. (required) - `dependencies()`
+- a partitioner (optional) - `partitioner()`
+- a list of preferred locations for the HDFS file (optional) - `preferredLocations(p)` (p: partition), returns a sequence of strings, each of which is the Hadoop name of the node where that partition is stored.
+
+As an end user, you will **rarely** need these 5 properties.
+
+Types of RDDs: 
+
+- `PairRDDFunctions` 
+- `OrderedRDDFunctions` 
+- `GroupedRDDFunctions`
+- `NewHadoopRDD`
+- `ShuffledRDD`
+
+Find out what type an RDD is by using the `toDebugString` function of RDDs.
+
+#### Actions
+
+- bring information back to the driver including `collect`, `count`, `collectAsMap`, `sample`, `reduce`, and `take`. **Best practice**: use actions like `take`, `count`, and `reduce`, which bring back a fixed amount of data to the driver.
+- write the data to stable storage including `saveAsTextFile`, `saveAsSequenceFile`, and
+`saveAsObjectFile`.
+
+#### Transformations
+
+Spark transformations are **coarse-grained**.
