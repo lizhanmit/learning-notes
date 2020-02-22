@@ -696,6 +696,8 @@ Print text in reverse sequence.
 
 Default permission of a new file: `644` or `rw-r--r--`.
 
+For deleting a file, do not need permission for itself, but write and execute for its directory. 
+
 ### Changing Permissions  
 
 #### in absolute mode
