@@ -4,7 +4,116 @@
 
 [Data Structures for Coding Interviews](https://www.interviewcake.com/article/java/data-structures-coding-interview)
 
-A trend in data structures: to get a nice property, you will often have to lose something.
+![characteristics-of-data-structures.png](img/characteristics-of-data-structures.png)
+
+### When to Use What
+
+The fast structures come with penalties.
+
+A trend in data structures: To get a nice property, you will often have to lose something.
+
+**Rule of thumb**: Start by considering the simple data structures, and code a simple version of an array or linked list and see what happens. Only when experimentation shows their performance to be too slow should you revert to more sophisticated data structures.
+
+![relationship-of-general-purpose-data-structures.png](img/relationship-of-general-purpose-data-structures.png)
+
+#### Arrays & LinkedLists
+
+**Roughly speaking** in terms of speed: Arrays and linked lists are slow, trees are fairly fast, and hash tables are very fast.
+
+#### Hash Tables 
+
+- require you to know in advance about how much data can be stored.
+- do not use memory very efficiently, so require additional memory, especially for open addressing. 
+
+#### Binary Trees
+
+**A binary tree is the first structure to consider when arrays and linked lists prove too slow.**
+
+#### Stacks
+
+A stack is often implemented as an array or a linked list. **A linked list is slightly slower than an array** because memory allocation is necessary to create a new link for insertion, and deallocation of the link is necessary at some point following removal of an item from the list.
+
+#### Priority Queues
+
+Priority queues can be implemented as an ordered array or as a heap. With the **heap** implementation, both insertion and deletion take **O(log N) time**. Use an array or a double-ended linked list if insertion speed is not a problem. If speed is important, a heap is a better choice.
+
+#### Graphs
+
+How to represent the graph:
+
+- use an **adjacency matrix** when the graph is full. 
+  - O(V^2) for BFS and DFS run, minimum spanning tree and shortest path run.
+- use an **adjacency list** when the graph is sparse.
+  - O(V+E) for BFS and DFS run.
+  - O((V+E) log V) for minimum spanning tree and shortest path run.
+
+How to know the graph is full or sparse: estimate V and E for the graph.
+
+#### Sorting
+
+As a wild guess, the slow sort such as insertion sort, might be appropriate for fewer than **1,000** items.
+
+**Insertion sort** is good for almost-sorted data - O(n). This is typically the case where a few new items are added to an already-sorted data.
+
+If insertion sort proves too slow, consider **shell sort**. Easy to implement. Useful up to **5,000** items. 
+
+Only when the shell sort proves too slow should you use one of the more complex but faster sorts. **Quick sort** is the usual choice when the fastest sorting time is necessary.
+
+**Do not use quick sort if data distribution is not random** - O(n^2). **For non-random data, heap sort is better** - O(n log n).
+
+For quick sort, small mistakes in coding can make it work poorly for certain arrangements of data, a situation that may be hard to diagnose.
+
+**Conclusion**: 
+
+- For small number of items and almost-sorted data, use insertion sort. If too slow, use shell sort.
+- For large number of items and random data, use quick sort. If non-random, use heap sort.
+
+#### External Storage
+
+When the amount of data is too large to store in memory, use external storage, which generally means **disk files**. Data is stored in a disk file in fixed-size units called **blocks**, each of which holds a number of **records**. Reading and writing operations always involve a single block.
+
+![relationship-of-external-storage-choices.png](img/relationship-of-external-storage-choices.png)
+
+##### Sequential Storage
+
+The simplest approach is to store records randomly and read them sequentially.
+
+New records are appended at the end of the file.
+
+Searching and deletion - O(n), **satisfactory
+for a small number of records**.
+
+##### Indexed Files
+
+Indexed files will be read into memory as needed. An index of keys and corresponding block numbers is kept in main memory. 
+
+Reading - O(1).
+
+Disadvantage: 
+
+- The index could become too large to fit in memory.
+- When creating the index, need to read through the file sequentially, which is slow.
+- When new items are added to the file, the index needs to be updated.
+
+##### B-trees
+
+Nodes correspond to blocks on the disk.
+
+Searching, insertion and deletion - O(log n).
+
+Works well for very large files.
+
+The programming is complex.
+
+##### External Hashing
+
+Reading - O(1). 
+
+Can handle larger files than indexed files.
+
+##### Virtual Memory
+
+If you read a file that is too big to fit in main memory, the virtual memory system will read in that part of the file that fits and store the rest on the disk. You can do operation just as if the entire file is in memory.
 
 ### Array
 
