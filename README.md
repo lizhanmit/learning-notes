@@ -1,6 +1,6 @@
 # IT learning notes
 
-## Data Engineering
+## Big Data
 
 [What is Data Engineering?](https://www.dataquest.io/blog/what-is-a-data-engineer/)
 
@@ -76,11 +76,13 @@
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
 - [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
 - [Git](https://github.com/lizhanmit/learning-notes/blob/master/git-note/git-note.md)
+- [Maven](https://github.com/lizhanmit/learning-notes/blob/master/maven-note/maven-note.md)
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Scala](https://github.com/lizhanmit/scala-tutorial)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
-
+- [Web API](https://github.com/lizhanmit/learning-notes/blob/master/web-api-note/web-api-note.md)
+  
 ---
 
 ## Non Tech
