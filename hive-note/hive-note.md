@@ -401,3 +401,17 @@ Example:
 `dfs` command may be disabled in beeline for permissions control in some Hadoop distributions.
 
 `!history`: show the command's history.
+
+---
+
+## Configuration 
+
+Enable Snappy compression for Hive output:
+
+```
+SET hive.exec.compress.output=true;
+SET mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec;
+SET mapred.output.compression.type=BLOCK; 
+```
+
+https://www.cloudera.com/documentation/enterprise/5-9-x/topics/introduction_compression_snappy.html
