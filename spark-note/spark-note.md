@@ -1717,6 +1717,25 @@ distinctElementsRDD.collect
 - `df.describe().show()`: **fast summary statistics for non-null values.**
 - `df.where("<column_name> = true")` is equivalent to `df.filter($"<column_name>" === true)`
 
+**Problem 1**: Given two dataframes aDF and bDF: key is line and value is file name, e.g. (line, a). The aim is to deduplicate lines after union a and b. 
+
+Solution i: 
+
+```scala
+val cDF = aDF.unionAll(bDF)
+cDF.dropDuplicates(col("line")).show()
+```
+
+Solution ii: 
+
+```scala
+val cDF = aDF.select("line").except(bDF.select("line")).withColumn("fileName")
+
+aDF.union(cDF).show()
+```
+
+`unionAll()` was deprecated in Spark 2.0, and for all future reference, `union()` is the only recommended method. In either case, `union` or `unionAll`, both do not do a SQL style deduplication of data. In order to remove any duplicate rows, just use `union()` followed by a `distinct()`. 
+
 #### Null Value
 
 Add a new string type column to dataframe with null value: `df.withColumn("columnName", lit(null).cast("string"))`
