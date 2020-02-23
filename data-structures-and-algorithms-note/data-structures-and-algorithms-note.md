@@ -1068,3 +1068,104 @@ int factorial(int n) {
    }
 }
 ```
+
+---
+
+### Pattern-matching Problem
+
+#### Brute-force (BF) Algorithm
+
+Main idea: It consists of two nested loops, with the outer loop indexing through all possible starting indices of the pattern in the text, and the inner loop indexing through each character of the pattern, comparing it to its potentially corresponding character in the text.
+
+Time complexity: O(nm)
+
+```java
+// returns the lowest index at which substring pattern begins in the text (or else -1)
+public static int findUsingBruteForce(char[] text, char[] pattern) {
+  int textLen = text.length;
+  int patternLen = pattern.length;
+
+  // if the pattern is "", return 0
+  if (patternLen == 0) {
+    return 0;
+  }
+
+  // try every starting index within text
+  for (int i = 0; i <= textLen - patternLen; i++) {
+    int k = 0; // k is index into pattern
+    while (k < patternLen && pattern[k] == text[k+i]) {
+      k++;
+    }
+    if (k == patternLen) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+```
+
+The algorithm implementation used by Java `contains()` and `indexOf()` method is similar to brute-force.
+
+#### Boyer-Moore (BM) Algorithm
+
+Time-saving heuristics: 
+
+- Looking-Glass Heuristic: When testing a possible placement of the pattern against the text, perform the comparisons against the pattern from right-to-left.
+- Character-Jump Heuristic: If `text[i]` is not contained anywhere in the pattern, then shift the pattern completely past `text[i] = c`. Otherwise, shift the pattern until an occurrence of character `c` gets aligned with `text[i]`.
+
+The efficiency of the Boyer-Moore algorithm relies on
+quickly determining where a mismatched character occurs elsewhere in the pattern.
+
+Define a function `last(c)` as: If `c` is in the pattern, `last(c)` is the index of the last (rightmost) occurrence of `c` in the pattern.
+
+Time complexity: O(nm)
+
+An example that achieves the worst case for Boyer-Moore: text is `aaaaaa...a`, pattern is `baaa...a`. 
+
+```java
+public static int findUsingBoyerMoore(char[] text, char[] pattern) {
+  int textLen = text.length;
+  int patternLen = pattern.length;
+
+  // if the pattern is "", return 0
+  if (patternLen == 0) return 0;
+
+  Map<Character, Integer> last = new HashMap<>();
+
+  for (char c : text) {
+    last.put(c, -1);
+  }
+
+  for (int k = 0; k < patternLen; k++) {
+    last.put(pattern, k);
+  }
+
+  int i = textLen - 1;
+  int k = patternLen - 1;
+
+  while (i < textLen) {
+    if (text[i] == pattern[k]) {
+      if (k == 0) { // entire pattern has been found
+        return i;
+      } 
+      i--;
+      k--;
+    } else {
+      // case analysis for jump step
+      i += m - Math.min(k, last.get(text[i]) + 1);
+      // restart at end of pattern
+      k = patternLen - 1;
+    }
+  }
+
+  return -1;
+}
+```
+
+#### Knuth-Morris-Pratt Algorithm
+
+A major inefficiency of BF and BM algorithm: For a certain alignment of the pattern, if we find several matching characters but then detect a mismatch, we ignore all the information gained by the successful
+comparisons after restarting with the next incremental placement of the pattern.
+
+Time complexity: O(n + m)
