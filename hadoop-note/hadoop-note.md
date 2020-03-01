@@ -48,6 +48,10 @@ Due to defect of MapReduce 1.0, top limit of number of nodes is 4000 in enterpri
 
 There is a standby ResourceManager for availability.  
 
+#### Coding
+
+Move one job to another queue on Yarn: `yarn application -movetiqueue <app_id> -queue <queue_name>` in terminal.
+
 ---
 
 ### HDFS Limitations
