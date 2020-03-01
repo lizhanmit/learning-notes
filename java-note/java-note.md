@@ -1195,6 +1195,48 @@ Using JDK or CGLIB dynamic proxy depends on:
 
 ![jvm-stack-and-heap.png](img/jvm-stack-and-heap.png)
 
+### Java Method Stack / Java Stack
+
+![java-method-stack.png](img/java-method-stack.png)
+
+**The memory for local variables and instance variables are allocated in stack memory.**
+
+Program counter: A special variable kept by JVM to maintain the address of the statement the JVM is currently executing in the program.
+
+When a new method (running method) is invoked, a frame for this method is pushed
+onto the stack. When it terminates, its frame is popped from the stack and the JVM
+resumes the processing of the previously suspended method.
+
+The JVM uses a stack to evaluate arithmetic expressions in Java.
+
+---
+
+### Memory Heap
+
+**The memory for objects and arrays are allocated in memory heap.**
+
+Free list: The method to keep contiguous "holes" of available free memory in a linked list.
+
+Fragmentation: The separation of unused memory into separate holes.
+
+- **Internal fragmentation** occurs when a portion of an allocated memory block is unused. For example, a program may request an array of size 1000, but only use the first 100 cells of this array. **A runtime environment can not do much to reduce internal fragmentation.**
+- **External fragmentation** occurs when there is a significant amount of unused memory between several contiguous blocks of allocated memory. **The runtime environment should allocate memory in a way to try to reduce external fragmentation.**
+
+#### Memory Allocation Algorithms
+
+- :thumbsdown: The best-fit algorithm
+- :thumbsdown: The first-fit algorithm
+- :thumbsdown: The next-fit algorithm
+- :thumbsup: The worst-fit algorithm searches the free list to find the largest hole of available memory. (Faster is the list is maintained as a priority queue.)
+
+Comparison:
+
+- The best-fit algorithm tends to produce the worst external fragmentation, since the leftover parts of the chosen holes tend to be small.
+- The first-fit algorithm is fast, but it tends to produce a lot of external fragmentation at the front of the free list, which slows down future searches.
+- The next-fit algorithm spreads fragmentation more evenly throughout the memory heap, thus keeping search times low. This spreading also makes it more difficult to allocate large blocks.
+- The worst-fit algorithm attempts to avoid this problem
+by keeping contiguous sections of free memory as large as possible.
+
 ---
 
 ## GC (Garbage Collection)
@@ -1202,6 +1244,35 @@ Using JDK or CGLIB dynamic proxy depends on:
 [What is Java Garbage Collection? How It Works, Best Practices](https://stackify.com/what-is-java-garbage-collection/)
 
 [五分钟了解JAVA垃圾回收](https://baijiahao.baidu.com/s?id=1610753983428990724&wfr=spider&for=pc)
+
+### The Mark-Sweep Algorithm
+
+There are several different algorithms for garbage collection, but one of **the most used** is the mark-sweep algorithm.
+
+#### Mark Phase 
+
+Associate a "mark" bit with each object that identifies whether that object is live. 
+
+Steps: 
+
+1. When the GC happens, suspend all other activity.
+2. Clear the mark bits of all the objects currently allocated in the memory heap. (清掉所有的mark。)
+3. Trace through the Java stacks of the currently running threads and we mark all the root objects in these stacks as "live".
+4. Mark other objects that are reachable from the root objects as "live".
+
+During this phase, perform a directed depth-first search.
+
+After this phase, some objects on the memory heap are marked as "live" while others not.
+
+#### Sweep Phase 
+
+Steps: 
+
+1. Scan through the memory heap and reclaim any space that is being used for an object that has not been marked.
+2. Optionally coalesce all the allocated space in the memory heap into a single block, thereby eliminating external fragmentation.
+3. Resume running the suspended program.
+
+The mark-sweep GC algorithm will reclaim unused space in **time proportional** to the number of live objects and their references plus the size of the memory heap.
 
 ---
 
