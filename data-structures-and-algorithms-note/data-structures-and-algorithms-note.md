@@ -115,6 +115,8 @@ Can handle larger files than indexed files.
 
 If you read a file that is too big to fit in main memory, the virtual memory system will read in that part of the file that fits and store the rest on the disk. You can do operation just as if the entire file is in memory.
 
+---
+
 ### Array
 
 cache-friendly
@@ -707,6 +709,12 @@ Minimum Spanning Tree algorithms:
 
 ---
 
+### Memory Management
+
+
+
+---
+
 ## Algorithms
 
 An integer division costs about 9 times as much as a multiplication and 25 times as much as an integer addition and logic operation.
@@ -888,6 +896,8 @@ Adaptive vs. Non-Adaptive Sorting
 - Adaptive: if the source list has some element already sorted, it will try not to re-order them.
 - Non-Adaptive Sorting: force every single element to be re-ordered, not taking into account the elements which are already sorted.
 
+[十大经典排序算法](https://www.runoob.com/w3cnote/ten-sorting-algorithm.html)
+
 [排序算法总结](https://www.runoob.com/w3cnote/sort-algorithm-summary.html)
 
 [十种常见排序算法的思想、应用场景](https://blog.csdn.net/hairy_monsters/article/details/80154391)
@@ -912,8 +922,6 @@ stable
 1. a[2]跟a[1]比，if a[2] < a[1]，a[1]的值赋给a[2]。
 2. a[2]跟a[0]比，if a[2] < a[0]，a[0]的值赋给a[1]。a[2]的值赋给a[0]。
 
-把小的值向后覆盖掉大的值。最终把最小值赋给第一个值。
-
 #### Selection Sort
 
 Divide the list into two sub-lists: sorted and unsorted. Then it selects the minimum element from unsorted sub-list and places it into the sorted list. This iterates unless all the elements from unsorted sub-list are placed into sorted sub-list.
@@ -921,6 +929,8 @@ Divide the list into two sub-lists: sorted and unsorted. Then it selects the min
 worst - O(n^2)
 
 not stable
+
+not adaptive
 
 1. Mark a[0] as min。
 2. a[0]跟a[1]比，if a[0] > a[1]，这时不要交换a[0]和a[1]。而是mark a[1] as min。
@@ -1163,9 +1173,15 @@ public static int findUsingBoyerMoore(char[] text, char[] pattern) {
 }
 ```
 
-#### Knuth-Morris-Pratt Algorithm
+#### Knuth-Morris-Pratt (KMP) Algorithm
 
 A major inefficiency of BF and BM algorithm: For a certain alignment of the pattern, if we find several matching characters but then detect a mismatch, we ignore all the information gained by the successful
 comparisons after restarting with the next incremental placement of the pattern.
 
 Time complexity: O(n + m)
+
+---
+
+## Appendices
+
+![summary.png](img/summary.png)
