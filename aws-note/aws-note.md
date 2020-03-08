@@ -15,11 +15,25 @@ Four primary benefits of using cloud services:
 
 ---
 
+## Global Infrastructure
+
+**AWS region**: 
+
+- Each region is a geographical area, which is a collection of AWS availability zones and data centers. 
+
+**Availability zone**: 
+
+- A geographical physical location that holds in AWS **data center**. 
+- Each availability zone is geographically separated from the other. 
+- Multiple availability zones are for redundancy. 
+  
+---
+
 ## VPC
 
 **Virtual Private Cloud** (VPC):  Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
 
- ![vpc.png](img/vpc.png)
+![vpc.png](img/vpc.png)
 
 ---
 
@@ -49,7 +63,6 @@ Common uses:
 **Simple Storage Service** (S3): Basically just a large "unlimited" storage bucket.
 
 - Provides object storage.
-
 - Multiple redundancies and backups of the files.
 
 Common uses: 
@@ -59,19 +72,7 @@ Common uses:
 
 ![s3.png](img/s3.png)
 
----
-
-## Global Infrastructure
-
-**AWS region**: 
-
-- Each region is a geographical area, which is a collection of AWS availability zones and data centers. 
-
-**Availability zone**: 
-
-- A geographical physical location that holds in AWS **data center**. 
-- Each availability zone is geographically separated from the other. 
-- Multiple availability zones are for redundancy. 
+To upload a file larger than 160 GB, use the AWS CLI, AWS SDK, or Amazon S3 REST API.
 
 ---
 
