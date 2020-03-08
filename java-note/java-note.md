@@ -1260,7 +1260,7 @@ Steps:
 3. Trace through the Java stacks of the currently running threads and we mark all the root objects in these stacks as "live".
 4. Mark other objects that are reachable from the root objects as "live".
 
-During this phase, perform a directed depth-first search.
+During this phase, perform a directed depth-first search (DFS), which should be performed **in-place** rather than recursively as we must not use extra space.
 
 After this phase, some objects on the memory heap are marked as "live" while others not.
 
