@@ -37,6 +37,16 @@ Four primary benefits of using cloud services:
 
 ---
 
+## DynamoDB
+
+A NoSQL database service for all applications that need consistent, single-digit millisecond latency at any scale. 
+
+The **primary key** is made up of a partition key (hash key) and an optional sort key. 
+
+The **partition key** is used to partition data across hosts for scalability and availability. Choose an attribute which has a wide range of values and is likely to have evenly distributed access patterns.
+
+---
+
 ## EC2
 
 **Elastic Compute Cloud** (EC2): It is the virtual equivalent of the server computer.
