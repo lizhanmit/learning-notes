@@ -709,12 +709,6 @@ Minimum Spanning Tree algorithms:
 
 ---
 
-### Memory Management
-
-
-
----
-
 ## Algorithms
 
 An integer division costs about 9 times as much as a multiplication and 25 times as much as an integer addition and logic operation.
