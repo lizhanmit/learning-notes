@@ -9,6 +9,7 @@
 - [Big Data Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/big-data-algorithms-note/big-data-algorithms-note.md)
 - [Big Data Basics](https://github.com/lizhanmit/learning-notes/blob/master/big-data-basics-note/big-data-basics-note.md)
 - [Big Data Environment Setup](https://github.com/lizhanmit/learning-notes/blob/master/big-data-environment-setup-note/big-data-environment-setup-note.md)
+- [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
 - [Data Warehouse](https://github.com/lizhanmit/learning-notes/blob/master/data-warehouse-note/data-warehouse-note.md)
 - [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
 - [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
@@ -71,7 +72,6 @@
 
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [CI CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
-- [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
 - [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
@@ -80,12 +80,13 @@
 - [MySQL](https://github.com/lizhanmit/learning-notes/blob/master/mysql-note/mysql-note.md)
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Scala](https://github.com/lizhanmit/scala-tutorial)
+- [SonarQube](https://github.com/lizhanmit/learning-notes/blob/master/sonarQube-note/sonarQube-note.md)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
 - [Web API](https://github.com/lizhanmit/learning-notes/blob/master/web-api-note/web-api-note.md)
   
 ---
 
-## Non Tech
+## Non-Tech
 
 - [Agile](https://github.com/lizhanmit/learning-notes/blob/master/agile-note/agile-note.md)
 - [OKR](https://github.com/lizhanmit/learning-notes/blob/master/okr-note/okr-note.md)
