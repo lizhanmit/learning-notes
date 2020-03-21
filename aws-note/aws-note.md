@@ -21,19 +21,13 @@ Four primary benefits of using cloud services:
 
 - Each region is a geographical area, which is a collection of AWS availability zones and data centers. 
 
+Define different services in the same region if you want them to interact.
+
 **Availability zone**: 
 
 - A geographical physical location that holds in AWS **data center**. 
 - Each availability zone is geographically separated from the other. 
 - Multiple availability zones are for redundancy. 
-  
----
-
-## VPC
-
-**Virtual Private Cloud** (VPC):  Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
-
-![vpc.png](img/vpc.png)
 
 ---
 
@@ -55,6 +49,32 @@ Common uses:
 
 - As a web hosting server.
 - Be good for any type of "processing" activity such as encoding and transcoding.
+
+---
+
+## IAM
+
+**Good practice**: bond groups and policies, then add users to groups. 
+
+- users
+- groups
+- policies
+- rules - services
+
+ARN: AWS Resource Name
+
+### Cognito 
+
+It offers: 
+
+- User pools: provides sign-up and sign-in options for app users.
+- Identity pools: provides AWS credentials to users to access AWS services.
+
+---
+
+## Lambda
+
+serverless
 
 ---
 
@@ -83,6 +103,14 @@ Common uses:
 ![s3.png](img/s3.png)
 
 To upload a file larger than 160 GB, use the AWS CLI, AWS SDK, or Amazon S3 REST API.
+
+---
+
+## VPC
+
+**Virtual Private Cloud** (VPC):  Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
+
+![vpc.png](img/vpc.png)
 
 ---
 
