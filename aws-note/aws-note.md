@@ -43,7 +43,7 @@ The **partition key** is used to partition data across hosts for scalability and
 
 ## EC2
 
-**Elastic Compute Cloud** (EC2): It is the virtual equivalent of the server computer.
+Elastic Compute Cloud (EC2): It is the virtual equivalent of the server computer.
 
 Common uses: 
 
@@ -61,7 +61,8 @@ Common uses:
 - policies
 - rules - services
 
-ARN: AWS Resource Name
+Think of the **user pool** as a database for user accounts that allows them to login and the **identity pool** gets them into the right role to give them permissions into the rest of AWS.
+
 
 ### Cognito 
 
@@ -80,7 +81,7 @@ serverless
 
 ## RDS 
 
-**Relational Database Service** (RDS):  AWS provisioned database service.
+Relational Database Service (RDS):  AWS provisioned database service.
 
 Common uses: 
 
@@ -90,7 +91,7 @@ Common uses:
 
 ## S3
 
-**Simple Storage Service** (S3): Basically just a large "unlimited" storage bucket.
+Simple Storage Service (S3): Basically just a large "unlimited" storage bucket.
 
 - Provides object storage.
 - Multiple redundancies and backups of the files.
@@ -104,11 +105,49 @@ Common uses:
 
 To upload a file larger than 160 GB, use the AWS CLI, AWS SDK, or Amazon S3 REST API.
 
+You can access S3 buckets across regions. But if you are defining something like a lambda that is going to use this bucket, you might want to define it in the same region for performance. 
+
+You would not want to store sensitive data in a region of another country. 
+
+---
+
+## SNS
+
+Simple Notification Service (SNS)
+
+- topics
+- subscribers
+
+Whenever there is a message for SNS on a topic, it pushes it out to all of its subscribers.
+
+SQS can be a subscriber.
+
+You can create notification using S3, e.g. the event that a new file is PUT. Then the message flow: S3 -> SNS -> SQS -> Lambda function that processes the message.
+
+
+
+---
+
+## SQS
+
+Simple Queue Service (SQS): a reliable, scalable, fully-managed message queuing service.
+
+- Send, store, and receive messages between apps and software components. 
+- Decouple and scale better.
+- User server side encryption (SSE) and Key Management Service (KMS) for security.
+
+Two types of queues: 
+
+- Standard: maximum throughput, best-effort ordering (not guaranteed the order), at-least-once delivery
+- FIFO: processed exactly once, in order
+
+Example: A Lambda function that can process messages. Configure trigger for the Lambda function on queue when the message is ready and send the message via message body and its attributes. And you can watch that through CloudWatch Logs.
+
 ---
 
 ## VPC
 
-**Virtual Private Cloud** (VPC):  Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
+Virtual Private Cloud (VPC):  Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
 
 ![vpc.png](img/vpc.png)
 
@@ -119,3 +158,32 @@ To upload a file larger than 160 GB, use the AWS CLI, AWS SDK, or Amazon S3 REST
 ![elastic-web-app-deployment-architecture.png](img/elastic-web-app-deployment-architecture.png)
 
 公网对外，私网对内。 私网不能直接访问公网，需通过NAT（相当于router）。
+
+---
+
+## Glossary 
+
+- ARN: AWS Resource Name
+- IdP: Identity Provides and Federation 
+- STS: Security Token Service
+- WIF: Web Identity Federation 
+
+---
+
+## Questions Collection 
+
+Q: In IAM, which areas need to be considered with restriction and access?
+
+A: Computing, Storage, Database, and App services. 
+
+---
+
+Q: There are tow ways to create a User Pool. What are they?
+
+A: Review defaults and Step through settings. 
+
+---
+
+Q: What is Anonymous Access?
+
+A: It creates Identity pools for you. 
