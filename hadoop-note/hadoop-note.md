@@ -338,7 +338,7 @@ Different versions of the same application can be run in parallel and they will 
 
 ### Yarn Commands
 
-Move one job to another queue on Yarn: `yarn application -movetiqueue <app_id> -queue <queue_name>` in terminal.
+Move one job to another queue on Yarn: `yarn application -movetoqueue <app_id> -queue <queue_name>` in terminal.
 
 ---
 
