@@ -357,6 +357,7 @@ All Hive keywords, table names and column names are **case-insensitive**.
 - `alter table <table_name> drop partition (ds='2019-05-10');`: Drop a partition.
 - `! <command>`: In Hive shell, execute Linux commands. For instance, `! ls`.
 - Need alias when order by count. Otherwise, error "Not yet supported place for UDAF 'count'". For instance, `select count(*) as cnt, brand_id from user_log where action='2' group by brand_id order by cnt desc;`.
+- Save the result of Hive query to text file: `hive -e 'desc dbName.tableName;' > ~/descriptionOfTable.txt`.
 
 ### Load Data
 
