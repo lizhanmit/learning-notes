@@ -98,6 +98,7 @@ Three shell style:
 
 #### HDFS Commands
 
+- `hdfs dfs -du -s -h <file_path>`: Check the size of file on HDFS. 
 - `hdfs dfs -put test.txt sampleDir`: Upload test.txt in the current directory to "sampleDir" folder on HDFS.
 - `hdfs dfs -put test.txt`: Upload test.txt in the current directory to root directory on HDFS.
 - `hdfs dfs -rm -R sampleDir/output`: Remove output files and directory itself using a recursive remove statement.
@@ -338,7 +339,9 @@ Different versions of the same application can be run in parallel and they will 
 
 ### Yarn Commands
 
-Move one job to another queue on Yarn: `yarn application -movetoqueue <app_id> -queue <queue_name>` in terminal.
+Move one job to another queue on Yarn: `yarn application -movetoqueue <application_id> -queue <queue_name>` in terminal.
+
+Kill job on Yarn: `yarn application -kill <application_id>` in terminal.
 
 ---
 
