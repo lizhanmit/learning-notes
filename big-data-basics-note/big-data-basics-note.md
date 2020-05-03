@@ -4,10 +4,6 @@
 
 ---
 
-![key-aspects-of-a-big-data-platform.png](img/key-aspects-of-a-big-data-platform.png)
-
----
-
 ![data-science-process.png](img/data-science-process.png)
 
 ---
@@ -48,3 +44,23 @@ Big data pain points:
 - network bottleneck
 - data shuffling 
 - processing time
+
+
+Big data challenges / characteristics - 5 Vs: 
+
+- volume
+- velocity
+- variety 
+- veracity 
+- value
+
+Not all organizations experience challenges in every area. 
+
+Key aspects of a big data platform:
+
+- integration 
+- analysis
+- visualization 
+- workload optimization 
+- security 
+- governance 
