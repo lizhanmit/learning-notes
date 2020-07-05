@@ -64,3 +64,7 @@ Key aspects of a big data platform:
 - workload optimization 
 - security 
 - governance 
+
+Big data types:
+
+![structured-vs-semistructured-vs-unstructured-data.png](img/structured-vs-semistructured-vs-unstructured-data.png)
