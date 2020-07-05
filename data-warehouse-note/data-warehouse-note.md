@@ -4,6 +4,8 @@
 
 A data warehouse is a subject-oriented, integrated, time-variant, and nonvolatile collection of data in support of management's decision-making process.  
 
+Used for structured data storage. 
+
 Data warehouse (DWH) is not loaded every time when new data is added into transaction database. 
 
 There is no frequent updating done in a data warehouse.
