@@ -2,6 +2,7 @@
 
 - [Data Science Note](#data-science-note)
   - [Basics](#basics)
+    - [Quick Look](#quick-look)
     - [Supervised Learning](#supervised-learning)
     - [Unsupervised Learning](#unsupervised-learning)
     - [Reinforcement Learning](#reinforcement-learning)
@@ -19,9 +20,10 @@
 
 ## Basics
 
-Multiclass classification - random forest
+### Quick Look
 
-K-means - clustering 
+- Random forest: multiclass classification 
+- K-means: clustering 
 
 ### Supervised Learning 
 
