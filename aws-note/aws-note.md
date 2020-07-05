@@ -1,5 +1,52 @@
 # AWS Note
 
+- [AWS Note](#aws-note)
+  - [Quick Look](#quick-look)
+  - [Overview](#overview)
+  - [Global Infrastructure](#global-infrastructure)
+  - [Athena](#athena)
+  - [CloudFormation](#cloudformation)
+  - [CloudFront](#cloudfront)
+  - [CloudWatch](#cloudwatch)
+  - [DynamoDB](#dynamodb)
+  - [EC2](#ec2)
+  - [Elastic Beanstalk (EB)](#elastic-beanstalk-eb)
+  - [ElastiCache](#elasticache)
+  - [EMR](#emr)
+  - [IAM](#iam)
+    - [Cognito](#cognito)
+  - [Lake Formation](#lake-formation)
+  - [Lambda](#lambda)
+  - [Redshift](#redshift)
+    - [Redshift Spectrum](#redshift-spectrum)
+  - [RDS](#rds)
+  - [S3](#s3)
+  - [SNS](#sns)
+  - [SQS](#sqs)
+  - [Step Functions](#step-functions)
+  - [VPC](#vpc)
+  - [Create an Elastic Web Application by Using AWS](#create-an-elastic-web-application-by-using-aws)
+  - [Glossary](#glossary)
+  - [Tips](#tips)
+  - [Questions Collection](#questions-collection)
+
+---
+
+## Quick Look
+
+- Athena: interactive query service against data in S3 using standard SQL.
+- EMR: a platform providing open source tools.
+- Glue: catalog data, understand the data within your data lake, prepare it, and load it reliably into data stores.
+- Kinesis: ingest streaming data.
+- Lake Formation: set up data lake.
+- Redshift: a data warehousing service.
+- Redshift Spectrum: combine data lake and data warehouse, allowing you to query across both spaces.
+- S3: data storage.
+- Snowball: ingest large volumes of on-premises data.
+
+
+---
+
 ## Overview
 
 Four primary benefits of using cloud services:
@@ -28,6 +75,15 @@ Define different services in the same region if you want them to interact.
 - A geographical physical location that holds in AWS **data center**. 
 - Each availability zone is geographically separated from the other. 
 - Multiple availability zones are for redundancy. 
+
+---
+
+## Athena
+
+Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. 
+
+- Serverless, no infrastructure to manage. 
+- Pay only for the queries that you run.
 
 ---
 
@@ -129,6 +185,18 @@ Cluster engine options:
 
 ---
 
+## EMR
+
+Amazon Elastic MapReduce (EMR): a cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. 
+
+EMR is a managed Hadoop framework. 
+
+EMR File System can catalog data within an Amazon S3 data lake and from an on-premises Hadoop File System at the same time.
+
+**The first principle of data analysis is to separate storage from processing.** Amazon EMR is a perfect example of this principle.
+
+---
+
 ## IAM
 
 - users
@@ -149,9 +217,40 @@ Think of the **user pool** as a database for user accounts that allows them to l
 
 ---
 
+## Lake Formation
+
+AWS Lake Formation is 
+
+- a service that makes it easy to set up a secure data lake in days. 
+- a service that organizes and curates data within Amazon S3 data lakes. 
+
+It makes it easy to ingest, clean, catalog, transform, and secure your data and make it available for analysis and machine learning. 
+
+It automatically configures underlying AWS services to ensure compliance with your defined policies. 
+
+---
+
 ## Lambda
 
 serverless
+
+---
+
+## Redshift
+
+Amazon Redshift is a data warehousing service that lets you set up and deploy a new data warehouse in minutes. 
+
+It is built to store and query datasets ranging from gigabytes to petabytes in size.
+
+Up to 10 times the performance that can be achieved with a comparable, on-prem data warehouse solution.
+
+### Redshift Spectrum
+
+Redshift Spectrum combines data lake and data warehouse as if they were a single source of data, allowing you to query across both spaces. 
+
+No data movement.
+
+Only analyzing data in data warehouse is a huge limitation in today's data landscape. You can create a data analytics solution that spans structured data in the data warehouse and semi-structured and unstructured data stored in the data lake. 
 
 ---
 
@@ -167,23 +266,45 @@ Common uses:
 
 ## S3
 
-Simple Storage Service (S3): Basically just a large "unlimited" storage bucket.
+Simple Storage Service (S3): Basically just a large **"unlimited"** storage bucket.
 
-- Provides object storage.
+- Provides **object storage** to store and retrieve any amount of data from anywhere.
 - Multiple redundancies and backups of the files.
+- An **object** is composed of a file and any metadata that describes that file.
+- **Buckets** are logical containers for objects.
+- You can have one or more buckets in your account.
+- Once objects have been stored in an Amazon S3 bucket, they are given an **object key**. Use this, along with the bucket name, to access the object.
+- Every object in Amazon S3 can be uniquely addressed through the combination of the web service endpoint, bucket name, key, and (optionally) version.
+
+![s3-bucket-object-url.png](img/s3-bucket-object-url.png)
 
 Common uses: 
 
 - Mass storage. 
 - Long term storage.
+- The best place to store all of semistructured and unstructured data.
 
 ![s3.png](img/s3.png)
 
-To upload a file larger than 160 GB, use the AWS CLI, AWS SDK, or Amazon S3 REST API.
+Three key ways to implement S3:
 
-You can access S3 buckets across regions. But if you are defining something like a lambda that is going to use this bucket, you might want to define it in the same region for performance. 
+- Decoupling storage from processing: may have separate buckets for raw data, temporary processing results, and final results.
+- Parallelization: running process in parallel.
+- Centralized location: providing access for multiple analytic processes at the same time, to avoid costly moving data between storage systems and processing systems.
 
-You would not want to store sensitive data in a region of another country. 
+The benefits of S3:
+
+- Store anything
+- Secure object storage
+- Natively online, HTTP access
+- Unlimited scalability 
+- 99.999999999% durability
+
+Tips: 
+
+- To upload a file larger than 160 GB, use the AWS CLI, AWS SDK, or Amazon S3 REST API.
+- You can access S3 buckets across regions. But if you are defining something like a lambda that is going to use this bucket, you might want to define it in the same region for performance. 
+- You would not want to store sensitive data in a region of another country. 
 
 ---
 
