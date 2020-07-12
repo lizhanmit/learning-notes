@@ -4,7 +4,7 @@
 
 A data warehouse is a subject-oriented, integrated, time-variant, and nonvolatile collection of data in support of management's decision-making process.  
 
-Used for structured data storage. 
+**Used for structured data storage.**
 
 Data warehouse (DWH) is not loaded every time when new data is added into transaction database. 
 
@@ -23,6 +23,15 @@ Three types of data warehouse applications:
 - Information Processing: querying, basic statistical analysis, reporting using crosstabs, tables, charts, or graphs.
 - Analytical Processing: basic OLAP operations, including slice-and-dice, drill down, roll up, and pivoting.
 - Data Mining: knowledge discovery by finding hidden patterns and associations, constructing analytical models, performing classification and prediction.
+
+### Pros & Cons
+
+|  Pros  | Cons  |
+|  ----  | ----  |
+| Fast data retrieval | Costly to implement |
+| Curated data sets  | Maintenance can be challenging |
+| Centralized storage | Security concerns |
+| Better business intelligence | Hard to scale to meet demand |
 
 ### Integrating Heterogeneous Databases
 
@@ -123,3 +132,8 @@ The implementation cycle of a data mart is measured in short periods of time, i.
 
 ---
 
+## Data Lakes
+
+Data lakes extend data warehouses.
+
+Data lakes provide customers a means for including **unstructured** and **semi-structured** data in their analytics.
