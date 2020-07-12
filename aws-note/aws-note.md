@@ -34,16 +34,17 @@
 
 ## Quick Look
 
-- Athena: interactive query service against data in S3 using standard SQL.
-- EMR: a platform providing open source tools.
-- Glue: catalog data, understand the data within your data lake, prepare it, and load it reliably into data stores.
-- Kinesis: ingest streaming data.
-- Lake Formation: set up data lake.
-- Redshift: a data warehousing service.
-- Redshift Spectrum: combine data lake and data warehouse, allowing you to query across both spaces.
-- S3: data storage.
-- Snowball: ingest large volumes of on-premises data.
+- Athena: Interactive query service against data in S3 using standard SQL.
+- EMR: A platform providing open source tools.
+- Glue: Catalog data, understand the data within your data lake, prepare it, and load it reliably into data stores.
+- Kinesis: Ingest streaming data.
+- Lake Formation: Set up data lake.
+- Redshift: A data warehousing service.
+- Redshift Spectrum: Combine data lake and data warehouse, allowing you to query across both spaces.
+- S3: Objects or files storage.
+- Snowball: Ingest large volumes of on-premises data.
 
+When you consider using Hadoop within AWS, go to Amazon EMR and AWS Glue. 
 
 ---
 
@@ -243,6 +244,17 @@ Amazon Redshift is a data warehousing service that lets you set up and deploy a 
 It is built to store and query datasets ranging from gigabytes to petabytes in size.
 
 Up to 10 times the performance that can be achieved with a comparable, on-prem data warehouse solution.
+
+Amazon Redshift overcomes all of [negatives of traditional DW](https://github.com/lizhanmit/learning-notes/blob/master/data-warehouse-note/data-warehouse-note.md#pros-and-cons). 
+
+Benefits: 
+
+- Faster performance
+- 10x faster than other data warehouses
+- Easy to set up, deploy, and manage
+- Secure
+- Scales quickly to meet your needs
+
 
 ### Redshift Spectrum
 
