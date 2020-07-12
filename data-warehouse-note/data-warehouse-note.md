@@ -24,7 +24,7 @@ Three types of data warehouse applications:
 - Analytical Processing: basic OLAP operations, including slice-and-dice, drill down, roll up, and pivoting.
 - Data Mining: knowledge discovery by finding hidden patterns and associations, constructing analytical models, performing classification and prediction.
 
-### Pros & Cons
+### Pros and Cons
 
 |  Pros  | Cons  |
 |  ----  | ----  |
@@ -137,3 +137,5 @@ The implementation cycle of a data mart is measured in short periods of time, i.
 Data lakes extend data warehouses.
 
 Data lakes provide customers a means for including **unstructured** and **semi-structured** data in their analytics.
+
+Previously, data warehouses are enough for data analytics and BI. But now, with the development of Machine Learning, unstructured and semi-structured can also provide values. Then data lakes come in.
