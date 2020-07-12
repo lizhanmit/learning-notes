@@ -139,3 +139,7 @@ Data lakes extend data warehouses.
 Data lakes provide customers a means for including **unstructured** and **semi-structured** data in their analytics.
 
 Previously, data warehouses are enough for data analytics and BI. But now, with the development of Machine Learning, unstructured and semi-structured can also provide values. Then data lakes come in.
+
+### Data Warehouse VS Data Lake
+
+![data-warehouse-vs-data-lake.png](img/data-warehouse-vs-data-lake.png)
