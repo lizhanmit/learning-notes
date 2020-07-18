@@ -1845,7 +1845,7 @@ Take Amazon EMR (Elastic MapReduce) as an example.
 
 #### Count
 
-- Show all rows of a DataFrame in the console instead of only 20 rows by default: `df.show(df.count())`.
+- Show all rows of a DataFrame in the console instead of only 20 rows by default: `df.show(df.count().toInt)`.
 - When performing calculations over big data, it can be quite expensive to get an exact answer to a question, and it is often much cheaper to simply request an approximate to a reasonable degree of accuracy. E.g. `approx_count_distinct("<column_name>", <max_estimation_percentage_error_allowed>)`.
 - `count(*)` will count null values (including rows containing all nulls). `count("<columnName>")` will not count null values.
 - Two ways to perform count:
