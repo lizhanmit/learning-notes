@@ -13,6 +13,7 @@
   - [Elastic Beanstalk (EB)](#elastic-beanstalk-eb)
   - [ElastiCache](#elasticache)
   - [EMR](#emr)
+    - [EMRFS](#emrfs)
   - [IAM](#iam)
     - [Cognito](#cognito)
   - [Lake Formation](#lake-formation)
@@ -188,13 +189,22 @@ Cluster engine options:
 
 ## EMR
 
-Amazon Elastic MapReduce (EMR): a cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. 
+Amazon Elastic MapReduce (EMR): A cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. 
 
-EMR is a managed Hadoop framework. 
-
-EMR File System can catalog data within an Amazon S3 data lake and from an on-premises Hadoop File System at the same time.
+Amazon EMR is a managed Hadoop framework. Amazon EMR is the AWS service that implements Hadoop frameworks.
 
 **The first principle of data analysis is to separate storage from processing.** Amazon EMR is a perfect example of this principle.
+
+Amazon EMR has the ability to implement two different file systems: 
+
+- HDFS 
+- Elastic MapReduce File System (**EMRFS**): an alternative to HDFS.
+
+### EMRFS
+
+No need to copy data into the cluster before transforming and analyzing the data as with HDFS, which can dramatically improve performance of the cluster.
+
+EMR File System can catalog data within an Amazon S3 data lake and from an on-premises Hadoop File System at the same time.
 
 ---
 
