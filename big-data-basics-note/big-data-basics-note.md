@@ -68,3 +68,32 @@ Key aspects of a big data platform:
 Big data types:
 
 ![structured-vs-semistructured-vs-unstructured-data.png](img/structured-vs-semistructured-vs-unstructured-data.png)
+
+---
+
+## Data Processing
+
+### Batch Processing
+
+Two forms: 
+
+- Scheduled: 
+  - Very large volume of data.
+  - Regular schedule—hourly, daily or weekly.
+  - Generally the same amount of data each time.
+  - Workloads are predictable.
+- Periodic:
+  - At random times, on-demand.
+  - Often run once a certain amount of data has been collected.
+  - Workloads are unpredictable and hard to plan around.
+
+You often use a single application to collect, process, and temporarily store data while it is processing.
+
+### Stream Processing
+
+Two forms: 
+
+- Real time: 
+  - Within milliseconds.
+- Near-real time: 
+  - Within minutes.
