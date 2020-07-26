@@ -1,23 +1,22 @@
 # Kafka Note
 
-Apache Kafka is publish-subscribe, high-throughput, distributed messaging system. 
-
-Kafka scales very well in a horizontal way without compromising speed and efficiency.
-
-Kafka is distributed, partitioned, replicated, and commit-log-based.
-
-Two directives or purposes of Kafka: 
-
-- Not block the producers (in order to deal with the back pressure).
-- Isolate producers and consumers. 
-
-Application scenarios:
-
-- messaging system
-- web analytics - clickstream
-- operational monitoring - e.g. manufacturing facility, sensor data.
-- log collection
-- stream processing - e.g. alerting abnormal usage when using credit card.
+- [Kafka Note](#kafka-note)
+  - [Architecture](#architecture)
+  - [Concepts](#concepts)
+  - [Basics](#basics)
+    - [Log](#log)
+    - [Topic & Partition & Message](#topic--partition--message)
+    - [Broker](#broker)
+    - [Write & Read](#write--read)
+  - [Kafka VS Flume](#kafka-vs-flume)
+  - [Hardware Recommendations](#hardware-recommendations)
+  - [Kafka Monitor](#kafka-monitor)
+  - [Kafka Audit](#kafka-audit)
+  - [Installation (kafka_2.11-0.9.0.0.tgz)](#installation-kafka_211-0900tgz)
+    - [Config ZooKeeper](#config-zookeeper)
+    - [Config Kafka](#config-kafka)
+  - [How to Use Single Node Single Broker](#how-to-use-single-node-single-broker)
+  - [How to Use Single Node Multiple Brokers](#how-to-use-single-node-multiple-brokers)
 
 ---
 
@@ -39,17 +38,56 @@ Using Kafka as a hub:
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
 
+---
+
+## Concepts
+
+Apache Kafka is publish-subscribe, high-throughput, distributed messaging system. 
+
+Kafka scales very well in a horizontal way without compromising speed and efficiency.
+
+Kafka is distributed, partitioned, replicated, and commit-log-based.
+
+Two directives or purposes of Kafka: 
+
+- Not block the producers (in order to deal with the back pressure).
+- Isolate producers and consumers. 
+
+Three main capabilities: 
+
+- Provide the ability to **publish/subscribe** to records like a **message queue**.
+- Store records with **fault-tolerance**.
+- Process **streams** as they occur.
+
+Application scenarios:
+
+- messaging system
+- web analytics - clickstream
+- operational monitoring - e.g. manufacturing facility, sensor data.
+- log collection
+- stream processing - e.g. alerting abnormal usage when using credit card.
+
 Three types of Kafka clusters:
 
 - Single node–single broker
 - Single node–multiple broker
 - Multiple node–multiple broker
 
-Three ways to deliver messages:
+**Three ways to deliver messages**:
 
-- Never redelivered: The messages may be lost.
-- May be redelivered: The messages are never lost. 
-- Delivered once: The message is delivered exactly once. There is zero loss of any message.
+- At least once (**by default**): The messages are never lost. 
+  - If a message from a producer has a failure or is not acknowledged, the producer will resend the message.
+  - The broker will see two messages (or only one if there was a true failure).
+  - Consumers will get as many messages as the broker received. They might have to deduplicate messages.
+- At most once: The messages may be lost.
+  - If a message from a producer has a failure or is not acknowledged, the producer will **not** resend the message.
+  - The broker will see one message at most (or zero if there was a true failure).
+  - Consumers will see the messages that the broker received. If there was a failure, the consumer would never see that message.
+  - Q: Why would someone be OK with losing a message? A: **Keeping the system performing and not waiting on acknowledgements might outweigh any gain from lost data.**
+- Exactly once: The message is delivered exactly once. There is zero loss of any message.
+  - If a message from a producer has a failure or is not acknowledged, the producer will resend the message.
+  - The broker will only allow one message.
+  - Consumers will only see the message once.
 
 The message log can be compacted in two ways:
 
@@ -98,7 +136,7 @@ A single broker can handle several hundred megabytes of reads and writes per sec
 
 If Broker 3 goes down,
 
-- the lead partition of Topic 3 will move over to Broker 1.
+- The lead partition of Topic 3 will move over to Broker 1.
 - Broker 1 is little bit overloaded because it is handling writes for both Topic 1 and 3.
 - Broker 2 will also adjust its partition of Topic 3.  
 
