@@ -1,4 +1,32 @@
-# Data Structure & Algorithm Interview Preparation
+# Data Structures & Algorithms Interview Preparation
+
+## LeetCode Explore
+
+### Data Structures
+
+#### Array 
+
+列表中没有索引，这是数组与列表最大的不同点。
+
+数组中的元素在内存中是连续存储的，且每个元素占用相同大小的内存。
+
+#### String 
+
+我们可以用 “==” 来比较两个字符串吗？
+
+这取决于下面这个问题的答案：我们使用的语言是否支持运算符重载？
+
+- 如果答案是 yes （例如 C++、Python）。我们可以使用 `==` 来比较两个字符串；
+- 如果答案是 no （例如 Java），我们可能无法使用 `==` 来比较两个字符串。当我们使用 `==` 时，它实际上会比较这两个对象是否是同一个对象。
+
+对于 Java来说，由于字符串是不可变的，
+
+- 如果你确实希望你的字符串是可变的，则可以使用 `toCharArray` 将其转换为字符数组。
+- 如果你经常必须连接字符串，最好使用一些其他的数据结构，如 `StringBuilder`。
+
+
+
+---
 
 ## Experience
 
