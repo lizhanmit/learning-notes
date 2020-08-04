@@ -89,10 +89,10 @@ You can see a list of active streams through `spark.streams.active`.
 
 ### Output Modes
 
-- append: default.
-- update: only the rows that are different from the previous write are written out to the sink. 
+- Append: default.
+- Update: only the rows that are different from the previous write are written out to the sink. 
     - If the query does not contain aggregations, this is equivalent to append mode.
-- complet: rewrite the full output.
+- Complete: rewrite the full output.
     - The map operation does not allow complete mode.
     - Complete mode is not supported as it is infeasible to keep all unaggregated
 data in the Result Table.
