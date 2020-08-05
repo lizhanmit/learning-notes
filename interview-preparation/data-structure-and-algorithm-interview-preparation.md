@@ -24,7 +24,18 @@
 - 如果你确实希望你的字符串是可变的，则可以使用 `toCharArray` 将其转换为字符数组。
 - 如果你经常必须连接字符串，最好使用一些其他的数据结构，如 `StringBuilder`。
 
+#### Hash Table
 
+Two types:
+
+- HashSet是集合数据结构的实现之一，用于存储非重复值。
+- HashMap是映射数据结构的实现之一，用于存储(key, value)键值对。
+
+哈希函数是哈希表中最重要的组件。
+
+理想情况下，完美的哈希函数将是键和桶之间的一对一映射。然而，在大多数情况下，哈希函数并不完美，它需要在桶的数量和桶的容量之间进行权衡。
+
+如果在同一个桶中有太多的值，这些值将被保留在一个高度平衡的二叉树搜索树中。
 
 ---
 
@@ -48,38 +59,40 @@
 
 ## Q & A
 
-### 100亿数据找出最大的1000个数字（top K问题）
+### Linked List
 
-在大规模数据处理中，经常会遇到的一类问题：在海量数据中找出出现频率最好的前k个数，或者从海量数据中找出最大的前k个数，这类问题通常被称为top K问题。例如，在搜索引擎中，统计搜索最热门的10个查询词；在歌曲库中统计下载最高的前10首歌等。
+Q: Detect cycle in a linked list.
 
-1、最容易想到的方法是将数据全部排序。该方法并不高效，因为题目的目的是寻找出最大的10000个数即可，而排序却是将所有的元素都排序了，做了很多的无用功。
+A: Take two pointers - a fast pointer which moves forward two steps once and a slow pointer which moves forward one step once. Initially they are at the beginning node. If there is cycle in the linked list, these two pointers must meet somewhere.
 
-2、局部淘汰法。用一个容器保存前10000个数，然后将剩余的所有数字一一与容器内的最小数字相比，如果所有后续的元素都比容器内的10000个数还小，那么容器内这个10000个数就是最大10000个数。如果某一后续元素比容器内最小数字大，则删掉容器内最小元素，并将该元素插入容器，最后遍历完这1亿个数，得到的结果容器中保存的数即为最终结果了。此时的时间复杂度为O（n+m^2），其中m为容器的大小。
+### Hash Table
 
-这个容器可以用（小顶堆）最小堆来实现。我们知道完全二叉树有几个非常重要的特性，就是假如该二叉树中总共有N个节点，那么该二叉树的深度就是log2N，对于小顶堆来说移动根元素到 底部或者移动底部元素到根部只需要log2N，相比N来说时间复杂度优化太多了（1亿的logN值是26-27的一个浮点数）。基本的思路就是先从文件中取出1000个元素构建一个小顶堆数组k，然后依次对剩下的100亿-1000个数字进行遍历m，如果m大于小顶堆的根元素，即k[0]，那么用m取代k[0]，对新的数组进行重新构建组成一个新的小顶堆。这个算法的时间复杂度是O((100亿-1000)log(1000))，即O((N-M)logM)，空间复杂度是M
+Q: 给定一个整数数组，查找数组是否包含任何重复项。
 
-这个算法优点是性能尚可，空间复杂度低，IO读取比较频繁，对系统压力大。
+A: Use HashSet. 
 
-3、第三种方法是分治法，即大数据里最常用的MapReduce。
+1. Traverse the array.
+2. Check if the element already exists in the HashSet. 
+3. If yes, return true. If no, insert the element into the HashSet. 
+4. If the traversal ends, return false.
 
-a、将100亿个数据分为1000个大分区，每个区1000万个数据
+Q: 给定一个整数数组，返回两个数字的索引，使它们相加得到特定目标。(Two sum)
 
-b、每个大分区再细分成100个小分区。总共就有1000*100=10万个分区
+A: Use HashMap.
 
-c、计算每个小分区上最大的1000个数。
+1. Traverse the array.
+2. Use target value to minus the element value, and get complement value. 
+3. Check if the complement value already exists as a key in the HashMap. 
+4. If yes, add these two indexes in an array list. 
+5. Put (element value, its index) in the HashMap.
+6. Return the array list when the traversal ends.
 
-为什么要找出每个分区上最大的1000个数？举个例子说明，全校高一有100个班，我想找出全校前10名的同学，很傻的办法就是，把高一100个班的同学成绩都取出来，作比较，这个比较数据量太大了。应该很容易想到，班里的第11名，不可能是全校的前10名。也就是说，不是班里的前10名，就不可能是全校的前10名。因此，只需要把每个班里的前10取出来，作比较就行了，这样比较的数据量就大大地减少了。我们要找的是100亿中的最大1000个数，所以每个分区中的第1001个数一定不可能是所有数据中的前1000个。
+Q: 给定一个字符串，找到它的第一个不重复的字符，并返回它的索引。如果不存在，则返回 -1。
 
-d、合并每个大分区细分出来的小分区。每个大分区有100个小分区，我们已经找出了每个小分区的前1000个数。将这100个分区的1000*100个数合并，找出每个大分区的前1000个数。
+A: Use HashMap. Traverse the string twice.
 
-e、合并大分区。我们有1000个大分区，上一步已找出每个大分区的前1000个数。我们将这1000*1000个数合并，找出前1000.这1000个数就是所有数据中最大的1000个数。
+1. Traverse the string. Put (character, count of appearance) into the HashMap. 
+2. Traverse the string the second time. Use each character as the key and get value from the HashMap. 
+3. If the value is 1, return the index of this character.
+4. If the traversal ends, return -1.
 
-（a、b、c为map阶段，d、e为reduce阶段）
-
-4、Hash法。如果这1亿个数里面有很多重复的数，先通过Hash法，把这1亿个数字去重复，这样如果重复率很高的话，会减少很大的内存用量，从而缩小运算空间，然后通过分治法或最小堆法查找最大的10000个数。
-
-**对于海量数据处理，思路基本上是：必须分块处理，然后再合并起来。**
-
-### Detect cycle in a linked list.
-
-Take two pointers - a fast pointer which moves forward two steps once and a slow pointer which moves forward one step once. Initially they are at the beginning node. If there is cycle in the linked list, these two pointers must meet somewhere.
