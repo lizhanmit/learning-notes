@@ -200,11 +200,19 @@ When to use a linked list:
 ![singly-linked-list.jpg](img/singly-linked-list.jpg)
 
 - Advantages: insertion and deletion can be very quick.
-  - insertion (prepend) - **O(1)**
-  - insertion (append) - **O(n)**
+  - insertion (prepend) - **O(1)** time
+  - insertion (append) - **O(n)** time
 - Disadvantages
-  - Slow to access an element. **O(n)**
+  - Slow to access an element. **O(n)** time
   - Memory is a concern. Require data and pointers.
+
+Steps to insert a new value into a singly linked list (not as the head or last node): **O(1)** time
+
+1. Create a new node with the new value.
+2. Point the new node to the next node.
+3. Point the pre node to the new node. 
+
+Delete a node (not the head node): **O(n)** time
 
 ```java
 public LinkedListNode getIthItemInLinkedList(LinkedListNode head, int i) {
