@@ -152,6 +152,8 @@ Only committed messages are ever given out to the consumer.
 
 For producers, they have the option of either waiting for the message to be committed or not, depending on their preference for tradeoff between latency and durability.
 
+One application reading a message off of the message brokers doesn’t remove it from other applications that might want to consume it as well.
+
 ---
 
 ## Kafka VS Flume
