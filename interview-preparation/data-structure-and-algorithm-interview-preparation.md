@@ -1,16 +1,33 @@
 # Data Structures & Algorithms Interview Preparation
 
-## LeetCode Explore
+- [Data Structures & Algorithms Interview Preparation](#data-structures--algorithms-interview-preparation)
+  - [Data Structures](#data-structures)
+    - [Array](#array)
+    - [String](#string)
+    - [Hash Table](#hash-table)
+    - [Trees](#trees)
+    - [Heaps](#heaps)
+    - [Graphs](#graphs)
+      - [邻接矩阵](#邻接矩阵)
+      - [邻接表](#邻接表)
+      - [逆邻接表](#逆邻接表)
+      - [十字链表](#十字链表)
+  - [Experience](#experience)
+  - [Q & A](#q--a)
+    - [Linked List](#linked-list)
+    - [Hash Table](#hash-table-1)
 
-### Data Structures
+---
 
-#### Array 
+## Data Structures
+
+### Array 
 
 列表中没有索引，这是数组与列表最大的不同点。
 
 数组中的元素在内存中是连续存储的，且每个元素占用相同大小的内存。
 
-#### String 
+### String 
 
 我们可以用 “==” 来比较两个字符串吗？
 
@@ -24,7 +41,7 @@
 - 如果你确实希望你的字符串是可变的，则可以使用 `toCharArray` 将其转换为字符数组。
 - 如果你经常必须连接字符串，最好使用一些其他的数据结构，如 `StringBuilder`。
 
-#### Hash Table
+### Hash Table
 
 Two types:
 
@@ -36,6 +53,93 @@ Two types:
 理想情况下，完美的哈希函数将是键和桶之间的一对一映射。然而，在大多数情况下，哈希函数并不完美，它需要在桶的数量和桶的容量之间进行权衡。
 
 如果在同一个桶中有太多的值，这些值将被保留在一个高度平衡的二叉树搜索树中。
+
+### Trees
+
+二叉树(Binary Tree)：每个结点最多有两个子树的树结构。
+
+完全二叉树(Complete Binary Tree)：除了最后一层结点，其它层的结点数都达到了最大值；同时最后一层的结点都是按照从左到右依次排布。
+
+满二叉树(Full Binary Tree)：除了最后一层，其它层的结点都有两个子结点。
+
+平衡树(Balance Tree)：任意节点的子树的高度差都小于等于1。
+
+平衡二叉树/平衡二叉搜索树/平衡二叉排序树(Balanced Binary Tree / Balanced Binary Search Tree / AVL Tree)： 一个二叉树每个节点的左右两个子树的高度差的绝对值小于等于1，并且左右两个子树都是一棵平衡二叉树。左子树上所有结点的值 < 根结点的值 < 右子树上所有结点的值。
+
+平衡二叉树的产生是为了解决二叉搜索树在插入时发生线性排列的现象（变为链表）。
+
+当平衡树不平衡时，需要调整：
+
+- 左旋：将该结点的左孩子变为该结点的父结点的右孩子，再将该结点的父结点变为该结点的左孩子。 
+- 右旋：将该结点的右孩子变为该结点的父结点的左孩子，再将该结点的父结点变为该结点的右孩子。
+
+高度平衡带来的好处是能够提供更高的搜索效率O(log N)。但是由于需要维持这份高度平衡，需要经过多次旋转实现复衡。这导致AVL Tree的插入和删除效率并不高。这时红黑树出场。
+
+红黑树通过将结点进行红黑着色，使得原本高度平衡的树结构被稍微打乱，平衡程度降低。红黑树不追求完全平衡，只要求达到部分平衡。这是一种折中的方案，大大提高了结点删除和插入的效率。
+
+红黑树中，新插入的节点要是红色。
+
+不需要做任何变色或者旋转的情况：新插入的节点父节点是黑色。
+
+红黑树应用examples: 
+
+- TreeMap and TreeSet的底层实现。
+- In Java 8, if the number of collision in one bucket is more than 8, Red-black is used instead of linked list.
+
+红黑树 VS AVL Tree: 
+
+| |  红黑树  | AVL Tree  |
+| ---- |  ----  | ----  |
+| 相同点 | 都是Balanced Binary Search Tree。  | 都是Balanced Binary Search Tree。 |
+| 查找效率 | Generally, O(log N); 最坏情况差于AVL。  | O(log N) |
+| 插入效率 | 需要旋转和变色操作。最多2次旋转。变色O(log N)。 | 最多1次旋转，O(log N)。 |
+| 删除效率 | 最多3次旋转。 | 最多O(log N)。 |
+| 优劣势 | 读取效率 < AVL，维护性 > AVL | 读取效率高，维护性差。 |
+| 应用场景 | 查找、插入、删除次数差不多时。 | 查找次数远大于插入、删除时。 |
+
+### Heaps
+
+可以直接用数组来表示一个堆。
+
+### Graphs
+
+#### 邻接矩阵
+
+目前常用的图存储方式为邻接矩阵。
+
+无向图的邻接矩阵是一个对称矩阵。有向图的邻接矩阵则不是。
+
+![无向图-邻接矩阵.png](img/无向图-邻接矩阵.png)
+
+![有向图-邻接矩阵.png](img/有向图-邻接矩阵.png)
+
+邻接矩阵使用二维数组实现。若图中顶点数过多，会导致二维数组的大小剧增，从而占用大量的内存空间。
+
+根据实际情况中，图中的顶点并不是任意两个顶点间都会相连，存储的邻接矩阵实际上会存在大量的0。虽然可以通过稀疏表示等方式对稀疏性高的矩阵进行关键信息的存储，但是却增加了图存储的复杂性。这时邻接表出场。
+
+#### 邻接表
+
+图的每一个顶点都是一个链表的头节点，其后连接着该顶点能够**直接达到的相邻顶点**。存储的顺序可以按照顶点的编号顺序进行。
+
+![有向图-邻接表.png](img/有向图-邻接表.png)
+
+对于有向图而言，图中有效信息除了从顶点“指出去” （出度）的信息，还包括从别的顶点“指进来”（入度）的信息。
+
+在对有向图进行表示时，邻接表只能求出图的出度，而无法求出入度。这时需要加一个逆邻接表。
+
+#### 逆邻接表
+
+图的顶点链接着能够到达该顶点的相邻顶点。
+
+![有向图-逆邻接表.png](img/有向图-逆邻接表.png)
+
+邻接表 + 逆邻接表 用于表示一个有向图结构。
+
+邻接表和逆邻接表实际上有一部分数据时重合的，可以合二为一，从而得到十字链表。
+
+#### 十字链表
+
+![有向图-十字链表.png](img/有向图-十字链表.png)
 
 ---
 
@@ -96,3 +200,12 @@ A: Use HashMap. Traverse the string twice.
 3. If the value is 1, return the index of this character.
 4. If the traversal ends, return -1.
 
+Q: 相同字母异序词（字母异位词）分组(Group Anagrams)
+
+A: Use HashMap. 
+
+1. Traverse the array of strings. 
+2. Convert each string to a char array. Then sort. Then convert back to string, which will be used as the key in HashMap.
+3. Check if the key exists in the HashMap. 
+4. If yes, get the value of the key, which is an ArrayList. Then add the original string into the ArrayList. 
+5. If no, put (key, new ArrayList()) in the HashMap. Then repeat step 4.
