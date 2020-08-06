@@ -392,7 +392,7 @@ Remove an element from a binary heap (**optimized** - O(log n)): use Hashtable t
 
 ### Heap
 
-Heap is a special case of balanced binary tree data structure where root-node key is compared with its children are arranged accordingly.
+Heap is a special case of balanced binary tree data structure where root-node key is compared with its children and arranged accordingly.
 
 Heap property / invariant: For min priority queue, the value in any node is less than the value in either of the children. 
 
@@ -476,6 +476,7 @@ Ways to solve collision:
      - for extremely non-uniform distribution
      - 👍 Potentially using less space, since no longer allocate a large array.
      - 👍 Can iterate through the keys in order.
+   - In Java 8, if the number of collision in one bucket is less than 8, use linked list; otherwise Red-black tree.
 - Open addressing   
    - Linear probing: search the next empty location in the bucket array to store the data. Probe distance is 1 or another fixed value.
      - If the number of collisions is small, it is efficient.
@@ -622,7 +623,7 @@ How to remember："pre", "in", "post" represent the sequence of visiting root.
 
 #### Binary Tree
 
-A binary tree has a special condition that each node can have two children at maximum.
+A binary tree has a special condition that each node can have **two children at maximum**.
 
 #### Full Binary Tree
 
@@ -642,7 +643,7 @@ Full binary tree is a particular case of complete binary tree.
 
 ![img/binary-search-tree.jpg](img/binary-search-tree.jpg)
 
-#### Self-Balancing  Binary Search Tree
+#### Self-Balancing Binary Search Tree
 
 Why do we want trees to be balanced?
 
@@ -650,7 +651,7 @@ Why do we want trees to be balanced?
 
 ![rotation-of-a-binary-search-tree.png](img/rotation-of-a-binary-search-tree.png)
 
-#### AVL Tree
+#### AVL Tree (Balanced Binary Search Tree)
 
 - Height balancing binary search tree.
 - Check the height of the left and the right sub-trees and assures that the difference (balance factor) is not more than 1. Otherwise, the tree is unbalanced.
@@ -662,6 +663,10 @@ Rotation techniques to balance the tree:
 - Left-Right rotation
 - Right-Left rotation
 
+![left-ratation.gif](img/left-rotation.gif)
+
+![right-ratation.gif](img/right-rotation.gif)
+
 ![avl-tree-double-rotation.png](img/avl-tree-double-rotation.png)
 
 Rotation steps:
@@ -670,11 +675,11 @@ Rotation steps:
 2. Detach the grandchild.
 3. Detach the child.
 4. Detach the current node.
-5. Set the current node as the child of child note.
+5. Set the current node as the child of child node.
 6. Set grandchild as the child of the current node.
 7. Set child as the child of parent.
 
-**Disadvantages**: AVL tree makes a lot of rotations. Since it is too quick to rotate, it may make very frequent rotation in opposite directions even when it would be unnecessary, had it been waiting for the future values to be inserted.
+**Disadvantages**: AVL tree makes a lot of rotations. Since it is too quick to rotate, it may make very frequent rotation in opposite directions even when it would be unnecessary, had it been waiting for the future values to be inserted. 
 
 This can be avoided using red-black tree which knows when to rotate a subtree.
 
@@ -682,11 +687,11 @@ This can be avoided using red-black tree which knows when to rotate a subtree.
 
 [漫画：什么是红黑树？](https://zhuanlan.zhihu.com/p/31805309)
 
-In red-black tree, leaves are nodes with null value.
+5 Conditions: 
 
-Conditions: 
-
+- Nodes are red or black.
 - The root has to be black.
+- All leaves are black nodes with null value. (NIL nodes)
 - Both children of a red node are black.
 - Every path from a given node to any of its descendant NIL nodes contains the same number of black nodes.
   
