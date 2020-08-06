@@ -8,6 +8,7 @@
     - [Topic & Partition & Message](#topic--partition--message)
     - [Broker](#broker)
     - [Write & Read](#write--read)
+  - [Kafka Stream](#kafka-stream)
   - [Kafka VS Flume](#kafka-vs-flume)
   - [Hardware Recommendations](#hardware-recommendations)
   - [Kafka Monitor](#kafka-monitor)
@@ -48,6 +49,8 @@ Kafka scales very well in a horizontal way without compromising speed and effici
 
 Kafka is distributed, partitioned, replicated, and commit-log-based.
 
+Small messages are not a problem for Kafka. The default message size is about 1 MB.
+
 Two directives or purposes of Kafka: 
 
 - Not block the producers (in order to deal with the back pressure).
@@ -84,15 +87,19 @@ Three types of Kafka clusters:
   - The broker will see one message at most (or zero if there was a true failure).
   - Consumers will see the messages that the broker received. If there was a failure, the consumer would never see that message.
   - Q: Why would someone be OK with losing a message? A: **Keeping the system performing and not waiting on acknowledgements might outweigh any gain from lost data.**
-- Exactly once: The message is delivered exactly once. There is zero loss of any message.
+- Exactly once (introduced in 0.11 release): The message is delivered exactly once. There is zero loss of any message.
   - If a message from a producer has a failure or is not acknowledged, the producer will resend the message.
   - The broker will only allow one message.
   - Consumers will only see the message once.
 
-The message log can be compacted in two ways:
+When Kafka might not be the right fit: 
 
-- Coarse-grained: Log compacted by time
-- Fine-grained: Log compacted by message
+- When you only need a once monthly or even once yearly summary of aggregate data.
+- When you do not need an on-demand view, quick answer, or even the ability to reprocess data.
+- Especially when data is manageable to process at once as a batch.
+- When your main access pattern for data is mostly random lookup of data.
+- When you need exact ordering of messages in Kafka for the entire topic.
+- With larger messages, you start to see memory pressure increase.
 
 ---
 
@@ -108,6 +115,11 @@ The message log can be compacted in two ways:
     - page views
     - scanning products
 - When one system updates the log, other systems can read from that log to sync themselves.
+
+The message log can be compacted in two ways:
+
+- Coarse-grained: Log compacted by time
+- Fine-grained: Log compacted by message
 
 ### Topic & Partition & Message
 
@@ -146,6 +158,8 @@ Multiple brokers: split topics across brokers into partitions. (replication for 
 
 ### Write & Read
 
+Linear read and writes is where Kafka shines.
+
 **The leader handles all read and write requests** for the partition while the followers passively replicate the leader. 
 
 Only committed messages are ever given out to the consumer. 
@@ -156,11 +170,23 @@ One application reading a message off of the message brokers doesn’t remove it
 
 ---
 
+## Kafka Stream 
+
+Streams API was released in 2016.
+
+Streams API can be thought of an abstraction layer that sits on top of producers and consumers. 
+
+It provides a higher level view of working with data as an unbounded stream.
+
+---
+
 ## Kafka VS Flume
 
 Kafka is designed for messages to be consumed by several applications.
 
 Flume is designed to stream messages to a sink such as HDFS or HBase.
+
+[Flume and Kafka Integration](https://github.com/lizhanmit/learning-notes/blob/master/flume-kafka-integration-note/flume-kafka-integration-note.md)
 
 ---
 
