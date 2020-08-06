@@ -52,3 +52,5 @@ flume-ng agent \
 ## Flume VS Kafka
 
 [Flume VS Kafka](https://www.jianshu.com/p/a6444d2a9cb3)
+
+[Why integrating Flume and Kafka](https://blog.csdn.net/weixin_44196083/article/details/92215261?utm_medium=distribute.pc_relevant.none-task-blog-baidulandingword-8&spm=1001.2101.3001.4242)
