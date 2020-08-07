@@ -4,6 +4,7 @@
   - [Data Structures](#data-structures)
     - [Array](#array)
     - [String](#string)
+    - [Queue](#queue)
     - [Hash Table](#hash-table)
     - [Trees](#trees)
     - [Heaps](#heaps)
@@ -20,6 +21,8 @@
 ---
 
 ## Data Structures
+
+[图解！24 张图彻底弄懂九大常见数据结构！](https://mp.weixin.qq.com/s/SRs4XPp7o4sn-PpCh9OgDA)
 
 ### Array 
 
@@ -40,6 +43,51 @@
 
 - 如果你确实希望你的字符串是可变的，则可以使用 `toCharArray` 将其转换为字符数组。
 - 如果你经常必须连接字符串，最好使用一些其他的数据结构，如 `StringBuilder`。
+
+### Queue
+
+广度优先搜索（BFS）的一个常见应用是找出从根结点到目标结点的最短路径。
+
+如果在第 k 轮中将结点 X 添加到队列中，则根结点与 X 之间的最短路径的长度恰好是 k。也就是说，第一次找到目标结点时，你已经处于最短路径中。
+
+BFS template: 
+
+```java
+/**
+ * Return the length of the shortest path between root and target node.
+ */
+int BFS(Node root, Node target) {
+    Queue<Node> queue;  // store all nodes which are waiting to be processed
+    Set<Node> used;     // store all the used nodes
+    int step = 0;       // number of steps neeeded from root to current node
+    // initialize
+    add root to queue;
+    add root to used;
+    // BFS
+    while (queue is not empty) {
+        step = step + 1;
+        // iterate the nodes which are already in the queue
+        int size = queue.size();
+        for (int i = 0; i < size; ++i) {
+            Node cur = the first node in queue;
+            return step if cur is target;
+            for (Node next : the neighbors of cur) {
+                if (next is not in used) {
+                    add next to queue;
+                    add next to used;
+                }
+            }
+            remove the first node from queue;
+        }
+    }
+    return -1;          // there is no path from root to target
+}
+```
+
+上面的Set 用来确保你永远不会访问一个结点两次。有两种情况你不需要使用Set：
+
+- 你完全确定没有循环，例如，在树遍历中。
+- 你确实希望多次将结点添加到队列中。
 
 ### Hash Table
 
@@ -73,7 +121,7 @@ Two types:
 - 左旋：将该结点的左孩子变为该结点的父结点的右孩子，再将该结点的父结点变为该结点的左孩子。 
 - 右旋：将该结点的右孩子变为该结点的父结点的左孩子，再将该结点的父结点变为该结点的右孩子。
 
-高度平衡带来的好处是能够提供更高的搜索效率O(log N)。但是由于需要维持这份高度平衡，需要经过多次旋转实现复衡。这导致AVL Tree的插入和删除效率并不高。这时红黑树出场。
+高度平衡带来的好处是能够提供更高的搜索效率O(log N)。但是由于需要维持这份高度平衡，需要经过多次旋转实现复衡。这导致AVL Tree的插入和删除效率并不高。**这时红黑树出场。**
 
 红黑树通过将结点进行红黑着色，使得原本高度平衡的树结构被稍微打乱，平衡程度降低。红黑树不追求完全平衡，只要求达到部分平衡。这是一种折中的方案，大大提高了结点删除和插入的效率。
 
@@ -115,7 +163,7 @@ Two types:
 
 邻接矩阵使用二维数组实现。若图中顶点数过多，会导致二维数组的大小剧增，从而占用大量的内存空间。
 
-根据实际情况中，图中的顶点并不是任意两个顶点间都会相连，存储的邻接矩阵实际上会存在大量的0。虽然可以通过稀疏表示等方式对稀疏性高的矩阵进行关键信息的存储，但是却增加了图存储的复杂性。这时邻接表出场。
+根据实际情况中，图中的顶点并不是任意两个顶点间都会相连，存储的邻接矩阵实际上会存在大量的0。虽然可以通过稀疏表示等方式对稀疏性高的矩阵进行关键信息的存储，但是却增加了图存储的复杂性。**这时邻接表出场。**
 
 #### 邻接表
 
@@ -125,7 +173,7 @@ Two types:
 
 对于有向图而言，图中有效信息除了从顶点“指出去” （出度）的信息，还包括从别的顶点“指进来”（入度）的信息。
 
-在对有向图进行表示时，邻接表只能求出图的出度，而无法求出入度。这时需要加一个逆邻接表。
+在对有向图进行表示时，邻接表只能求出图的出度，而无法求出入度。**这时需要加一个逆邻接表。**
 
 #### 逆邻接表
 
@@ -140,6 +188,10 @@ Two types:
 #### 十字链表
 
 ![有向图-十字链表.png](img/有向图-十字链表.png)
+
+邻接表和逆邻接表的链表节点中重复出现的顶点并没有得到重复利用。因此，上图的表示方式还可以进行进一步优化：扩展的顶点结构和边结构来。
+
+![有向图-十字链表-优化.png](img/有向图-十字链表-优化.png)
 
 ---
 
@@ -202,10 +254,35 @@ A: Use HashMap. Traverse the string twice.
 
 Q: 相同字母异序词（字母异位词）分组(Group Anagrams)
 
-A: Use HashMap. 
+A1: Use HashMap. 用排序数组作key。 
 
 1. Traverse the array of strings. 
 2. Convert each string to a char array. Then sort. Then convert back to string, which will be used as the key in HashMap.
 3. Check if the key exists in the HashMap. 
 4. If yes, get the value of the key, which is an ArrayList. Then add the original string into the ArrayList. 
 5. If no, put (key, new ArrayList()) in the HashMap. Then repeat step 4.
+6. Return `new ArrayList(values of the HashMap)`.
+
+N: Number of strings in the array.
+K: Length of the longest string in the array. 
+
+O(NK log K) time, O(NK) space.
+
+A2: Use HashMap. 用计数作key。 
+
+1. Create an array of int to store the count of characters in each string. The size of the array is 26.
+2. Traverse the array of strings.
+3. Convert each string to a char array.
+4. Traverse the char array. `count[c - 'a']++;`
+5. Create a StringBuilder. Loop 26 times, append "#" and the element of the count array to the StringBuilder. 
+6. Then convert the StringBuilder to String, which will be used as the key in HashMap.
+7. Check if the key exists in the HashMap. 
+8. If yes, get the value of the key, which is an ArrayList. Then add the original string into the ArrayList. 
+9. If no, put (key, new ArrayList()) in the HashMap. Then repeat step 6.
+10. Return `new ArrayList(values of the HashMap)`.
+
+N: Number of strings in the array.
+K: Length of the longest string in the array. 
+
+O(NK) time, O(NK) space.
+
