@@ -5,7 +5,10 @@
   - [Concepts](#concepts)
   - [Basics](#basics)
     - [Log](#log)
-    - [Topic & Partition & Message](#topic--partition--message)
+    - [Topic, Partition & Message](#topic-partition--message)
+      - [Messages](#messages)
+      - [Topics](#topics)
+      - [Partition](#partition)
     - [Broker](#broker)
     - [Write & Read](#write--read)
   - [Kafka Stream](#kafka-stream)
@@ -51,6 +54,8 @@ Kafka is distributed, partitioned, replicated, and commit-log-based.
 
 Small messages are not a problem for Kafka. The default message size is about 1 MB.
 
+Kafka's performance is effectively constant with respect to data size.
+
 Two directives or purposes of Kafka: 
 
 - Not block the producers (in order to deal with the back pressure).
@@ -65,9 +70,9 @@ Three main capabilities:
 Application scenarios:
 
 - messaging system
-- web analytics - clickstream
-- operational monitoring - e.g. manufacturing facility, sensor data.
-- log collection
+- website activity tracking - clickstream
+- operational monitoring / IoT data processing - e.g. manufacturing facility, sensor data.
+- log collection / aggregation
 - stream processing - e.g. alerting abnormal usage when using credit card.
 
 Three types of Kafka clusters:
@@ -92,6 +97,11 @@ Three types of Kafka clusters:
   - The broker will only allow one message.
   - Consumers will only see the message once.
 
+Special features that make Kafka standout from other message brokers: 
+
+- replayable messages 
+- multiple consumers features
+
 When Kafka might not be the right fit: 
 
 - When you only need a once monthly or even once yearly summary of aggregate data.
@@ -107,36 +117,54 @@ When Kafka might not be the right fit:
 
 ### Log
 
-- Log: The source of the truth.
-- When systems make changes, it creates events or changes. A log is like a never ending stream of these changes to a specific category or entity.
-  - Changes:
-    - update to customer info
-    - new orders
-    - page views
-    - scanning products
-- When one system updates the log, other systems can read from that log to sync themselves.
+Log: The source of the truth.
+
+When systems make changes, it creates events or changes. A log is like a never ending stream of these changes to a specific category or entity.
+
+Changes:
+  - update to customer info
+  - new orders
+  - page views
+  - scanning products
+
+When one system updates the log, other systems can read from that log to sync themselves.
 
 The message log can be compacted in two ways:
 
 - Coarse-grained: Log compacted by time
 - Fine-grained: Log compacted by message
 
-### Topic & Partition & Message
+### Topic, Partition & Message
 
 ![topic-partition-message.png](img/topic-partition-message.png)
 
-- Kafka splits a topic into partitions.
-- Each partition is an ordered immutable sequence of messages.
+Kafka splits a topic into partitions.
+
+#### Messages
+
 - Messages are byte arrays of data with String, JSON, and Avro being the most common.
-- Messages are replicated across the cluster and persisted to disk.
 - Each message is assigned a unique sequential identifier or key called **offset**. Messages with the same key arrive at the same partition.
 - Each message consists of a key, a value and a timestamp.
+- A key is not required.
+- Messages are replicated across the cluster and persisted to disk.
 - Kafka retains all messages for a configurable period of time.
-- Kafka's performance is effectively constant with respect to data size.
+
+#### Topics 
 
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
 
 Different topics can have different configurations of the amount of partitions.
+
+- Create a topic: `bin/kafka-topics.sh --zookeeper localhost: 2181 --create --topic helloworld --partitions 3 --replication-factor 3`
+- List topics: `bin/kafka-topics.sh --zookeeper localhost:2181 --list`
+- Describe a topic: `bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic helloworld`
+
+![describe-a-topic.png](img/describe-a-topic.png)
+
+
+#### Partition
+
+Each partition is an ordered immutable sequence of messages.
 
 Each server acts as a leader for some of its partitions and a follower for others, so load is well balanced within the cluster.
 
