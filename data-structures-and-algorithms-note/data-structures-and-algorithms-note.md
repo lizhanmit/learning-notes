@@ -302,7 +302,7 @@ An Abstract Data Type (ADT) used to store and retrieve values in First In First 
 
 flexible size
 
-![queue.jpg](img/queue.jpg)
+![queue.png](img/queue.png)
 
 When to use queue:
 
@@ -343,14 +343,80 @@ O(1) time for both array-based and linkedList-based implementations.
  
 Linked lists have a large number of primitive operations per call. **In practice, the linkedList method is more expensive than the array-based method.**
 
-#### Circular Queue
+circular queue > array-based queue > linked list-based queue
 
-Adapt the CircularlyLinkedList implementation.
+#### Circular Queue
 
 Use cases:
 
 - multiplayer, turn-based games 
 - round-robin scheduling of computing processes
+
+```java
+public class MyCircularQueue {
+
+	private int[] data;
+	
+	private int front, rear;
+	
+	public MyCircularQueue(int k) {
+		data = new int[k];
+		front = -1;
+		rear = -1;
+	}
+	
+	
+	public boolean enqueue(int value) {
+		if (isFull()) return false;
+		
+		if (isEmpty()) {
+			front = 0;
+		}
+		
+		rear = (rear + 1) % data.length;
+		data[rear] = value;
+		
+		return true;
+	}
+	
+	public boolean dequeue() {
+		if (isEmpty()) return false; 
+		
+		// It is also special when there is only one element in the array.
+		if (front == rear) {
+			front = -1;
+			rear = -1;
+			return true;
+		}
+		
+		front = (front + 1) % data.length;
+		return true;
+	}
+	
+	public int getFront() throws Exception {
+		if (isEmpty()) throw new Exception();
+		
+		return data[front];
+	}
+	
+	public int getRear() throws Exception {
+		if (isEmpty()) return throw new Exception();
+		
+		return data[rear];
+	}
+
+	// The essence is as long as the array is empty, set front as -1.
+	public boolean isEmpty() {
+		return front == -1;
+	}
+	
+	// The essence is to check if rear move one more step will meet front.
+	public boolean isFull() {
+		return (rear + 1) % data.length == front;
+	}
+	
+}
+```
 
 #### Deque (Double-Ended Queue)
 
@@ -557,7 +623,7 @@ Edges - represent them using a two-dimensional array.
 
 Traverse a graph in a depthward motion. Use stack to remember to get the next vertex to start a search, when a dead end occurs in any iteration.
 
-The simplest algorithm for traversing a tree is the depth first traversal.
+The **simplest** algorithm for traversing a tree is the depth first traversal.
 
 1. Visit the adjacent unvisited vertex. Mark it as visited. Display it. Push it in a stack.
 2. If no adjacent vertex is found, pop up a vertex from the stack. (It will pop up all the vertices from the stack, which do not have adjacent vertices.)
@@ -570,7 +636,7 @@ Applications:
 - Produce the minimum spanning tree and all pair shortest path tree for an unweighted graph.
 - Cycle detection in a graph (both undirected and directed).
 - Path finding.
-- Solving puzzles with only one solution, such as mazes. DFS can be adapted to find all solutions to a maze by only including nodes on the current path in the visited set.
+- Solving puzzles with only one solution, such as mazes. DFS can be adopted to find all solutions to a maze by only including nodes on the current path in the visited set.
 
 #### Breadth First Search (BFS)  
 
@@ -585,11 +651,11 @@ Traverse a graph in a breadthward motion. Use a queue to remember to get the nex
 Applications:
 
 - Peer to Peer networks: In Peer to Peer networks like BitTorrent, BFS is used to find all neighbor nodes.
-- Crawlers in search engines: Crawlers build index using BFS. The idea is to start from source page and follow all links from source and keep doing same. DFS can also be used for crawlers, but the advantage with BFS is, depth or levels of the built tree can be limited.
+- Crawlers in search engines: Crawlers build index using BFS. The idea is to start from source page and follow all links from source and keep doing same. DFS can also be used for crawlers, but the **advantage with BFS** is, depth or levels of the built tree can be limited.
 - Social networking websites: In social networks, we can find people within a given distance "k" from a person using Breadth First Search till "k" levels.
 - GPS navigation systems: BFS is used to find all neighboring locations.
 - Broadcasting in network: In networks, a broadcasted packet follows BFS to reach all nodes.
-- Garbage collection: BFS is used in copying garbage collection using Cheney’s algorithm. BFS is preferred over DFS because of better locality of reference.
+- Garbage collection: BFS is used in copying garbage collection using Cheney’s algorithm. **BFS is preferred** over DFS because of better locality of reference.
 - Cycle detection in undirected graph.
 - Path finding.
 
