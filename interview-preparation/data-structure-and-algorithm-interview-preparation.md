@@ -5,8 +5,12 @@
     - [Array](#array)
     - [String](#string)
     - [Queue](#queue)
+      - [BFS](#bfs)
+    - [Stacks](#stacks)
+      - [DFS](#dfs)
     - [Hash Table](#hash-table)
     - [Trees](#trees)
+      - [Max Depth of Trees](#max-depth-of-trees)
     - [Heaps](#heaps)
     - [Graphs](#graphs)
       - [邻接矩阵](#邻接矩阵)
@@ -16,6 +20,7 @@
   - [Experience](#experience)
   - [Q & A](#q--a)
     - [Linked List](#linked-list)
+    - [Stack](#stack)
     - [Hash Table](#hash-table-1)
 
 ---
@@ -46,9 +51,11 @@
 
 ### Queue
 
+#### BFS
+
 广度优先搜索（BFS）的一个常见应用是找出从根结点到目标结点的最短路径。
 
-如果在第 k 轮中将结点 X 添加到队列中，则根结点与 X 之间的最短路径的长度恰好是 k。也就是说，第一次找到目标结点时，你已经处于最短路径中。
+如果在第 k 轮中将结点 X 添加到队列中，则根结点与 X 之间的最短路径的长度恰好是 k。也就是说，**第一次找到目标结点时，你已经处于最短路径中。**
 
 BFS template: 
 
@@ -89,6 +96,37 @@ int BFS(Node root, Node target) {
 - 你完全确定没有循环，例如，在树遍历中。
 - 你确实希望多次将结点添加到队列中。
 
+### Stacks
+
+#### DFS
+
+**第一次找到目标的路径并不一定是最短的路径。**
+
+递归template:
+
+```java
+/*
+ * Return true if there is a path from cur to target.
+ */
+ boolean DFS(Node cur, Node target, Set<Node> visited) {
+     if (cur == target) return true;
+
+     for (Node next : the neighbors of cur) {
+         if (next is not in visited) {
+             add next to visited; 
+             return if DFS(next, target, visited);
+         }
+     }
+
+     return false;
+ }
+```
+
+当我们递归地实现 DFS 时，似乎不需要使用任何栈。但实际上，我们使用的是由系统提供的隐式栈，也称为调用栈（Call Stack）。栈的大小正好是 DFS 的深度。因此，在最坏的情况下，维护系统栈需要 O(h)，其中 h 是 DFS 的最大深度。在计算空间复杂度时，永远不要忘记考虑系统栈。
+
+- Pros: easy to implement. 
+- Cons: If the recursion is too deep, OOM. Then consider using BFS or 用loop和显示栈实现DFS。
+
 ### Hash Table
 
 Two types:
@@ -103,6 +141,14 @@ Two types:
 如果在同一个桶中有太多的值，这些值将被保留在一个高度平衡的二叉树搜索树中。
 
 ### Trees
+
+树里的每一个节点有一个值和一个包含所有子节点的列表。从图的观点来看，树也可视为一个拥有N 个节点和N-1 条边的一个有向无环图。
+
+当你删除树中的节点时，删除过程将按照后序遍历的顺序进行。 也就是说，当你删除一个节点时，你将首先删除它的左节点和它的右边的节点，然后再删除节点本身。
+
+后序在数学表达中被广泛使用。编写程序来解析后缀表示法更为容易。如果你想对这棵树进行后序遍历，使用栈来处理表达式会变得更加容易。每遇到一个操作符，就可以从栈中弹出栈顶的两个元素，计算并将结果返回到栈中。
+
+递归是解决树的相关问题最有效和最常用的方法之一。
 
 二叉树(Binary Tree)：每个结点最多有两个子树的树结构。
 
@@ -144,6 +190,54 @@ Two types:
 | 删除效率 | 最多3次旋转。 | 最多O(log N)。 |
 | 优劣势 | 读取效率 < AVL，维护性 > AVL | 读取效率高，维护性差。 |
 | 应用场景 | 查找、插入、删除次数差不多时。 | 查找次数远大于插入、删除时。 |
+
+#### Max Depth of Trees
+
+- “自底向上” 的解决方案 - 后序遍历 / 递归DFS:
+
+```java
+public int getMaxDepth(Node node) {
+    if (node == null) return 0; 
+
+    int leftDepth = getMaxDepth(node.leftNode);
+    int rightDepth = getMaxDepth(node.rightNode);
+
+    return Math.max(leftDepth, rightDepth) + 1; 
+}
+```
+
+O(N) time, O(heightOfTree) space.
+
+- “自顶向下” 的解决方案 - 前序遍历
+- BFS: 我们需要将队列里的所有节点都拿出来进行拓展，这样能保证每次拓展完的时候队列里存放的是当前层的所有节点。
+
+```java
+public int getMaxDepth(Node node) {
+    if (node == null) return 0;
+
+    Queue<Node> queue = new LinkedList<>();
+    queue.offer(node);
+
+    int depth = 0;
+
+    while (!queue.isEmpty) {
+        for (int i = 0; i < queue.size(); i++) {
+            Node cur = queue.poll();
+
+            if (cur.leftNode != null) {
+                queue.offer(cur.leftNode);
+            }
+            if (cur.rightNode != null) {
+                queue.offer(cur.rightNode);
+            }
+        }
+        depth++;
+    }
+    return depth;
+}
+```
+
+O(N) time, O(N) space.
 
 ### Heaps
 
@@ -220,6 +314,50 @@ Two types:
 Q: Detect cycle in a linked list.
 
 A: Take two pointers - a fast pointer which moves forward two steps once and a slow pointer which moves forward one step once. Initially they are at the beginning node. If there is cycle in the linked list, these two pointers must meet somewhere.
+
+### Stack
+
+Q: 设计最小栈。能在常数时间内检索到最小元素的栈。
+
+A1: Use 单链表。
+
+1. Create Node class.
+
+```java
+private static class Node {
+    int val;
+    int min;
+    Node next;
+
+    public Node(int val, int min) {
+        this(val, min, null);
+    }
+
+    public Node(int val, int min, Node next) {
+        this.val = val;
+        this.min = min;
+        this.next = next;
+    }
+}
+```
+
+2. In push(), check if head is null. If yes, `head = new Node(value, value, null)`. If no, 新结点指向head并成为新的head。 `head = new Node(value, Math.min(value, head.min), head)`
+3. In pop(), `head = head.next`.
+
+O(1) time, O(N) space.
+
+A2: Use Stack<Node>. Java 内置Stack，自定义Node class.
+
+```java
+private static class Node {
+    int val;
+    int min;
+}
+```
+
+A3: 用辅助Stack专门存min value。和主stack同时做push和pop操作。Push时，存入min value。
+
+
 
 ### Hash Table
 
