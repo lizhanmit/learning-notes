@@ -10,6 +10,8 @@
       - [Topics](#topics)
       - [Partition](#partition)
     - [Broker](#broker)
+    - [Producers](#producers)
+    - [Consumers](#consumers)
     - [Write & Read](#write--read)
   - [Kafka Stream](#kafka-stream)
   - [Kafka VS Flume](#kafka-vs-flume)
@@ -155,6 +157,8 @@ Kafka splits a topic into partitions.
 
 Different topics can have different configurations of the amount of partitions.
 
+There is configuration to enable or disable auto-creation of topics. However, you are free to manually create yourself.
+
 - Create a topic: `bin/kafka-topics.sh --zookeeper localhost: 2181 --create --topic helloworld --partitions 3 --replication-factor 3`
 - List topics: `bin/kafka-topics.sh --zookeeper localhost:2181 --list`
 - Describe a topic: `bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic helloworld`
@@ -183,6 +187,14 @@ If Broker 3 goes down,
 ![broker-3-goes-down.png](img/broker-3-goes-down.png)
 
 Multiple brokers: split topics across brokers into partitions. (replication for fault tolerance)
+
+### Producers
+
+Start a console producer: `bin/kafka-console-producer.sh --broker-list localhost:9092 -- topic helloworld`
+
+### Consumers
+
+Start a console consumer: `bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloworld --from-beginning`
 
 ### Write & Read
 
