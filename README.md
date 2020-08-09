@@ -97,5 +97,4 @@
 ## Interview Preparation
 
 - [Data Engineer Interview Preparation](https://github.com/lizhanmit/learning-notes/blob/master/interview-preparation/data-engineer-interview-preparation.md)
-- [Data Structure & Algorithm Interview Preparation](https://github.com/lizhanmit/learning-notes/blob/master/interview-preparation/data-structure-and-algorithm-interview-preparation.md)
-- [Interview Practice](https://github.com/lizhanmit/interview-practice)
+- [Data Structures and Algorithms Interview Preparation](https://github.com/lizhanmit/data-structures-and-algorithms)
