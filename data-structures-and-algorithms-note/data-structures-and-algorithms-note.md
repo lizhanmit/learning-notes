@@ -65,8 +65,8 @@ For quick sort, small mistakes in coding can make it work poorly for certain arr
 
 **Conclusion**: 
 
-- For small number of items and almost-sorted data, use insertion sort. If too slow, use shell sort.
-- For large number of items and random data, use quick sort. If non-random, use heap sort.
+- For **small number** of items and **almost-sorted** data, use **insertion sort**. If too slow, use **shell sort**.
+- For **large number** of items and **random data**, use **quick sort**. If **non-random**, use **heap sort**.
 
 #### External Storage
 
@@ -452,7 +452,7 @@ Remove an element from a binary heap O(n):
 3. Remove it.
 4. Adjust the heap to satisfy heap invariant.
 
-Remove an element from a binary heap (**optimized** - O(log n)): use Hashtable to store the node value as the key and the node index as the value (the value is implemented using Set or Tree Set because the node value can be repeated).
+Remove an element from a binary heap (**optimized** - O(log n)): Use Hashtable to store the node value as the key and the node index as the value (the value is implemented using Set or Tree Set because the node value can be repeated).
 
 ---
 
@@ -981,54 +981,51 @@ A comparison-based algorithm in which each pair of adjacent elements is compared
 
 N elements need N-1 loops.
 
-- time - O(n^2) - not suitable for large set of data. :-1:
-- space - O(1)
-
-#### Insertion Sort
-
-Divide the list into two sub-list: sorted and unsorted. Then it takes one element at a time and finds an appropriate location in sorted sub-list and insert it.
-
-worst - O(n^2)
-
-stable
-
-1. a[2]跟a[1]比，if a[2] < a[1]，a[1]的值赋给a[2]。
-2. a[2]跟a[0]比，if a[2] < a[0]，a[0]的值赋给a[1]。a[2]的值赋给a[0]。
+O(n^2) time, O(1) space, stable
 
 #### Selection Sort
 
 Divide the list into two sub-lists: sorted and unsorted. Then it selects the minimum element from unsorted sub-list and places it into the sorted list. This iterates unless all the elements from unsorted sub-list are placed into sorted sub-list.
 
-worst - O(n^2)
-
-not stable
-
-not adaptive
+O(n^2) time, O(1) space, unstable, not adaptive
 
 1. Mark a[0] as min。
 2. a[0]跟a[1]比，if a[0] > a[1]，这时不要交换a[0]和a[1]。而是mark a[1] as min。
 3. a[1]跟a[2]比，if a[1] > a[2]，mark a[2] as min。
 4. 一趟loop完后，拿到min。这时将min和a[0]交换。再从a[1]开始重复这个过程。
 
-找min，一趟loop完后再做交换。
+In a word, 找min，一趟loop完后再做交换。
 
-More efficient than bubble sort. Less swap.
+**More efficient than bubble sort.** Less swap.
 
-#### Merge Sort
+#### Insertion Sort
 
-Divide and conquer approach. Keep on dividing the list into smaller sub-list until all sub-list has only one element. Then it merges them in a sorted way until all sub-lists are sorted.
+Divide the list into two sub-lists: sorted and unsorted. Then it takes one element at a time and finds an appropriate location in sorted sub-list and insert it.
 
-O(n log n)
+O(n^2) time, O(1) space, stable
 
-space - O(n)
+1. a[2]跟a[1]比，if a[2] < a[1]，用a[1]的值覆盖掉a[2]。（这里并没有把a[2]的值交换给a[1]。）
+2. a[2]跟a[0]比，if a[2] < a[0]，用a[0]的值覆盖掉a[1]。a[2]的值赋给a[0]。
+
+插入排序对于大规模的乱序数组的时候效率是比较慢的。
 
 #### Shell Sort
 
 A variant of insertion sort. Divide the list into smaller sub-list based on some gap variables. Sort each sub-list using insertion sort.
 
-best - O(n log n)
+是插入排序的一种更高效的改进版本。希尔排序为了加快插入的速度，让数据移动的时候可以实现跳跃移动，节省了一部分的时间开支。
 
-1. Initialize the value of interval h. (h = h * 3 + 1) (O(n^(3/2)) by Knuth, 1973: 1, 4, 13, 40, 121, ...)
+O(n log n) best time, O(n^2) time, O(1) space, unstable
+
+1. Initialize the value of interval h. (h = h * 3 + 1) (O(n^(3/2)) by Knuth, 1973: 1, 4, 13, 40, 121, ...) Use the biggest value
+
+```java
+int gap = 1;
+while (gap < arr.length) {
+  gap = gap * 3 + 1;
+}
+```
+
 2. Divide the list into smaller sub-list of equal interval h.
 3. Sort these sub-lists using insertion sort.
 4. Reduce h, divide sub-lists into smaller one. Sort.
@@ -1037,6 +1034,14 @@ best - O(n log n)
 ![img/shell-sort.jpg](img/shell-sort.jpg)
 
 ![img/shell-sort-2.jpg](img/shell-sort-2.jpg)
+
+#### Merge Sort
+
+Divide and conquer approach. Keep on dividing the list into smaller sub-lists until all sub-lists have only one element. Then it merges them in a sorted way until all sub-lists are sorted.
+
+O(n log n) time, O(n) space, stable
+
+![img/merge-sort.png](img/merge-sort.png)
 
 #### Quick Sort
 
@@ -1049,16 +1054,30 @@ Divide and conquer approach. Divide the list in smaller "partitions" using "pivo
 
 Pivot selection:
 
-- If pick the last or first element as the pivot, susceptible to the worst case O(n^2), most notably when the original sequence is already sorted, reverse sorted, or nearly sorted.
+- If pick the last or first element as the pivot, susceptible to the **worst case O(n^2)**, most notably when the original sequence is **already sorted, reverse sorted, or nearly sorted**.
 - In practice, **"median-of-three"** technique, use median of the front, middle, and tail of the sequence.
 
 Hybrid approach:
 
 - Quick sort has **good performance on large data sets**, but **high overhead on small data sets**. 
-- When the size of a subsequence falls below some threshold (perhaps 50 elements), use insertion sort. 
+- When the size of a subsequence falls below some threshold (perhaps 50 elements), use **insertion sort**. 
 
+O(n log n) time, extreme situation O(n^2) time, O(1) space, unstable
 
 [Good explanation](https://www.youtube.com/watch?v=SLauY6PpjW4&list=PLX6IKgS15Ue02WDPRCmYKuZicQHit9kFt&t=0s&index=20)
+
+#### Counting Sort
+
+1. Traverse the array a. Find the max value. 
+2. Create another array countArr whose size is (the max value in step 1) + 1.
+3. Traverse the array a. 在countArr[a的元素值]中计数。
+4. Traverse the array countArr. If the value of the element > 0, 将这个value对应的countArr下标存入array a （不用管array a中原来的值）。存入的个数为value of the element。If the value of the element == 0, 不用管。
+
+Limitations: 
+
+- Can only be used for sorting int. 
+- Cannot be used when the gap between values  in the array is too large. For instance, [2,1,1000]. You do not want to create a countArr with 10001 size, right?
+  
 
 ---
 
