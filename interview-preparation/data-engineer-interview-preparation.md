@@ -310,6 +310,8 @@ Examples:
 
 ## Data Skew
 
+[Spark性能优化之道——解决Spark数据倾斜（Data Skew）的N种姿势](https://zhuanlan.zhihu.com/p/31393452)
+
 [什么是数据倾斜?如何解决数据倾斜? ](https://www.sohu.com/a/224276626_543508)
 
 [数据倾斜及其高效解决方法](https://blog.csdn.net/anshuai_aw1/article/details/84033160)
