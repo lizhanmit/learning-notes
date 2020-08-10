@@ -3,16 +3,15 @@
 - [Kafka Note](#kafka-note)
   - [Architecture](#architecture)
   - [Concepts](#concepts)
-  - [Basics](#basics)
-    - [Log](#log)
-    - [Topic, Partition & Message](#topic-partition--message)
-      - [Messages](#messages)
-      - [Topics](#topics)
-      - [Partition](#partition)
-    - [Broker](#broker)
-    - [Producers](#producers)
-    - [Consumers](#consumers)
-    - [Write & Read](#write--read)
+  - [Log](#log)
+  - [Topic, Partition & Message](#topic-partition--message)
+    - [Messages](#messages)
+    - [Topics](#topics)
+    - [Partition](#partition)
+  - [Broker](#broker)
+  - [Producers](#producers)
+  - [Consumers](#consumers)
+  - [Write & Read](#write--read)
   - [Kafka Stream](#kafka-stream)
   - [Kafka VS Flume](#kafka-vs-flume)
   - [Hardware Recommendations](#hardware-recommendations)
@@ -43,6 +42,8 @@ Using Kafka as a hub:
 ![kafka-architecture-2.png](img/kafka-architecture-2.png)
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
+
+The reliance on zookeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Clients no longer store offsets in ZooKeeper.
 
 ---
 
@@ -115,9 +116,7 @@ When Kafka might not be the right fit:
 
 ---
 
-## Basics
-
-### Log
+## Log
 
 Log: The source of the truth.
 
@@ -136,13 +135,15 @@ The message log can be compacted in two ways:
 - Coarse-grained: Log compacted by time
 - Fine-grained: Log compacted by message
 
-### Topic, Partition & Message
+---
+
+## Topic, Partition & Message
 
 ![topic-partition-message.png](img/topic-partition-message.png)
 
 Kafka splits a topic into partitions.
 
-#### Messages
+### Messages
 
 - Messages are byte arrays of data with String, JSON, and Avro being the most common.
 - Each message is assigned a unique sequential identifier or key called **offset**. Messages with the same key arrive at the same partition.
@@ -151,7 +152,7 @@ Kafka splits a topic into partitions.
 - Messages are replicated across the cluster and persisted to disk.
 - Kafka retains all messages for a configurable period of time.
 
-#### Topics 
+### Topics 
 
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
 
@@ -166,13 +167,15 @@ There is configuration to enable or disable auto-creation of topics. However, yo
 ![describe-a-topic.png](img/describe-a-topic.png)
 
 
-#### Partition
+### Partition
 
 Each partition is an ordered immutable sequence of messages.
 
 Each server acts as a leader for some of its partitions and a follower for others, so load is well balanced within the cluster.
 
-### Broker
+---
+
+## Broker
 
 A single broker can handle several hundred megabytes of reads and writes per second from thousands of applications.
 
@@ -188,15 +191,28 @@ If Broker 3 goes down,
 
 Multiple brokers: split topics across brokers into partitions. (replication for fault tolerance)
 
-### Producers
+---
+
+## Producers
+
+A producer is also a way to send messages inside Kafka itself. For
+example, if you are reading data from a specific topic and wanted to send it to a different topic,
+you would also use a producer.
+
 
 Start a console producer: `bin/kafka-console-producer.sh --broker-list localhost:9092 -- topic helloworld`
 
-### Consumers
+---
+
+## Consumers
 
 Start a console consumer: `bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloworld --from-beginning`
 
-### Write & Read
+
+
+---
+
+## Write & Read
 
 Linear read and writes is where Kafka shines.
 
