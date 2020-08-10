@@ -929,7 +929,15 @@ Work better finding all matched values in an array.
 
 #### Binary Search
 
-Select the middle which splits the entire list into two parts. Compare the target value to the mid of the list.
+**The array must be sorted in advance.**
+
+1. `int lowIndex = 0; int highIndex = arr.length - 1;`
+2. While lowIndex <= highIndex,
+   1. Select the middle which splits the entire list into two parts. `int mid = (highIndex - lowIndex) >> 1 + lowIndex;`
+   2. Compare the target value to the mid of the list: arr[mid].
+   3. `if (arr[mid] == target) return mid;`
+   4. If the middle > target, the target is in the left part. Otherwise, the target is in the right part.
+3. If while loop ends and still not found the target, return -1.
 
 ```java
 // commonly used, but bad
@@ -947,8 +955,6 @@ int mid = ((high - low) >> 1) + low;
 Time complexity: Ο(log n)
 
 Work better finding one match if there is no duplicates in the array.
-
-**The array must be sorted in advance.**
 
 #### Inverted Index
 
@@ -1079,7 +1085,65 @@ Limitations:
 - Cannot be used when the gap between values  in the array is too large. For instance, [2,1,1000]. You do not want to create a countArr with 10001 size, right?
   
 
----
+#### Bucket Sort
+
+桶排序可以看成是计数排序的升级版。它通过映射函数将要排的数据分到多个有序的桶里，每个桶里的数据再单独排序，再把每个桶的数据依次取出，即可完成排序。
+
+为了使桶排序更加高效，key points:
+
+- 在额外空间充足的情况下，尽量增大桶的数量。(One practice is using the size of the array as the number of buckets.)
+- 使用的映射函数能够将输入的 N 个数据均匀的分配到 K 个桶中。
+- 对于桶中元素的排序，选择何种比较排序算法对于性能的影响至关重要。
+
+Q: 什么时候排序最快？
+
+A: 当输入的数据可以均匀的分配到每一个桶中。Ideally, each element is in one bucket. 
+
+Q: 什么时候排序最慢？
+
+A: 当输入的数据被分配到了同一个桶中。
+
+1. Traverse the array. Find the min and max. 
+2. Calculate the section which is the number range for each bucket. **`float section = (float) (max - min) / (size of the array - 1);`**.
+3. Create a bucketList. `ArrayList<ArrayList<Integer>> bucketList = new ArrayList<>();`
+4. Loop the size of the array, and create an ArrayList in each bucket.
+5. Traverse the array. For each element, calculate the index of bucket where to insert into. And then insert the element into the bucket.
+
+```java
+for (int i = 0; i < arr.length; i++) {
+  int index = (int) (arr[i] / section) - 1;
+  if (index < 0) index = 0;
+  bucketList.get(index).add(arr[i]);
+}
+```
+
+6. Traverse the bucketList. Sort elements within each bucket. You can use `Collections.sort();`
+7. Traverse the bucketList and furthermore each bucket. Overwrite the original array with each element in the bucket.
+
+```java
+int index = 0;
+for (ArrayList<Integer> bucket : bucketList) {
+  for (Integer element : bucket) {
+    arr[index++] = element;
+  }
+}
+```
+
+O(n) best time, O(n^2) time, O(n) space 
+
+#### Radix Sort 
+
+基数排序是一种**非比较型**整数排序算法。
+
+由于整数也可以表达字符串（比如名字或日期）和特定格式的浮点数，所以基数排序也不是只能使用于整数。
+
+假设要对 100 万个手机号码进行排序，用基数排序比较好。
+
+1. Create a bucketList. `ArrayList<ArrayList<Integer>> bucketList = new ArrayList<>();`
+2. 桶的数目是确定的：10个。因为每位数可能的取值只有0~9。Loop 10, and create an ArrayList in each bucket.
+3. Traverse the array. 对个位数应用基数排序。即将数组中的值放入以其个位数为下标的bucket中。
+4. Traverse the bucketList. Overwrite the original array with each element in the bucket. **Clear each bucket.** (**NOTE**: Clear the bucket not the bucketList.)
+5. Repeat step 3 and 4 but for 十位数. Then for 百位数、千位数... until 10 * 位数 > max value of the array. 
 
 #### Sorting Algorithms Complexity Table
 
