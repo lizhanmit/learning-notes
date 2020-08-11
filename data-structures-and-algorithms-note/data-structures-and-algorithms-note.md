@@ -53,7 +53,7 @@ How to know the graph is full or sparse: estimate V and E for the graph.
 
 As a wild guess, the slow sort such as insertion sort, might be appropriate for fewer than **1,000** items.
 
-**Insertion sort** is good for almost-sorted data - O(n). This is typically the case where a few new items are added to an already-sorted data.
+**Insertion sort is good for almost-sorted data** - O(n). This is typically the case where a few new items are added to an already-sorted data.
 
 If insertion sort proves too slow, consider **shell sort**. Easy to implement. Useful up to **5,000** items. 
 
@@ -542,7 +542,7 @@ Ways to solve collision:
      - for extremely non-uniform distribution
      - 👍 Potentially using less space, since no longer allocate a large array.
      - 👍 Can iterate through the keys in order.
-   - In Java 8, if the number of collision in one bucket is less than 8, use linked list; otherwise Red-black tree.
+   - **In Java 8, if the number of collision in one bucket is less than 8, use linked list; otherwise Red-black tree.**
 - Open addressing   
    - Linear probing: search the next empty location in the bucket array to store the data. Probe distance is 1 or another fixed value.
      - If the number of collisions is small, it is efficient.
@@ -578,9 +578,9 @@ Lower load factor indicates lower possibility of collision.
 
 #### Resize
 
-Rule of thumb: once load factor >= 0.7, resize the bucket array to double size.
+**Rule of thumb**: once load factor >= 0.7, resize the bucket array to double size.
 
-The new bucket array’s size is good to be a prime number approximately double the previous size.
+The new bucket array’s size is good to be a **prime number** approximately double the previous size.
 
 
 #### Applications
