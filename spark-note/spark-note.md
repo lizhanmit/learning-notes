@@ -214,13 +214,12 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 
 1. Client Request
     1. You submit an application executing code on your local machine through `spark-submit`.
-    2. Make a request to the cluster manager driver node explicitly asking for resources for the Spark driver process only.
+    2. Make a request to the cluster manager driver node explicitly asking for resources for the **Spark driver process** only.
     3. Cluster manager places the driver process onto a node in the cluster.
-    4. The client process exits and application is off and running on the cluster.
+    4. The **client process exits** and application is off and running on the cluster.
 2. Launch
     1. The driver process runs user code on the cluster including a SparkSession that initializes a Spark cluster.
-    2. The SparkSession communicates with the cluster manager asking it to
-launch Spark executor processes across the cluster.
+    2. The SparkSession communicates with the cluster manager asking it to launch **Spark executor processes** across the cluster.
     3. The cluster manager responds by launching the executor processes and sends the relevant information about their locations to the driver process.
 3. Execution
     1. The driver and the workers communicate among themselves, executing code and moving data around.
@@ -234,7 +233,7 @@ launch Spark executor processes across the cluster.
 1. Create a SparkSession (the first step of any Spark Application).
 2. Execute code.
 
-1 data block - 1 partition - 1 Spark task - runs on 1 executor
+**1 data block - 1 partition - 1 Spark task - runs on 1 executor**
 
 ---
 
