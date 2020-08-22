@@ -185,6 +185,11 @@ A Stage gets broken into multiple Tasks that are distributed to nodes on the clu
 
 ![spark-architecture-2.png](img/spark-architecture-2.png)
 
+- 1 worker node - n executors 
+- 1 executor - n threads
+- 1 thread - 1 task
+- 1 task - produces 1 partition (data block)
+
 There is a **BlockManager** storage module in **Executor**, which uses both RAM and disk as storage devices in order to reduce IO overhead effectively.
 
 When executing an application, Driver will apply resources from Cluster Manager, start up Executors, send program code and files to Executors, and then execute Tasks on Executors.
@@ -232,8 +237,6 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 
 1. Create a SparkSession (the first step of any Spark Application).
 2. Execute code.
-
-**1 data block - 1 partition - 1 Spark task - runs on 1 executor**
 
 ---
 
@@ -1047,6 +1050,8 @@ Using `SparkSession`, you can
 - use SQL statements to operate data.
 
 #### SparkContext
+
+SparkContext is the entry point of the SparkSession. 
 
 SparkContext focuses on more fine-grained control of Spark’s central abstractions.
 
