@@ -59,6 +59,8 @@ Small messages are not a problem for Kafka. The default message size is about 1 
 
 Kafka's performance is effectively constant with respect to data size.
 
+Kafka can process millions of messages quickly because it relies on the page cache instead of JVM heap.
+
 Two directives or purposes of Kafka: 
 
 - Not block the producers (in order to deal with the back pressure).
