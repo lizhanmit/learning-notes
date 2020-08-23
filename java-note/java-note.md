@@ -110,6 +110,8 @@ Interfaces can have properties, but they must be `public static final`.
 
 ## Collections
 
+[两万字长文读懂 Java 集合！](https://blog.csdn.net/csdnnews/article/details/107888522)
+
 ![collections.gif](img/collections.gif)
 
 ![map-inheritance.jpg](img/map-inheritance.jpg)
