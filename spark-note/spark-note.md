@@ -1,7 +1,7 @@
 # Spark Note
 
 - [Spark Note](#spark-note)
-  - [Spark Core](#spark-core)
+  - [Basics](#basics)
     - [Architecture](#architecture)
     - [Cluster Resource Manager](#cluster-resource-manager)
     - [Life Cycle of a Spark Application](#life-cycle-of-a-spark-application)
@@ -123,7 +123,7 @@
       - [Driver OutOfMemoryError or Driver Unresponsive](#driver-outofmemoryerror-or-driver-unresponsive)
       - [Executor OutOfMemoryError or Executor Unresponsive](#executor-outofmemoryerror-or-executor-unresponsive)
   - [GraphX](#graphx)
-    - [Basics](#basics)
+    - [Basics](#basics-1)
       - [Property Graphs](#property-graphs)
       - [Vertex RDDs](#vertex-rdds)
       - [Edge RDDs](#edge-rdds)
@@ -171,7 +171,7 @@
 
 Apache Spark is a fast and general-purpose distributed / cluster computing system. It provides high-level APIs in Java, Scala, Python and R, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools including Spark SQL for SQL and structured data processing, MLlib for machine learning, GraphX for graph processing, and Spark Streaming.
 
-## Spark Core
+## Basics
 
 ### Architecture  
 
@@ -504,7 +504,8 @@ results in the Spark UI, whereas unnamed ones will not.
 /*
  * unnamed accumulators
  */
-val <accumulatorVar> = new LongAccumulator spark.sparkContext.register(<accumulatorVar>)
+val <accumulatorVar> = new LongAccumulator 
+spark.sparkContext.register(<accumulatorVar>)
 
 /*
  * named accumulators
@@ -512,7 +513,7 @@ val <accumulatorVar> = new LongAccumulator spark.sparkContext.register(<accumula
 val <accumulatorVar> = new LongAccumulator
 spark.sparkContext.register(<accumulatorVar>, "<accumulatorName>")
 // or
-val <accumulatorVar> = spark.SparkContext.longAccumulator("<accumulatorName>")
+val <accumulatorVar> = spark.sparkContext.longAccumulator("<accumulatorName>")
 ```
 
 - Use: `<accum_var>.add(<number>)`
@@ -665,16 +666,21 @@ Taking advantage of lazy evaluation:
 
 The difference between `foreach()` and `map()`:
 
-- `foreach()`: return void or no return value.
-- `map()`: return dataset object.
+- `foreach()`: Returns void or no return value.
+- `map()`: Returns dataset object.
 
-`map()`: row based
+`map()`: Row based.
 
-`mapPartitions()`: partition based
+`mapPartitions()`: Partition based.
 
 `mapPartitionsWithIndex()`: The partition index is the partition number in the RDD.
 
-`glom()`: Take every partition in the dataset and convert each partition to an array. Collect the data to the driver.
+`glom()`: Takes every partition in the dataset and converts each partition to an array. This can be useful if you are going to collect the data to the driver and want to have an array for each partition.
+
+```scala
+spark.sparkContext.parallelize(Seq("Hello", "World"), 2).glom.collect()
+// Array(Array(Hello), Array(World))
+```
 
 **DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
 
@@ -765,7 +771,13 @@ Two ways to create a Dataset:
 - from Hadoop InputFormats (such as HDFS files).
 - by transforming other Datasets.
 
-![when-to-use-datasets.png](img/when-to-use-datasets.png)
+When to use Datasets: 
+
+- When your code needs high-level abstraction, rich semantics and domain specific APIs. 
+- If processing requires high-level expressions, filters, aggregations, SQL queries, columnar access.
+- If high degree of compile time and run time type safety is required.
+- To take advantage of performance optimizations from Catalyst. 
+- To take advantage of efficient dynamic code generation from Tungsten. 
 
 #### Disadvantages
 
