@@ -10,6 +10,7 @@
   - [CloudWatch](#cloudwatch)
   - [DynamoDB](#dynamodb)
   - [EC2](#ec2)
+    - [Amazon Machine Image (AMI)](#amazon-machine-image-ami)
   - [Elastic Beanstalk (EB)](#elastic-beanstalk-eb)
   - [ElastiCache](#elasticache)
   - [EMR](#emr)
@@ -77,6 +78,13 @@ Define different services in the same region if you want them to interact.
 - A geographical physical location that holds in AWS **data center**. 
 - Each availability zone is geographically separated from the other. 
 - Multiple availability zones are for redundancy. 
+
+How to pick a region? 
+
+- Service availability: Not all AWS services are available in each of the regions.
+- Pricing: The cost of an AWS service is different across regions.
+- Latency: The service should be close to your customers.
+- Compliance: Special type of data needs to be taken care, such as financing info, banking info and health care info.
 
 ---
 
@@ -146,6 +154,12 @@ Common uses:
 
 - As a web hosting server.
 - Be good for any type of "processing" activity such as encoding and transcoding.
+
+T2 microsize type of EC2 instance: 1 virtual CPU, 1 GB RAM.
+
+### Amazon Machine Image (AMI) 
+
+The first step to launch an EC2 instance is to select an AMI.
 
 ---
 
