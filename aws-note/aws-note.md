@@ -4,6 +4,8 @@
   - [Quick Look](#quick-look)
   - [Overview](#overview)
   - [Global Infrastructure](#global-infrastructure)
+    - [AWS Regions](#aws-regions)
+    - [Availability Zones (AZ)](#availability-zones-az)
   - [Athena](#athena)
   - [CloudFormation](#cloudformation)
   - [CloudFront](#cloudfront)
@@ -11,6 +13,11 @@
   - [DynamoDB](#dynamodb)
   - [EC2](#ec2)
     - [Amazon Machine Image (AMI)](#amazon-machine-image-ami)
+    - [Instance Types](#instance-types)
+    - [VPC and Subnet](#vpc-and-subnet)
+    - [EBS Volumes](#ebs-volumes)
+    - [Security Groups](#security-groups)
+    - [Key Pairs](#key-pairs)
   - [Elastic Beanstalk (EB)](#elastic-beanstalk-eb)
   - [ElastiCache](#elasticache)
   - [EMR](#emr)
@@ -26,7 +33,6 @@
   - [SNS](#sns)
   - [SQS](#sqs)
   - [Step Functions](#step-functions)
-  - [VPC](#vpc)
   - [Create an Elastic Web Application by Using AWS](#create-an-elastic-web-application-by-using-aws)
   - [Glossary](#glossary)
   - [Tips](#tips)
@@ -67,17 +73,13 @@ Four primary benefits of using cloud services:
 
 ## Global Infrastructure
 
-**AWS region**: 
+### AWS Regions
 
-- Each region is a geographical area, which is a collection of AWS availability zones and data centers. 
+Each region is a geographical area, which is a collection of AWS availability zones and data centers. 
 
 Define different services in the same region if you want them to interact.
 
-**Availability zone**: 
-
-- A geographical physical location that holds in AWS **data center**. 
-- Each availability zone is geographically separated from the other. 
-- Multiple availability zones are for redundancy. 
+**By default**, different regions cannot communicate with each other.
 
 How to pick a region? 
 
@@ -85,6 +87,13 @@ How to pick a region?
 - Pricing: The cost of an AWS service is different across regions.
 - Latency: The service should be close to your customers.
 - Compliance: Special type of data needs to be taken care, such as financing info, banking info and health care info.
+
+### Availability Zones (AZ)
+
+- A geographical physical location that holds in AWS **data center**. 
+- Each availability zone is geographically separated from the other. 
+- Availability Zones in a Region are connected through low-latency links. 
+- Multiple availability zones are for redundancy. 
 
 ---
 
@@ -155,11 +164,89 @@ Common uses:
 - As a web hosting server.
 - Be good for any type of "processing" activity such as encoding and transcoding.
 
-T2 microsize type of EC2 instance: 1 virtual CPU, 1 GB RAM.
+By default, the EC2 instance will not be able to access the objects in the S3 bucket. 
+
+By default, your EC2 instances are launched using shared hardware.
+
+Basic monitoring: collecting data with 5 mins interval.
+
+If the utilization of CPU is below the baseline of CPU performance, it is accumulating the CPU credits. Having a positive credit balance will allow the EC2 instance to burst above the baseline of CPU performance.
+
+Make sure your EC2 instance has been attached a security group with allowing SSH inbound before you log in the instance from local machine.
 
 ### Amazon Machine Image (AMI) 
 
 The first step to launch an EC2 instance is to select an AMI.
+
+### Instance Types
+
+The most popular type: T2
+
+T2 microsize type: 1 virtual CPU, 1 GB RAM.
+
+### VPC and Subnet
+
+Virtual Private Cloud (VPC):  
+
+- A virtual, logically isolated network of your AWS account. 
+- Simply an IP range. 
+- Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
+
+Each AWS account has a default VPC.
+
+![vpc.png](img/vpc.png)
+
+Subnet: A range of IP addresses in your VPC.
+
+Mapping: 
+
+- VPC - region
+- Subnet - availability zone
+
+In networking, the bigger you subnet mask, the smaller the IP range.
+
+How to logically isolate web servers from databases: 
+
+1. Set two subnets in one VPC. One public and one private. 
+2. Use public subnet for web servers, which has Internet access.
+3. Use private subnet for databases, which does not have Internet access. 
+
+### EBS Volumes
+
+Elastic Block Store (EBS) Volumes: Block level storage volumes for use with EC2 instances.
+
+- Raw, unformatted storage volumes.
+- 1 EC2 instance : n volumes. One volume can only be attached to one instance.
+- The EBS volume and instance must be in the same AZ.
+- EBS volumes persist independently from the life of an instance.
+
+Root volume is used to install OS.
+
+### Security Groups
+
+It is like a virtual firewall for your EC2 instance to control your inbound and outbound traffic.
+
+By default, the same security group does not apply to the other instance. It works on instance level.
+
+**Only allow rules can be specified, no deny rules.**
+
+By default, all outbound traffic is allowed and all inbound traffic is blocked.
+
+Security groups are stateful. If you send a request from your instance, the response traffic for this request is allowed to flow in regardless of inbound security group rules. Since it is part of the connection that was already allowed outbound, the inbound response will be automatically allowed.
+
+When you configuring a security group using the EC2 instance launch wizard, you can only configure the inbound rules.
+
+By default, a rule for SSH has been added for Linux based AMI; a rule for RDP (Remote Desktop Protocol) for Windows based AMI. 
+
+1 EC2 instance : n security groups
+
+### Key Pairs
+
+It is not compulsory to specify a key pair name when launching EC2 instances.
+
+Key pairs are regional. If you create a key pair in one region, you cannot use the same key pair to access the instances that belong to other regions. 
+
+You will not be able to download the key pair again after it is created. The only chance to download it is when creating it before launching the EC2 instance.
 
 ---
 
@@ -395,14 +482,6 @@ Step Function examples:
 - Syncing/backing up S3 buckets
 - Email verification/confirmation/authorization of process
 - Scaling image automation
-
----
-
-## VPC
-
-Virtual Private Cloud (VPC):  Your private section of AWS, where you can place AWS resources, and allow / restrict access to them.
-
-![vpc.png](img/vpc.png)
 
 ---
 
