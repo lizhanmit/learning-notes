@@ -22,10 +22,14 @@
   - [ElastiCache](#elasticache)
   - [EMR](#emr)
     - [EMRFS](#emrfs)
-  - [IAM](#iam)
+  - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
     - [Cognito](#cognito)
   - [Lake Formation](#lake-formation)
   - [Lambda](#lambda)
+    - [Lambda Programming Model](#lambda-programming-model)
+      - [Triggers](#triggers)
+      - [Handler Function](#handler-function)
+      - [Code](#code)
   - [Redshift](#redshift)
     - [Redshift Spectrum](#redshift-spectrum)
   - [RDS](#rds)
@@ -309,14 +313,16 @@ EMR File System can catalog data within an Amazon S3 data lake and from an on-pr
 
 ---
 
-## IAM
+## IAM (Identity and Access Management)
 
 - users
 - groups
 - policies
 - rules - services
 
-**Good practice**: bond groups and policies, then add users to groups. 
+By default, all users and groups are created with no permissions at all.
+
+**Good practice**: Bond groups and policies, then add users to groups. 
 
 ### Cognito 
 
@@ -344,7 +350,46 @@ It automatically configures underlying AWS services to ensure compliance with yo
 
 ## Lambda
 
-serverless
+Serverless computing: 
+
+- Pay for what you use.
+- Do not need to manage infra.
+- Scale services automatically up and down.
+
+When not to use Lambda:
+
+- Extreme real-time responses. (Lambda may take a while to respond.)
+- Complex computing with high memory.
+- 100% reliability is needed.
+
+Lambda pricing is based on: 
+
+- The number of requests.
+- The duration of each request.
+- The amount of memory Lambda needs to handle each request.
+
+### Lambda Programming Model
+
+#### Triggers
+
+Examples: 
+
+- API Gateway trigger: HTTP request -> API Gateway -> Lambda
+- DynamoDB trigger: Record in table changed -> DynamoDB -> Lambda
+- S3 trigger: A new file is created -> S3 -> Lambda
+- SQS trigger: New message in the queue -> SQS -> Lambda
+
+#### Handler Function
+
+Function to be executed upon invocation.
+
+Execution models: 
+
+- synchronous
+- asynchronous
+- poll/stream based
+
+#### Code
 
 ---
 
