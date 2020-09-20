@@ -6,6 +6,7 @@
   - [Global Infrastructure](#global-infrastructure)
     - [AWS Regions](#aws-regions)
     - [Availability Zones (AZ)](#availability-zones-az)
+  - [API Gateway](#api-gateway)
   - [Athena](#athena)
   - [CloudFormation](#cloudformation)
   - [CloudFront](#cloudfront)
@@ -29,7 +30,7 @@
     - [Lambda Programming Model](#lambda-programming-model)
       - [Triggers](#triggers)
       - [Handler Function](#handler-function)
-      - [Code](#code)
+      - [Execution Models](#execution-models)
   - [Redshift](#redshift)
     - [Redshift Spectrum](#redshift-spectrum)
   - [RDS](#rds)
@@ -46,6 +47,7 @@
 
 ## Quick Look
 
+- API Gateway: Create, public, maintain, monitor, and secure APIs.
 - Athena: Interactive query service against data in S3 using standard SQL.
 - EMR: A platform providing open source tools.
 - Glue: Catalog data, understand the data within your data lake, prepare it, and load it reliably into data stores.
@@ -101,6 +103,16 @@ How to pick a region?
 
 ---
 
+##  API Gateway
+
+It is used to create, public, maintain, monitor, and secure APIs.
+
+- Traffic management, authorization, access control, monitoring, and API management. 
+- No minimum fees, and startup costs.
+- Pay for how much you use.
+
+---
+
 ## Athena
 
 Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. 
@@ -138,12 +150,14 @@ Delivery method options:
 
 - Helps with monitoring and management service.
 - Provides data and actionable insights to determine health of your system.
-- Logs, metrics, and events.
+- Monitor data in forms of logs, metrics, and events.
 - Creates "high-resolution" alarms monitoring such as your costs and S3 buckets, and automated actions.
 
 Workflow example: CloudWatch Alarm -> SNS -> SQS -> Lambda function
 
 CloudWatch has two alarms to monitor loads, and they trigger when the alarms are too high or too low for the auto scaling group.
+
+CloudWatch dashboards show metrics from different AWS resources. Totally customizable. 
 
 ---
 
@@ -374,22 +388,34 @@ Lambda pricing is based on:
 
 Examples: 
 
-- API Gateway trigger: HTTP request -> API Gateway -> Lambda
-- DynamoDB trigger: Record in table changed -> DynamoDB -> Lambda
-- S3 trigger: A new file is created -> S3 -> Lambda
-- SQS trigger: New message in the queue -> SQS -> Lambda
+- API Gateway trigger (the most popular): HTTP request -> API Gateway -> Lambda
+- DynamoDB trigger: A record in a specific table is created/deleted/updated -> DynamoDB Streams -> Lambda
+- S3 trigger: A file is created/deleted/updated in a specific path or with a specific extension -> S3 -> Lambda
+- SQS trigger: A new message arrives at the queue -> SQS -> Lambda
+- Kinesis trigger: A new event arrives -> Kinesis stream -> Lambda
 
 #### Handler Function
 
-Function to be executed upon invocation.
+```javascript 
+module.exports.handler = function(event, context, callback) {
+  ...
+};
+```
 
-Execution models: 
+Handler function: function to be executed upon invocation. `module.exports.handler`
+
+Event object: data sent during invocation. `event`
+
+Context object: methods available to interact with the runtime info. `context`
+
+Callback: return info to the invoker. `callback` (Not mandatory. Not available in all cases.)
+
+#### Execution Models
 
 - synchronous
 - asynchronous
 - poll/stream based
 
-#### Code
 
 ---
 
