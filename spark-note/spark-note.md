@@ -166,6 +166,7 @@
     - [RDD](#rdd)
       - [Actions](#actions)
       - [Transformations](#transformations)
+  - [Spark Tuning](#spark-tuning)
 
 ---
 
@@ -2050,7 +2051,7 @@ Two things you can do with null values:
 
 #### Optimization
 
-- When reading a csv file as DataFrame, if you can know the schema ahead of time and **use `StructType` rather than `option("inferSchema", "true")`**, there will be a significant performance benefit when the data set is very large, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
+- When reading a csv file as DataFrame, if you can know the schema ahead of time and **use `StructType` rather than `option("inferSchema", "true")`**, there will be a significant performance benefit **when the data set is very large**, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
 
 ---
 
@@ -2149,3 +2150,13 @@ Find out what type an RDD is by using the `toDebugString` function of RDDs.
 #### Transformations
 
 Spark transformations are **coarse-grained**.
+
+---
+
+## Spark Tuning
+
+Most Spark settings can only be adjusted at the application level.
+
+**Spark’s default settings** are designed to make sure that jobs can be submitted on very small clusters, and are **not recommended for production**.
+
+Using fewer, larger executors may prevent OOM failure.
