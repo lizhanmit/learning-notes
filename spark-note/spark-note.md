@@ -423,7 +423,7 @@ Used to deal with data skew (some keys have many, many more values than other ke
 #### Coalesce
 
 - Coalesce is fast in certain situations because it minimizes data movement.
-- **No shuffle.** Merge partitions on the same node into one partition.
+- Merge partitions on the same node into one partition.
 - Coalesce changes the number of nodes by moving data from some partitions to existing partitions. This algorithm obviously **cannot increase** the number of partitions.
   - For example, `numbersDf.rdd.partitions.size` is 4. Even if you use `numbersDf.coalesce(6)`, it is still 4 rather than 6.
 - **Avoids a full data shuffle.**
