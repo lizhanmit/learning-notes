@@ -14,6 +14,9 @@
       - [Manipulate Index](#manipulate-index)
       - [Conditional Selection](#conditional-selection)
     - [Assign Data](#assign-data)
+    - [Summary Functions](#summary-functions)
+    - [Mapping Operations](#mapping-operations)
+      - [Built-ins](#built-ins)
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
 
@@ -240,6 +243,7 @@ wine_reviews.loc[wine_reviews.price.isnull()]
 ```python
 # create a new column with a constant value
 wine_reviews['critic'] = 'everyone'
+
 wine_reviews['critic']
 
 # result:
@@ -252,6 +256,7 @@ wine_reviews['critic']
 
 # create a new column with an iterable of values
 wine_reviews['index_backwards'] = range(len(wine_reviews), 0, -1)
+
 wine_reviews['index_backwards']
 
 # result:
@@ -263,49 +268,136 @@ wine_reviews['index_backwards']
 # Name: index_backwards, Length: 129971, dtype: int64
 ```
 
-### Snippets
+### Summary Functions
 
 ```python
-import pandas as pd
-
 # check how large the DataFrame is
 df.shape
 
 # result: 
 # (number_of_rows, number_of_columns)
 
-# show the first five rows
+# show the first 5 rows of a DataFrame
 df.head()
 
-# set max number of rows to display when showing dataframe
+# show the first n rows of a DataFrame
+df.head(n)
+
+# get a high-level summary of the attributes of a column
+# "points" is a column name
+wine_reviews.points.describe()
+
+# result:
+# count    129971.000000
+# mean         88.447138
+#              ...      
+# 75%          91.000000
+# max         100.000000
+# Name: points, Length: 8, dtype: float64
+
+# get the mean of a column
+wine_reviews.points.mean()
+
+# result:
+# 88.44713820775404
+
+# get a list of unique values of a column
+wine_reviews.taster_name.unique()
+
+# result:
+# array(['Kerin O’Keefe', 'Roger Voss', 'Paul Gregutt',
+#        'Alexander Peartree', 'Michael Schachner', 'Anna Lee C. Iijima',
+#        'Virginie Boone', 'Matt Kettmann', nan, 'Sean P. Sullivan',
+#        'Jim Gordon', 'Joe Czerwinski', 'Anne Krebiehl\xa0MW',
+#        'Lauren Buzzeo', 'Mike DeSimone', 'Jeff Jenssen',
+#        'Susan Kostrzewa', 'Carrie Dykes', 'Fiona Adams',
+#        'Christina Pickard'], dtype=object)
+
+# get count of unique values of a column
+wine_reviews.taster_name.value_counts()
+
+# result:
+# Roger Voss           25514
+# Michael Schachner    15134
+#                      ...  
+# Fiona Adams             27
+# Christina Pickard        6
+# Name: taster_name, Length: 19, dtype: int64
+```
+
+### Mapping Operations 
+
+`map()` method is similar to the one in Spark. It takes one set of values and "maps" them to another set of values.
+
+```python
+# remean column "points": use each value of column "points" to minus the mean of all values
+wine_reviews_points_mean = wine_reviews.points.mean()
+wine_reviews.points.map(lambda p: p - wine_reviews_points_mean)
+
+# result:
+# 0        -1.447138
+# 1        -1.447138
+#             ...   
+# 129969    1.552862
+# 129970    1.552862
+# Name: points, Length: 129971, dtype: float64
+```
+
+If you want to transform a whole DataFrame instead a Series by calling a custom method on each row, use `apply()`.
+
+```python
+def remean_points(row): 
+  row.points = row.points - wine_reviews_points_mean
+  return row
+
+wine_reviews.apply(remean_points, axis='columns')
+```
+
+**NOTE** that `map()` and `apply()` return new, transformed Series and DataFrames, respectively. They do not modify the original data they are called on. 
+
+#### Built-ins
+
+Pandas provides many common mapping operations as built-ins. These operators are **faster** than `map()` or `apply()` because they uses speed ups built into Pandas.
+
+```python
+# remean column "points"
+wine_reviews.points - wine_reviews_points_mean
+
+# result:
+# 0        -1.447138
+# 1        -1.447138
+#             ...   
+# 129969    1.552862
+# 129970    1.552862
+# Name: points, Length: 129971, dtype: float64
+
+# combine country and region info
+wine_reviews.country + ' - ' + wine_reviews.region_1
+
+# result:
+# 0            Italy - Etna
+# 1                     NaN
+#                ...       
+# 129969    France - Alsace
+# 129970    France - Alsace
+# Length: 129971, dtype: object
+```
+
+However, they are not as flexible as `map()` or `apply()`, which can do more advanced things, like applying conditional logic.
+
+### Snippets
+
+```python
+import pandas as pd
+
+# set max number of rows to display as 5 when showing DataFrame
 pd.set_option('display.max_rows', 5)
-# set max number of columns to display when showing dataframe
+# set max number of columns to display as 5 when showing DataFrame
 pd.set_option('display.max_columns', 5)
 
 
 
 
-country_dict = {
-  "country": ["Brazil", "Russia", "India", "China", "South Africa"],
-  "capital": ["Brasilia", "Moscow", "New Dehli", "Beijing", "Pretoria"], 
-  "area": [8.516, 17.10, 3.286, 9.597, 1.221],
-  "population": [200.4, 143.5, 1252, 1357, 52.98] }
-
-# transfer a dictionary to a data frame
-country_data_frame = pd.DataFrame(country_dict)
-
-# change default numerical index to customized index 
-country_data_frame.index = ["BR", "RU", "IN", "CH", "SA"]
-
-
-# transfer a .csv file to a data frame 
-data_frame_name = pd.read_csv('file_name.csv')
-
-# get the observation of a specific row based on index
-data_frame_name.iloc[index_number]
-
-# get the observation of a specific row based on label
-data_frame_name.loc['label_value']
 ```
 
 
