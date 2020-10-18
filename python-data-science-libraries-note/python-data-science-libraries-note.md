@@ -17,6 +17,8 @@
     - [Summary Functions](#summary-functions)
     - [Mapping Operations](#mapping-operations)
       - [Built-ins](#built-ins)
+    - [Grouping](#grouping)
+    - [Sorting](#sorting)
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
 
@@ -384,6 +386,52 @@ wine_reviews.country + ' - ' + wine_reviews.region_1
 ```
 
 However, they are not as flexible as `map()` or `apply()`, which can do more advanced things, like applying conditional logic.
+
+### Grouping 
+
+You can think of each group as being a slice of the DataFrame containing only data with values that match.
+
+```python
+# get the number of count for each value of column "points"
+wine_reviews.groupby('points').points.count()
+
+# result:
+# points
+# 80     397
+# 81     692
+#       ... 
+# 99      33
+# 100     19
+# Name: points, Length: 21, dtype: int64
+
+# get the cheapest wine in each point value category
+wine_reviews.groupby('points').price.min()
+
+# result:
+# points
+# 80      5.0
+# 81      5.0
+#        ... 
+# 99     44.0
+# 100    80.0
+# Name: price, Length: 21, dtype: float64
+
+# get the name of the first wine reviewed from each winery in the dataset
+wine_reviews.groupby('winery').apply(lambd df: df.title.iloc[0])
+
+# result:
+# winery
+# 1+1=3                          1+1=3 NV Rosé Sparkling (Cava)
+# 10 Knots                 10 Knots 2010 Viognier (Paso Robles)
+#                    ...                        
+# àMaurice    àMaurice 2013 Fred Estate Syrah (Walla Walla V...
+# Štoka                         Štoka 2009 Izbrani Teran (Kras)
+# Length: 16757, dtype: object
+
+
+```
+
+### Sorting 
 
 ### Snippets
 
