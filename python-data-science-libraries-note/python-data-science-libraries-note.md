@@ -417,7 +417,7 @@ wine_reviews.groupby('points').price.min()
 # Name: price, Length: 21, dtype: float64
 
 # get the name of the first wine reviewed from each winery in the dataset
-wine_reviews.groupby('winery').apply(lambd df: df.title.iloc[0])
+wine_reviews.groupby('winery').apply(lambda df: df.title.iloc[0])
 
 # result:
 # winery
@@ -440,12 +440,15 @@ import pandas as pd
 
 # set max number of rows to display as 5 when showing DataFrame
 pd.set_option('display.max_rows', 5)
+
 # set max number of columns to display as 5 when showing DataFrame
 pd.set_option('display.max_columns', 5)
 
+# display all columns when showing DataFrame 
+pd.set_option('display.max_columns', None)
 
-
-
+# do not hide content of columns even if it is too long when showing DataFrame 
+pd.set_option('display.max_colwidth', -1)
 ```
 
 
