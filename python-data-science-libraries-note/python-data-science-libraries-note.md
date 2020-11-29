@@ -18,6 +18,7 @@
     - [Mapping Operations](#mapping-operations)
       - [Built-ins](#built-ins)
     - [Grouping](#grouping)
+      - [Multi-indexes](#multi-indexes)
     - [Sorting](#sorting)
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
@@ -352,7 +353,7 @@ def remean_points(row):
   row.points = row.points - wine_reviews_points_mean
   return row
 
-wine_reviews.apply(remean_points, axis='columns')
+wine_reviews.apply(remean_points, axis = 'columns')
 ```
 
 **NOTE** that `map()` and `apply()` return new, transformed Series and DataFrames, respectively. They do not modify the original data they are called on. 
@@ -391,6 +392,8 @@ However, they are not as flexible as `map()` or `apply()`, which can do more adv
 
 You can think of each group as being a slice of the DataFrame containing only data with values that match.
 
+For the result of grouping, the order of the rows is dependent on the values in the index, not in the data.
+
 ```python
 # get the number of count for each value of column "points"
 wine_reviews.groupby('points').points.count()
@@ -428,10 +431,90 @@ wine_reviews.groupby('winery').apply(lambda df: df.title.iloc[0])
 # Štoka                         Štoka 2009 Izbrani Teran (Kras)
 # Length: 16757, dtype: object
 
+# group by multiple columns
+# get the wine with highest points by country and province
+wine_reviews.groupby(['country', 'province']).apply(lambda df: df.loc[df.points.idxmax()])
 
+# agg() lets you run a bunch of different functions on your DataFrame simultaneously
+wine_reviews.groupby('country').price.agg([len, min, max])
+
+# result:
+# 	        len	    min	  max
+# country			
+# Argentina	3800.0	4.0	  230.0
+# Armenia	  2.0	    14.0	15.0
+# ...	      ...	    ...	  ...
+# Ukraine	  14.0	  6.0	  13.0
+# Uruguay	  109.0	  10.0	130.0
+```
+
+#### Multi-indexes
+
+`groupby()` sometimes result in a multi-index depending on the operation you run.
+
+A multi-index has multiple levels.
+
+```python
+countries_reviewed = wine_reviews.groupby(['country', 'province']).description.agg([len])
+countries_reviewed
+
+# result: 
+# 		                        len
+# country	  province	
+# Argentina	Mendoza Province	3264
+#           Other	            536
+# ...	      ...	              ...
+# Uruguay	  San Jose	        3
+#           Uruguay           24
+
+type(countries_reviewed.index)
+
+# result:
+# pandas.core.indexes.multi.MultiIndex
+
+# convert multi-index to regular index
+countries_reviewed.reset_index()
+
+# result:
+#     country	  province	        len
+# 0	  Argentina	Mendoza Province	3264
+# 1	  Argentina	Other	            536
+# ...	...	      ...	              ...
+# 423	Uruguay	  San Jose	        3
+# 424	Uruguay	  Uruguay	          24
 ```
 
 ### Sorting 
+
+```python
+countries_reviewed = countries_reviewed.reset_index()
+countries_reviewed.sort_values(by = 'len')
+
+# result:
+# 	  country	province	            len
+# 179	Greece	Muscat of Kefallonian	1
+# 192	Greece	Sterea Ellada	        1
+# ...	...	...	...
+# 415	US	    Washington	          8639
+# 392	US	    California	          36247
+
+# descending 
+countries_reviewed.sort_values(by = 'len', ascending = False)
+
+# sort by index values
+countries_reviewed.sort_index()
+
+# result:
+# 	  country	  province	        len
+# 0	  Argentina	Mendoza Province	3264
+# 1	  Argentina	Other	            536
+# ...	...	      ...	              ...
+# 423	Uruguay	  San Jose	        3
+# 424	Uruguay	  Uruguay	          24
+
+# sort by multiple columns
+countries_reviewed.sort_values(by = ['country', 'len'])
+```
 
 ### Snippets
 
@@ -449,11 +532,14 @@ pd.set_option('display.max_columns', None)
 
 # do not hide content of columns even if it is too long when showing DataFrame 
 pd.set_option('display.max_colwidth', -1)
+
+# pop() removes a column from the data frame, and returns it as a Series
+Extract a column: my_series = <df_name>.pop('<column_name>')
 ```
 
 
 
-Extract the response variable: `target = <df_name>.pop("<column_name>")`
+
 
 ---
 
