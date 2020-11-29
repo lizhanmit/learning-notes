@@ -2028,6 +2028,7 @@ Take Amazon EMR (Elastic MapReduce) as an example.
 - **Recommend** parsing dates, timestamps and nulls explicitly instead of relying on implicit conversions.
 - **When performing grouping sets, if you do not filter out null values, you will get incorrect results.** This applies to cubes, rollups, and grouping sets.
 - When joing two dataframes using `Seq`, e.g. `val resultDF = df1.join(df2, Seq("colA"))`, only `colA` in `df1` will be kept in `resultDF`, `colA` in `df2` will not.
+- Check if a DataFrame is empty: `df.head(1).isEmpty`
 
 #### Count
 
