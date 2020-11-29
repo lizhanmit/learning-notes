@@ -20,6 +20,8 @@
     - [Grouping](#grouping)
       - [Multi-indexes](#multi-indexes)
     - [Sorting](#sorting)
+    - [Data Types](#data-types)
+    - [Missing Values](#missing-values)
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
 
@@ -516,6 +518,60 @@ countries_reviewed.sort_index()
 countries_reviewed.sort_values(by = ['country', 'len'])
 ```
 
+### Data Types
+
+`dtype`: The data type for a column.
+
+The data type of String is `object`.
+
+```python
+# get the data type for column 'prices'
+wine_reviews.prices.dtype
+
+# result:
+# dtype('float64')
+
+# get data types for all columns
+# similar to df.printSchema() in Spark
+wine_reviews.dtypes
+
+# result:
+# country        object
+# description    object
+#                 ...  
+# variety        object
+# winery         object
+# Length: 13, dtype: object
+
+# convert a column of one type into another
+wine_reviews.points.astype('float64')
+
+# result:
+# 0         87.0
+# 1         87.0
+#           ... 
+# 129969    90.0
+# 129970    90.0
+# Name: points, Length: 129971, dtype: float64
+```
+
+### Missing Values
+
+Entries missing values are given the value `NaN` (Not a Number). For technical reasons these `NaN` values are always of the `float64` dtype.
+
+```python
+# filter data that the value of column 'country' is NaN
+wine_reviews[pd.isnull(wine_reviews.country)]
+
+# filter data that the value of column 'country' is not NaN
+wine_reviews[pd.notnull(wine_reviews.country)]
+
+# replace NaN value with "Unknown"
+wine_reviews.region_2.fillna('Unknown')
+```
+
+Some sentinel values can be used for fill `NaN`: "Unknown", "Undisclosed", "Invalid".
+
 ### Snippets
 
 ```python
@@ -535,6 +591,9 @@ pd.set_option('display.max_colwidth', -1)
 
 # pop() removes a column from the data frame, and returns it as a Series
 Extract a column: my_series = <df_name>.pop('<column_name>')
+
+# replace value
+<df_name>.<column_name>.replace('<value_to_replace>', '<replacement_value>')
 ```
 
 
