@@ -22,6 +22,9 @@
     - [Sorting](#sorting)
     - [Data Types](#data-types)
     - [Missing Values](#missing-values)
+    - [Renaming](#renaming)
+    - [Combining](#combining)
+      - [`join()`](#join)
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
 
@@ -571,6 +574,45 @@ wine_reviews.region_2.fillna('Unknown')
 ```
 
 Some sentinel values can be used for fill `NaN`: "Unknown", "Undisclosed", "Invalid".
+
+### Renaming 
+
+```python
+# rename column 'points' to 'score
+wine_reviews.rename(columns = {'points': 'score'})
+
+# rename some elements of the index
+wine_reviews.rename(index = {0: 'firstRow', 1: 'secondRow'})
+```
+
+It is rare to rename index values. 
+
+Both the row index and column index can have their own `name` attribute. `rename_axis()` method may be used to change these names. For example, 
+
+```python
+wine_reviews.rename_axis("wines", axis = 'rows').rename_axis("fields", axis = 'columns')
+```
+
+### Combining
+
+Three core methods for combining different DataFrames and/or Series: (in order of increasing complexity)
+
+- `concat()`
+- `join()`
+- `merge()`: Most of what `merge()` can do can also be done more simply with `join()`.
+
+#### `join()`
+
+Combine different DataFrame objects which have an index in common. 
+
+```python
+left_df = df.set_index('<common_column>')
+right_df = df.set_index('<common_column>')
+# "lsuffix" and "rsuffix" parameters are necessary here because both dataframes have the same column names
+left_df.join(right_df, lsuffix = '_left', rsuffix = '_right')
+```
+
+
 
 ### Snippets
 
