@@ -27,6 +27,7 @@
       - [`join()`](#join)
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
+  - [Data Visualization](#data-visualization)
 
 ---
 
@@ -612,8 +613,6 @@ right_df = df.set_index('<common_column>')
 left_df.join(right_df, lsuffix = '_left', rsuffix = '_right')
 ```
 
-
-
 ### Snippets
 
 ```python
@@ -638,10 +637,6 @@ Extract a column: my_series = <df_name>.pop('<column_name>')
 <df_name>.<column_name>.replace('<value_to_replace>', '<replacement_value>')
 ```
 
-
-
-
-
 ---
 
 ## Scikit-Learn (sklearn)
@@ -656,3 +651,9 @@ With sklearn, there are four main steps to train a machine learning model:
 Each algorithm will have its own specific hyperparameters that can be tuned. If you leave the hyperparameters blank, the model will use the default values specified by sklearn.
 
 **Recommend**: at least set the `random_state` hyperparameter in order to get reproducible results every time that you have to run the same code.
+
+---
+
+## Data Visualization
+
+A histogram is a good way to visualize how values are distributed across a dataset. Sometimes, it can also help you to detect outliers.
