@@ -2,17 +2,18 @@
 
 - [Kafka Note](#kafka-note)
   - [Architecture](#architecture)
+    - [ZooKeeper](#zookeeper)
   - [Concepts](#concepts)
-  - [Log](#log)
+  - [Commit Log](#commit-log)
   - [Topic, Partition & Message](#topic-partition--message)
     - [Messages](#messages)
+    - [Partitions](#partitions)
     - [Topics](#topics)
-    - [Partition](#partition)
   - [Broker](#broker)
   - [Producers](#producers)
   - [Consumers](#consumers)
   - [Write & Read](#write--read)
-  - [Kafka Stream](#kafka-stream)
+  - [Kafka Streams](#kafka-streams)
   - [Kafka VS Flume](#kafka-vs-flume)
   - [Hardware Recommendations](#hardware-recommendations)
   - [Kafka Monitor](#kafka-monitor)
@@ -39,11 +40,15 @@ Using Kafka as a hub:
 
 ![pipeline-architecture-example.png](img/pipeline-architecture-example.png)
 
-![kafka-architecture-2.png](img/kafka-architecture-2.png)
-
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
 
-The reliance on zookeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Clients no longer store offsets in ZooKeeper.
+### ZooKeeper
+
+ZooKeeper helps maintain consensus in the cluster.
+
+The reliance on ZooKeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Clients no longer store offsets in ZooKeeper.
+
+ZooKeeper should have been running before you started your brokers. 
 
 ---
 
@@ -59,7 +64,7 @@ Small messages are not a problem for Kafka. The default message size is about 1 
 
 Kafka's performance is effectively constant with respect to data size.
 
-Kafka can process millions of messages quickly because it relies on the page cache instead of JVM heap.
+Kafka can process millions of messages quickly because it relies on the page cache instead of JVM heap. As a result, the brokers help avoid some of the issues that large heaps can hold, ie. long or frequent garbage collection pauses.
 
 Two directives or purposes of Kafka: 
 
@@ -82,9 +87,9 @@ Application scenarios:
 
 Three types of Kafka clusters:
 
-- Single node–single broker
-- Single node–multiple broker
-- Multiple node–multiple broker
+- Single node – single broker
+- Single node – multiple broker
+- Multiple node – multiple broker
 
 **Three ways to deliver messages**:
 
@@ -118,13 +123,19 @@ When Kafka might not be the right fit:
 
 ---
 
-## Log
+## Commit Log
 
-Log: The source of the truth.
+Commit log: the source of the truth.
+
+As each new message comes in, it is added to the end of the log.
+
+Users will use offsets to know where they are in that log.
+
+Commit logs are retained by period of time or size configuration properties. In various companies, after the data in the Kafka commit logs hits a configurable size or time retention period, the data is often moved into a permanent store like S3 or HDFS.
 
 When systems make changes, it creates events or changes. A log is like a never ending stream of these changes to a specific category or entity.
 
-Changes:
+Change examples:
   - update to customer info
   - new orders
   - page views
@@ -134,8 +145,8 @@ When one system updates the log, other systems can read from that log to sync th
 
 The message log can be compacted in two ways:
 
-- Coarse-grained: Log compacted by time
-- Fine-grained: Log compacted by message
+- coarse-grained: log compacted by time
+- fine-grained: log compacted by message
 
 ---
 
@@ -145,14 +156,27 @@ The message log can be compacted in two ways:
 
 Kafka splits a topic into partitions.
 
-### Messages
+### Messages 
 
-- Messages are byte arrays of data with String, JSON, and Avro being the most common.
+- Messages (= records) are byte arrays of data with String, JSON, and Avro being the most common.
+- Each message consists of a key, a value and a timestamp. A key is not required.
 - Each message is assigned a unique sequential identifier or key called **offset**. Messages with the same key arrive at the same partition.
-- Each message consists of a key, a value and a timestamp.
-- A key is not required.
 - Messages are replicated across the cluster and persisted to disk.
 - Kafka retains all messages for a configurable period of time.
+
+### Partitions
+
+Partition: how many parts you want the topic to be split into.
+
+Each partition is an ordered immutable sequence of messages.
+
+The partition is further broken up into segment files (the actual files) written on the disk drive.
+
+A single partition only exists on one broker and will not be split between brokers.
+
+One of the partition copies (replicas) will be the leader. Producers and consumers will only read or write from or to the leader.
+
+
 
 ### Topics 
 
@@ -169,17 +193,15 @@ There is configuration to enable or disable auto-creation of topics. However, yo
 ![describe-a-topic.png](img/describe-a-topic.png)
 
 
-### Partition
 
-Each partition is an ordered immutable sequence of messages.
-
-Each server acts as a leader for some of its partitions and a follower for others, so load is well balanced within the cluster.
 
 ---
 
 ## Broker
 
 A single broker can handle several hundred megabytes of reads and writes per second from thousands of applications.
+
+Each server acts as a leader for some of its partitions and a follower for others, so load is well balanced within the cluster.
 
 ![brokers-and-topic-partitions.png](img/brokers-and-topic-partitions.png)
 
@@ -197,10 +219,9 @@ Multiple brokers: split topics across brokers into partitions. (replication for 
 
 ## Producers
 
-A producer is also a way to send messages inside Kafka itself. For
-example, if you are reading data from a specific topic and wanted to send it to a different topic,
-you would also use a producer.
+There are no default producers.
 
+A producer is also a way to send messages inside Kafka itself. For example, if you are reading data from a specific topic and wanted to send it to a different topic, you would also use a producer.
 
 Start a console producer: `bin/kafka-console-producer.sh --broker-list localhost:9092 -- topic helloworld`
 
@@ -224,11 +245,11 @@ Only committed messages are ever given out to the consumer.
 
 For producers, they have the option of either waiting for the message to be committed or not, depending on their preference for tradeoff between latency and durability.
 
-One application reading a message off of the message brokers doesn’t remove it from other applications that might want to consume it as well.
+One application reading a message off of the message brokers does not remove it from other applications that might want to consume it as well.
 
 ---
 
-## Kafka Stream 
+## Kafka Streams 
 
 Streams API was released in 2016.
 
