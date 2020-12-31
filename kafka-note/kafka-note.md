@@ -11,9 +11,14 @@
     - [Topics](#topics)
   - [Broker](#broker)
   - [Producers](#producers)
+    - [Java Client Producer](#java-client-producer)
   - [Consumers](#consumers)
+    - [Java Client Consumer](#java-client-consumer)
   - [Write & Read](#write--read)
-  - [Kafka Streams](#kafka-streams)
+  - [Various Source Code Packages](#various-source-code-packages)
+    - [Kafka Streams](#kafka-streams)
+    - [Kafka Connect](#kafka-connect)
+    - [AdminClient](#adminclient)
   - [Kafka VS Flume](#kafka-vs-flume)
   - [Hardware Recommendations](#hardware-recommendations)
   - [Kafka Monitor](#kafka-monitor)
@@ -225,13 +230,87 @@ A producer is also a way to send messages inside Kafka itself. For example, if y
 
 Start a console producer: `bin/kafka-console-producer.sh --broker-list localhost:9092 -- topic helloworld`
 
+### Java Client Producer
+
+Pre-requisite: add the following dependency in pom.xml if using Maven.
+
+```xml
+<dependency>
+  <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka-clients</artifactId>
+  <version>0.11.0.0</version>
+</dependency>
+```
+
+Producers are thread-safe.
+
+```java
+/*
+ * an example of a simple producer
+ */
+
+Properties props = new Properties();
+
+// a list of message brokers
+// best practice: include more than one server
+// this list does not have to be every server you have though, as after it connects, it will be able to find out information about the rest of the cluster brokers and will not depend on that list
+props.put("bootstrap.servers", "localhost:9092,localhost:9093");  
+
+// we provide a class that will be able to serialize the data as it moves into Kafka
+// keys and values do not have to use the same serializer
+props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+// producers are thread-safe
+Producer<String, String> producer = new KafkaProducer<>(props);  
+
+ProducerRecord producerRecord = new ProducerRecord<String, String>
+("helloworld", null, "hello world again!");  // (topic, key, value)
+
+producer.send(producerRecord);
+
+producer.close();
+```
+
 ---
 
 ## Consumers
 
 Start a console consumer: `bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloworld --from-beginning`
 
+### Java Client Consumer
 
+Make sure you terminate the program after you done reading messages.
+
+Java consumer client is **NOT** thread-safe.
+
+```java
+/*
+ * an example of a simple consumer
+ */
+
+Properties props = new Properties();
+
+// properties are set the same way as producers
+props.put("bootstrap.servers", "localhost:9092,localhost:9093");
+props.put("group.id", "helloconsumer");
+props.put("enable.auto.commit", "true");
+props.put("auto.commit.interval.ms", "1000");
+props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+
+// can subscribe to more than one topic at a time
+consumer.subscribe(Arrays.asList("helloworld"));
+
+while (true) {
+  // no messages, one message, or many messages could all come back with a single poll
+  ConsumerRecords<String, String> records = consumer.poll(100);
+  for (ConsumerRecord<String, String> record : records)
+    System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+}
+```
 
 ---
 
@@ -249,13 +328,45 @@ One application reading a message off of the message brokers does not remove it 
 
 ---
 
-## Kafka Streams 
+## Various Source Code Packages
+
+### Kafka Streams 
 
 Streams API was released in 2016.
+
+lightweight library
+
+Features: 
+
+- local state with fault-tolerance
+- one-at-a-time message processing
+- exactly once 
 
 Streams API can be thought of an abstraction layer that sits on top of producers and consumers. 
 
 It provides a higher level view of working with data as an unbounded stream.
+
+It was made to make sure that creating streaming applications was as easy as possible and even provides a domain-specific language (DSL).
+
+One of the sweet spots for Streams is
+that no separate processing cluster is needed.
+
+### Kafka Connect
+
+This framework was created to make integration with other systems easier.
+
+In many ways, it can be thought to help replace other tools such as Camus, Apache Gobblin, and Apache Flume. Using a direct comparison to Flume features are not the intention or sole goals of Connect.
+
+- Source connectors: import data from a source into Kafka.
+- Sink connectors: export data out of Kafka into a different system.
+
+Kafka Connect is great for making quick and simple data pipeline that tie together a common system.
+
+### AdminClient
+
+With version 0.11.0, Kafka introduced the AdminClient API.
+
+It is used to perform administrative actions.
 
 ---
 
