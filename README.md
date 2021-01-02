@@ -2,8 +2,6 @@
 
 ## Big Data
 
-[What is Data Engineering?](https://www.dataquest.io/blog/what-is-a-data-engineer/)
-
 - [Apache Airflow](https://github.com/lizhanmit/learning-notes/blob/master/apache-airflow-note/apache-airflow-note.md)
 - [Architecting Big Data Applications](https://github.com/lizhanmit/learning-notes/blob/master/architecting-big-data-applications-note/architecting-big-data-applications-note.md)
 - [Big Data Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/big-data-algorithms-note/big-data-algorithms-note.md)
@@ -22,6 +20,7 @@
 - [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
 - [Pig](https://github.com/lizhanmit/learning-notes/blob/master/pig-note/pig-note.md)
 - [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
+- [Python Data Science Libraries](https://github.com/lizhanmit/learning-notes/blob/master/python-data-science-libraries-note/python-data-science-libraries-note.md)
 - [Spark](https://github.com/lizhanmit/learning-notes/blob/master/spark-note/spark-note.md)
 - [Spark Coding](https://github.com/lizhanmit/spark-coding-tutorial)
 - [Spark Streaming](https://github.com/lizhanmit/learning-notes/blob/master/spark-streaming-note/spark-streaming-note.md)
@@ -56,7 +55,8 @@
 
 ### Articles
 
-[如何快速全面建立自己的大数据知识体系？](http://www.woshipm.com/data-analysis/714937.html)
+- [What is Data Engineering?](https://www.dataquest.io/blog/what-is-a-data-engineer/)
+- [如何快速全面建立自己的大数据知识体系？](http://www.woshipm.com/data-analysis/714937.html)
 
 ---
 
