@@ -35,8 +35,8 @@
     - [Constructors](#constructors)
     - [Inheritance](#inheritance)
     - [Magic Methods](#magic-methods)
-      - [`__repr(self)__`](#reprself)
-      - [`__str(self)__`](#strself)
+      - [`__repr(self)__`](#__reprself__)
+      - [`__str(self)__`](#__strself__)
     - [Decorators](#decorators)
       - [`@property`](#property)
   - [Miscellaneous](#miscellaneous)
@@ -952,3 +952,7 @@ def first_letter(word):
 print(first_letter('Hello World'))
 first_letter(['Not', 'A', 'String'])
 ```
+
+---
+
+![python3-in-one-pic.jpg](img/python3-in-one-pic.jpg)
