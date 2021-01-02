@@ -75,7 +75,7 @@ Whether data is coming from a database or a log event, my preference is to get t
 
 Two directives or purposes of Kafka: 
 
-- Not block the producers (in order to deal with the back pressure).
+- Not block the producers (in order to deal with the back pressure). (the ability to capture messages even if the consuming service is down)
 - Isolate producers and consumers. 
 
 Three main capabilities: 
@@ -97,7 +97,7 @@ Application scenarios:
 - log collection / aggregation
 - stream processing - e.g. alerting abnormal usage when using credit card.
 
-When Kafka might not be the right fit: 
+When Kafka might **NOT** be the right fit: 
 
 - When you only need a once monthly or even once yearly summary of aggregate data.
 - When you do not need an on-demand view, quick answer, or even the ability to reprocess data.
@@ -132,13 +132,21 @@ Kafka context overview:
 
 ![kafka-context-overview.png](img/kafka-context-overview.png)
 
+The answer to the questions below will impact various parts of implementation (configuration options): 
+
+- Message loss: Is it okay to lose any messages in the system?
+- Grouping: Does your data need to be grouped in any way? Are the events correlated with other events that are coming in?
+- Ordering: Do you need data delivered in an exact order? What if a message gets delivered in an order other than when it actually occurred?
+- Last value only: Do you only want the last value of a specific value? Or is history of that value important? Do you really care about the history of how your data values evolved over time? 
+- Independent consumer: How many consumers are we going to have? Will they all be independent of each other or will they need to maintain some sort of order when reading the messages?
+
 ---
 
 ## Commit Log
 
 Commit log: the source of the truth.
 
-As each new message comes in, it is added to the end of the log.
+As each new message comes in, it is added to the end of the log. The log is immutable and can only be appended to the end.
 
 Users will use offsets to know where they are in that log.
 
@@ -187,8 +195,6 @@ A single partition only exists on one broker and will not be split between broke
 
 One of the partition copies (replicas) will be the leader. Producers and consumers will only read or write from or to the leader.
 
-
-
 ### Topics 
 
 ![anatomy-of-a-topic.png](img/anatomy-of-a-topic.png)
@@ -196,6 +202,9 @@ One of the partition copies (replicas) will be the leader. Producers and consume
 Different topics can have different configurations of the amount of partitions.
 
 There is configuration to enable or disable auto-creation of topics. However, you are free to manually create yourself.
+
+You can use one topic as the starting point to
+populate another topic. 
 
 - Create a topic: `bin/kafka-topics.sh --zookeeper localhost: 2181 --create --topic helloworld --partitions 3 --replication-factor 3`
 - List topics: `bin/kafka-topics.sh --zookeeper localhost:2181 --list`
