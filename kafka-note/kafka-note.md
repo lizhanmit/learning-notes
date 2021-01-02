@@ -2,8 +2,8 @@
 
 - [Kafka Note](#kafka-note)
   - [Architecture](#architecture)
-    - [ZooKeeper](#zookeeper)
-  - [Concepts](#concepts)
+    - [ZooKeeper Ensemble](#zookeeper-ensemble)
+  - [Overview](#overview)
   - [Commit Log](#commit-log)
   - [Topic, Partition & Message](#topic-partition--message)
     - [Messages](#messages)
@@ -19,7 +19,7 @@
     - [Kafka Streams](#kafka-streams)
     - [Kafka Connect](#kafka-connect)
     - [AdminClient](#adminclient)
-  - [Kafka VS Flume](#kafka-vs-flume)
+  - [Kafka vs Flume](#kafka-vs-flume)
   - [Hardware Recommendations](#hardware-recommendations)
   - [Kafka Monitor](#kafka-monitor)
   - [Kafka Audit](#kafka-audit)
@@ -47,7 +47,7 @@ Using Kafka as a hub:
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
 
-### ZooKeeper
+### ZooKeeper Ensemble
 
 ZooKeeper helps maintain consensus in the cluster.
 
@@ -57,7 +57,7 @@ ZooKeeper should have been running before you started your brokers.
 
 ---
 
-## Concepts
+## Overview
 
 Apache Kafka is publish-subscribe, high-throughput, distributed messaging system. 
 
@@ -65,11 +65,13 @@ Kafka scales very well in a horizontal way without compromising speed and effici
 
 Kafka is distributed, partitioned, replicated, and commit-log-based.
 
-Small messages are not a problem for Kafka. The default message size is about 1 MB.
+Small messages are not a problem for Kafka. The default message size is about 1 MB. It is configurable. 
 
 Kafka's performance is effectively constant with respect to data size.
 
 Kafka can process millions of messages quickly because it relies on the page cache instead of JVM heap. As a result, the brokers help avoid some of the issues that large heaps can hold, ie. long or frequent garbage collection pauses.
+
+Whether data is coming from a database or a log event, my preference is to get the data into Kafka first. The data will be available in the purest form that you can achieve.
 
 Two directives or purposes of Kafka: 
 
@@ -82,6 +84,11 @@ Three main capabilities:
 - Store records with **fault-tolerance**.
 - Process **streams** as they occur.
 
+Special features that make Kafka standout from other message brokers: 
+
+- replayable messages 
+- multiple consumers features
+
 Application scenarios:
 
 - messaging system
@@ -89,6 +96,15 @@ Application scenarios:
 - operational monitoring / IoT data processing - e.g. manufacturing facility, sensor data.
 - log collection / aggregation
 - stream processing - e.g. alerting abnormal usage when using credit card.
+
+When Kafka might not be the right fit: 
+
+- When you only need a once monthly or even once yearly summary of aggregate data.
+- When you do not need an on-demand view, quick answer, or even the ability to reprocess data.
+- Especially when data is manageable to process at once as a batch.
+- When your main access pattern for data is mostly random lookup of data.
+- When you need exact ordering of messages in Kafka for the entire topic.
+- With larger messages, you start to see memory pressure increase.
 
 Three types of Kafka clusters:
 
@@ -112,19 +128,9 @@ Three types of Kafka clusters:
   - The broker will only allow one message.
   - Consumers will only see the message once.
 
-Special features that make Kafka standout from other message brokers: 
+Kafka context overview: 
 
-- replayable messages 
-- multiple consumers features
-
-When Kafka might not be the right fit: 
-
-- When you only need a once monthly or even once yearly summary of aggregate data.
-- When you do not need an on-demand view, quick answer, or even the ability to reprocess data.
-- Especially when data is manageable to process at once as a batch.
-- When your main access pattern for data is mostly random lookup of data.
-- When you need exact ordering of messages in Kafka for the entire topic.
-- With larger messages, you start to see memory pressure increase.
+![kafka-context-overview.png](img/kafka-context-overview.png)
 
 ---
 
@@ -175,7 +181,7 @@ Partition: how many parts you want the topic to be split into.
 
 Each partition is an ordered immutable sequence of messages.
 
-The partition is further broken up into segment files (the actual files) written on the disk drive.
+The partition is further broken up into **segment files** (the actual files) written on the disk drive.
 
 A single partition only exists on one broker and will not be split between brokers.
 
@@ -340,7 +346,7 @@ Features:
 
 - local state with fault-tolerance
 - one-at-a-time message processing
-- exactly once 
+- exactly once delivery 
 
 Streams API can be thought of an abstraction layer that sits on top of producers and consumers. 
 
@@ -353,14 +359,29 @@ that no separate processing cluster is needed.
 
 ### Kafka Connect
 
-This framework was created to make integration with other systems easier.
+This framework was created to make integration with other systems easier. It is already part of Kafka that really can make it simple to use pieces (connectors) that have been already been built to start your streaming journey.
+
+The purpose of Connect is to help move data in or out of Kafka without having to deal with
+writing our own producers and clients.
 
 In many ways, it can be thought to help replace other tools such as Camus, Apache Gobblin, and Apache Flume. Using a direct comparison to Flume features are not the intention or sole goals of Connect.
+
+Connectors: 
 
 - Source connectors: import data from a source into Kafka.
 - Sink connectors: export data out of Kafka into a different system.
 
 Kafka Connect is great for making quick and simple data pipeline that tie together a common system.
+
+If you use a database today and want to kick the tires on streaming data, one of the easiest on-ramps is to start with Kafka Connect.
+
+Start standalone Connect for a file source: `bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties`. Leave it running. 
+
+Start standalone Connect for a file source and sink: `bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties`
+
+When to use Connect vs Kafka Clients? If you are not familiar enough with the upstream or downstream application, use a pre-built connector. 
+
+Connect also has a REST API and provides options to build your own connector.
 
 ### AdminClient
 
@@ -370,7 +391,7 @@ It is used to perform administrative actions.
 
 ---
 
-## Kafka VS Flume
+## Kafka vs Flume
 
 Kafka is designed for messages to be consumed by several applications.
 
