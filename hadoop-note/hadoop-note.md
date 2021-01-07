@@ -1,5 +1,87 @@
 # Hadoop Note
 
+- [Hadoop Note](#hadoop-note)
+  - [Hadoop Applications](#hadoop-applications)
+  - [Hadoop 1.0](#hadoop-10)
+  - [HDFS](#hdfs)
+    - [Original HDFS Design](#original-hdfs-design)
+      - [NameNode](#namenode)
+      - [DataNode](#datanode)
+      - [HDFS Architecture](#hdfs-architecture)
+      - [HDFS Replication](#hdfs-replication)
+    - [HDFS Limitations](#hdfs-limitations)
+    - [HDFS Data Access](#hdfs-data-access)
+      - [Read Data](#read-data)
+      - [Write Data](#write-data)
+    - [HDFS Coding](#hdfs-coding)
+      - [HDFS Commands](#hdfs-commands)
+  - [Yarn](#yarn)
+    - [MapReduce V1 -> Yarn](#mapreduce-v1---yarn)
+    - [Architecture](#architecture)
+    - [Resource Manager (RM)](#resource-manager-rm)
+      - [RM High Availability](#rm-high-availability)
+      - [Yarn Schedulers](#yarn-schedulers)
+        - [FIFO Scheduler](#fifo-scheduler)
+        - [Capacity Scheduler](#capacity-scheduler)
+        - [Fair Scheduler](#fair-scheduler)
+    - [Node Manager](#node-manager)
+    - [Application Master](#application-master)
+    - [Node Labels](#node-labels)
+    - [YARN Timeline Server](#yarn-timeline-server)
+    - [Opportunistic Containers](#opportunistic-containers)
+    - [Docker containers in YARN](#docker-containers-in-yarn)
+    - [Yarn Commands](#yarn-commands)
+  - [MapReduce](#mapreduce)
+    - [MapReduce Architecture](#mapreduce-architecture)
+    - [MapReduce Workflow](#mapreduce-workflow)
+    - [Shuffle](#shuffle)
+    - [Word Count](#word-count)
+    - [Combiner](#combiner)
+      - [Combine VS Merge](#combine-vs-merge)
+    - [MapReduce Application Patterns](#mapreduce-application-patterns)
+    - [MapReduce Coding](#mapreduce-coding)
+  - [File Formats](#file-formats)
+    - [Types](#types)
+      - [Text](#text)
+      - [Sequence File](#sequence-file)
+      - [Avro](#avro)
+      - [ORC (Optimized Row Columnar)](#orc-optimized-row-columnar)
+      - [Parquet](#parquet)
+  - [Data Compression](#data-compression)
+    - [Pros](#pros)
+    - [Comparison](#comparison)
+    - [Choice](#choice)
+    - [Types](#types-1)
+      - [Gzip](#gzip)
+      - [BZip2](#bzip2)
+      - [LZO (Lempel-Ziv-Oberhumer)](#lzo-lempel-ziv-oberhumer)
+      - [Snappy](#snappy)
+  - [Serialization](#serialization)
+  - [Data Ingestion](#data-ingestion)
+    - [Types](#types-2)
+      - [Batch Ingestion](#batch-ingestion)
+      - [Micro Batch Ingestion](#micro-batch-ingestion)
+      - [Real-time Ingestion](#real-time-ingestion)
+  - [Data Processing](#data-processing)
+    - [Types](#types-3)
+      - [Batch Processing](#batch-processing)
+      - [Micro Batch Processing](#micro-batch-processing)
+      - [Real-time Processing](#real-time-processing)
+    - [Common Design Pattern](#common-design-pattern)
+      - [Slowly Changing Dimension](#slowly-changing-dimension)
+      - [Duplicate Record](#duplicate-record)
+      - [Small Files](#small-files)
+    - [Real-time Lookup](#real-time-lookup)
+  - [Data Governance](#data-governance)
+    - [Metadata Management](#metadata-management)
+    - [Data Life Cycle Management (DLM)](#data-life-cycle-management-dlm)
+    - [Data Classification](#data-classification)
+  - [Hadoop Variants](#hadoop-variants)
+  - [Hadoop Cluster Deployment & Usage](#hadoop-cluster-deployment--usage)
+  - [Hadoop Ecosystem](#hadoop-ecosystem)
+
+---
+
 ## Hadoop Applications
 
 ![hadoop-applications.png](img/hadoop-applications.png)
@@ -471,6 +553,21 @@ Cons:
 - **Row-based**
 - **Schema evolution**
 - **Splittable** and **compression**
+- Avro data is serialized with its schema.
+- It can apply rules to handle schemas that can
+change over time. If the schema changes, the old and new schema are present when processing data, so differences can be handled.
+- It does not have the same storage impacts of JSON.
+- A binary representation is used for efficient storage. 
+
+Add this dependency to pom.xml to use Avro in Maven project. 
+
+```xml
+<dependency>
+  <groupId>org.apache.avro</groupId>
+  <artifactId>avro</artifactId>
+  <version>1.8.2</version>
+</dependency>
+```
 
 #### ORC (Optimized Row Columnar)
 
