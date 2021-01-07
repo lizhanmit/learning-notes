@@ -71,7 +71,7 @@ Kafka's performance is effectively constant with respect to data size.
 
 Kafka can process millions of messages quickly because it relies on the page cache instead of JVM heap. As a result, the brokers help avoid some of the issues that large heaps can hold, ie. long or frequent garbage collection pauses.
 
-Whether data is coming from a database or a log event, my preference is to get the data into Kafka first. The data will be available in the purest form that you can achieve.
+Whether data is coming from a database or a log event, my preference is to get the data into Kafka first. The data will be available in the purest form that you can achieve. Kafka does not really care about the content of the data or do any validation by default.
 
 Two directives or purposes of Kafka: 
 
