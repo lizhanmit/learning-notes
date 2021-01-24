@@ -1,6 +1,7 @@
 # Data Science Note
 
 - [Data Science Note](#data-science-note)
+  - [Books](#books)
   - [Basics](#basics)
     - [Quick Look](#quick-look)
     - [Supervised Learning](#supervised-learning)
@@ -11,6 +12,13 @@
     - [The Method of Least Squares](#the-method-of-least-squares)
     - [Logarithmic Transformations of Variables](#logarithmic-transformations-of-variables)
     - [Correlation Matrices](#correlation-matrices)
+
+---
+
+## Books
+
+- [Top 20 Best Data Science Books You Should Read](https://solutionsreview.com/business-intelligence/best-data-science-books-you-should-read/)
+- [17 BEST Data Science Books (2021 Update)](https://www.guru99.com/data-science-books.html)
 
 ---
 
