@@ -656,4 +656,10 @@ Each algorithm will have its own specific hyperparameters that can be tuned. If 
 
 ## Data Visualization
 
-A histogram is a good way to visualize how values are distributed across a dataset. Sometimes, it can also help you to detect outliers.
+**TODO: add Jupyter files under this folder, add link to code here**
+
+A **histogram** is a good way to visualize how values are distributed across a dataset. Sometimes, it can also help you to detect outliers.
+
+While a **scatter** plot is an excellent tool for getting a first impression about possible correlation, it certainly is not definitive proof of a connection.
+
+Even if a correlation exists between two values, it still does not mean that a change in one would result in a change in the other. In other words, **correlation does not imply causation**.
