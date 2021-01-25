@@ -663,3 +663,9 @@ A **histogram** is a good way to visualize how values are distributed across a d
 While a **scatter** plot is an excellent tool for getting a first impression about possible correlation, it certainly is not definitive proof of a connection.
 
 Even if a correlation exists between two values, it still does not mean that a change in one would result in a change in the other. In other words, **correlation does not imply causation**.
+
+Vertical and horizontal **bar** charts are often a good choice if you want to see the difference between your categories.
+
+If you are interested in ratios, then **pie** plots are an excellent tool.
+
+Sometimes, a Series contains a few smaller categories. As a result, creating a pie plot with `<series_name>.plot(kind="pie")` will produce several tiny slices with overlapping labels. To address this problem, you can lump the smaller categories into a single group. Merge all categories with a condition, e.g. total under 100,000, into a category called "Other", then create a **pie** plot.
