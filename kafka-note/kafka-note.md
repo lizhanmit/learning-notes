@@ -11,6 +11,9 @@
     - [Topics](#topics)
   - [Broker](#broker)
   - [Producers](#producers)
+    - [How Producers Write to Brokers](#how-producers-write-to-brokers)
+    - [Producer Configuration](#producer-configuration)
+      - [`acks`](#acks)
     - [Java Client Producer](#java-client-producer)
   - [Consumers](#consumers)
     - [Java Client Consumer](#java-client-consumer)
@@ -140,6 +143,8 @@ The answer to the questions below will impact various parts of implementation (c
 - Last value only: Do you only want the last value of a specific value? Or is history of that value important? Do you really care about the history of how your data values evolved over time? 
 - Independent consumer: How many consumers are we going to have? Will they all be independent of each other or will they need to maintain some sort of order when reading the messages?
 
+Kafka allows you to change key behaviors just by changing some configuration values.
+
 ---
 
 ## Commit Log
@@ -245,6 +250,53 @@ A producer is also a way to send messages inside Kafka itself. For example, if y
 
 Start a console producer: `bin/kafka-console-producer.sh --broker-list localhost:9092 -- topic helloworld`
 
+### How Producers Write to Brokers
+
+![how-producers-write-to-brokers.png](img/how-producers-write-to-brokers.png)
+
+Once the producer is connected to the cluster, it can then obtain metadata. The senders job includes fetching metadata about the cluster itself, which helps the producer find the information about which actual broker is written to (since producers only write to the leader of the partition).
+
+The record accumulators job is to "accumulate" the messages into batches, which improves throughput and allow for a higher compression ratio than one messages at a time if compression for the messages is used. (If each and every message was sent one at a time, a slow down likely could be seen in regards to how fast your messages are being processed.)
+
+**NOTE**: If one message in the batch fails, then the entire batch fails for that partition. Thus, there is already the built-in retry logic.
+
+If ordering of the messages is important,
+
+- set the retries to a non-zero number;
+- set the `max.in.flight.requests.per.connection` <= 5;
+- set `ack` to "all", which provides the **best** situation for making sure your producer’s messages arrive in the order.
+
+Alternatively, set with the one configuration property `enable.idempotence`.
+
+Do not have to worry about that one producer getting in the way of another producer’s data. Data will not be overwritten, but handled by the log itself and appended on the brokers log.
+
+### Producer Configuration
+
+#### `acks`
+
+It controls how many acknowledgments the producer needs to receive from the leader before it returns a complete request.
+
+Your message will not be seen by consumers until it is considered to be committed. However, this status is NOT related to the `acks` setting.
+
+Set to `0`: 
+
+- Lowest latency
+- Cost of durability 
+- Retries are not attempted. 
+- Not a big deal in the situation where data loss is acceptable, e.g. web page click tracing.
+
+Set to `1`:
+
+- Guarantee that at least the leader has received the message. 
+- The followers might not have copied the message before a failure brings down the leader.
+
+Set to `all` or `-1`:
+
+- The leader will wait on all of the in-sync replicas (ISRs) to acknowledge they have gotten the message. 
+- Best for durability
+- Not the quickest
+- Suitable for the situation where data loss is not acceptable.  
+
 ### Java Client Producer
 
 Pre-requisite: add the following dependency in pom.xml if using Maven.
@@ -267,7 +319,7 @@ Producers are thread-safe.
 Properties props = new Properties();
 
 // a list of message brokers
-// best practice: include more than one server
+// best practice: include more than one server in case one of the servers is down or in maintenance
 // this list does not have to be every server you have though, as after it connects, it will be able to find out information about the rest of the cluster brokers and will not depend on that list
 props.put("bootstrap.servers", "localhost:9092,localhost:9093");  
 
