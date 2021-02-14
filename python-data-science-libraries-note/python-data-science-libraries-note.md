@@ -28,6 +28,7 @@
     - [Snippets](#snippets)
   - [Scikit-Learn (sklearn)](#scikit-learn-sklearn)
   - [Data Visualization](#data-visualization)
+    - [Coding](#coding)
 
 ---
 
@@ -656,7 +657,11 @@ Each algorithm will have its own specific hyperparameters that can be tuned. If 
 
 ## Data Visualization
 
-**TODO: add Jupyter files under this folder, add link to code here**
+Three major considerations for Data Visualization:
+
+- Clarity ensures that the data set is complete and relevant. This enables the data scientist to use the new patterns yield from the data in the relevant places.
+- Accuracy ensures using appropriate graphical representation to convey the right message.
+- Efficiency uses efficient visualization technique which highlights all the data points.
 
 A **histogram** is a good way to visualize how values are distributed across a dataset. Sometimes, it can also help you to detect outliers.
 
@@ -669,3 +674,17 @@ Vertical and horizontal **bar** charts are often a good choice if you want to se
 If you are interested in ratios, then **pie** plots are an excellent tool.
 
 Sometimes, a Series contains a few smaller categories. As a result, creating a pie plot with `<series_name>.plot(kind="pie")` will produce several tiny slices with overlapping labels. To address this problem, you can lump the smaller categories into a single group. Merge all categories with a condition, e.g. total under 100,000, into a category called "Other", then create a **pie** plot.
+
+### Coding
+
+[Code](https://github.com/lizhanmit/learning-notes/blob/master/python-data-science-libraries-note/python-data-visualization-tutorial/tutorial_1.ipynb)
+
+Python data visualization libraries:
+
+- matplotlib
+- Vispy
+- bokeh
+- Seaborn
+- pygal
+- folium
+- networkx
