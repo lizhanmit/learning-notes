@@ -14,6 +14,8 @@
     - [How Producers Write to Brokers](#how-producers-write-to-brokers)
     - [Producer Configuration](#producer-configuration)
       - [`acks`](#acks)
+      - [`compression.type`](#compressiontype)
+      - [Custom Serializer](#custom-serializer)
     - [Java Client Producer](#java-client-producer)
   - [Consumers](#consumers)
     - [Java Client Consumer](#java-client-consumer)
@@ -296,6 +298,88 @@ Set to `all` or `-1`:
 - Best for durability
 - Not the quickest
 - Suitable for the situation where data loss is not acceptable.  
+
+#### `compression.type`
+
+If the size of data being sent is a concern, compression might be a feature you want to look into. Some types: snappy, gzip, lz4.
+
+Do not forget that CPU and memory are needed for this work. And that tradeoff might not make sense in every use case.
+
+Compression is done at the batch level.
+
+The size and rate of your data decide if it is necessary to use compression. Situations that do not need compression: 
+
+- small messages
+- low traffic or events, do not have many messages
+
+#### Custom Serializer
+
+For plain text messages, use `StringSerializer`.
+
+For Avro, use `io.confluent.kafka.serializers.KafkaAvroSerializer`.
+
+You can serialize key and values with different serializers on the same message.
+
+Example:
+
+```java
+/*
+ * custom class
+ */
+public class Alert {
+  private int alertId;
+  private String stageId;
+  private String alertLevel;
+  private String alertMessage;
+
+  public Alert(int alertId, String stageId, String alertLevel, String alertMessage) {
+    this.alertId = alertId;
+    this.stageId = stageId;
+    this.alertLevel = alertLevel;
+    this.alertMessage = alertMessage;
+  }
+
+  // getters
+  // ...
+
+
+  // setters
+  // ...
+}
+```
+
+```java
+/*
+ * custom Serializer class
+ */
+public class AlertKeySerde implements Serializer<Alert>, Deserializer<Alert> {
+
+  public byte[] serialize(String topic, Alert value) {
+    if (value == null) {
+      return null;
+    }
+
+    try {
+      return value.getStageId().getBytes("UTF8");
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public void close() {
+  // nothing needed
+  }
+
+  public void configure(Map<String, ?> configs, boolean isKey) {
+  // nothing needed
+  }
+
+  public Alert deserialize(String topic, byte[] value) {
+  //We will leave this part for later
+    return null;
+  }
+}
+```
 
 ### Java Client Producer
 
