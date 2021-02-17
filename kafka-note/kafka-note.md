@@ -12,11 +12,17 @@
   - [Broker](#broker)
   - [Producers](#producers)
     - [How Producers Write to Brokers](#how-producers-write-to-brokers)
+    - [Java Client Producer](#java-client-producer)
     - [Producer Configuration](#producer-configuration)
       - [`acks`](#acks)
       - [`compression.type`](#compressiontype)
       - [Custom Serializer](#custom-serializer)
-    - [Java Client Producer](#java-client-producer)
+      - [Custom Partitioner](#custom-partitioner)
+    - [Synchronous Wait](#synchronous-wait)
+    - [Example Producer Code](#example-producer-code)
+      - [Health Trending Producer](#health-trending-producer)
+      - [Alert Producer](#alert-producer)
+    - [Client and Broker Versions](#client-and-broker-versions)
   - [Consumers](#consumers)
     - [Java Client Consumer](#java-client-consumer)
   - [Write & Read](#write--read)
@@ -264,13 +270,57 @@ The record accumulators job is to "accumulate" the messages into batches, which 
 
 If ordering of the messages is important,
 
-- set the retries to a non-zero number;
-- set the `max.in.flight.requests.per.connection` <= 5;
-- set `ack` to "all", which provides the **best** situation for making sure your producer’s messages arrive in the order.
+```java
+props.put("acks", "all");  // setting to "all" provides the best situation for making sure your producer’s messages arrive in the order
+props.put("retries", "3");  // set the retries to a non-zero number
+props.put("max.in.flight.requests.per.connection", "5");  // set the value <= 5
+```
 
 Alternatively, set with the one configuration property `enable.idempotence`.
 
 Do not have to worry about that one producer getting in the way of another producer’s data. Data will not be overwritten, but handled by the log itself and appended on the brokers log.
+
+### Java Client Producer
+
+Pre-requisite: add the following dependency in pom.xml if using Maven.
+
+```xml
+<dependency>
+  <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka-clients</artifactId>
+  <version>0.11.0.0</version>
+</dependency>
+```
+
+Producers are thread-safe.
+
+```java
+/**
+ * an example of a simple producer
+ */
+
+Properties props = new Properties();
+
+// a list of message brokers
+// best practice: include more than one server in case one of the servers is down or in maintenance
+// this list does not have to be every server you have though, as after it connects, it will be able to find out information about the rest of the cluster brokers and will not depend on that list
+props.put("bootstrap.servers", "localhost:9092,localhost:9093");  
+
+// we provide a class that will be able to serialize the data as it moves into Kafka
+// keys and values do not have to use the same serializer
+props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+// producers are thread-safe
+Producer<String, String> producer = new KafkaProducer<>(props);  
+
+ProducerRecord producerRecord = new ProducerRecord<String, String>
+("helloworld", null, "hello world again!");  // (topic, key, value)
+
+producer.send(producerRecord);
+
+producer.close();
+```
 
 ### Producer Configuration
 
@@ -323,7 +373,7 @@ You can serialize key and values with different serializers on the same message.
 Example:
 
 ```java
-/*
+/**
  * custom class
  */
 public class Alert {
@@ -349,7 +399,7 @@ public class Alert {
 ```
 
 ```java
-/*
+/**
  * custom Serializer class
  */
 public class AlertKeySerde implements Serializer<Alert>, Deserializer<Alert> {
@@ -381,47 +431,147 @@ public class AlertKeySerde implements Serializer<Alert>, Deserializer<Alert> {
 }
 ```
 
-### Java Client Producer
+#### Custom Partitioner 
 
-Pre-requisite: add the following dependency in pom.xml if using Maven.
+Kafka uses hash partitioning. 
 
-```xml
-<dependency>
-  <groupId>org.apache.kafka</groupId>
-    <artifactId>kafka-clients</artifactId>
-  <version>0.11.0.0</version>
-</dependency>
-```
+If there are specific keys that you might want to avoid all being hashed to the same partition due to the volume you expect, the client can write custom partitioner class to control what partition it writes to, which load-balances the data over the partitions. 
 
-Producers are thread-safe.
+For example, if two customers produce 75% of your traffic, it might be a good idea to
+split those two customers into different partitions in order to avoid filling your storage space on specific partitions only.
+
+Example: 
 
 ```java
-/*
- * an example of a simple producer
+import org.apache.kafka.clients.producer.Partitioner;
+import org.apache.kafka.common.Cluster;
+import org.apache.kafka.common.PartitionInfo;
+import java.util.*;
+
+/**
+ * custom Partitioner class
+ *
+ * place alerts with the different levels in different partitions
+ * make "CRITICAL" events assigned to a specific partition
+ */
+public class AlertLevelPartitioner implements Partitioner {
+  public int partition(final String topic,    
+                      final Object objectKey, 
+                      final byte[] keyBytes, 
+                      final Object value, 
+                      final byte[] valueBytes, 
+                      final Cluster cluster) {
+
+    final List<PartitionInfo> partitionInfoList = cluster.availablePartitionsForTopic(topic); 
+    final int partitionSize = partitionInfoList.size();
+    final criticalPartition = partitionSize - 1;
+    final partitionCount = partitionSize - 1;
+
+    final String key = ((String) objectKey);
+
+    if (key.contains("CRITICAL")) {
+      return criticalPartition;
+    } else {
+      return Math.abs(key.hashCode()) % partitionCount;
+    }
+  }
+
+  public void close() {
+    // nothing needed
+  }
+
+  public void configure(Map<String, ?> configs) {
+    // nothing needed
+  }
+}
+```
+
+```java
+/**
+ * use custom partitioner class in producer
  */
 
 Properties props = new Properties();
 
-// a list of message brokers
-// best practice: include more than one server in case one of the servers is down or in maintenance
-// this list does not have to be every server you have though, as after it connects, it will be able to find out information about the rest of the cluster brokers and will not depend on that list
-props.put("bootstrap.servers", "localhost:9092,localhost:9093");  
+props.put("partitioner.class", "com.yourpackagename.partitioner.AlertLevelPartitioner");
+```
 
-// we provide a class that will be able to serialize the data as it moves into Kafka
-// keys and values do not have to use the same serializer
-props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+### Synchronous Wait
+
+In some cases, you might want to wait for the response to complete in a synchronous way after sending messages. 
+
+```java
+RecordMetadata result = producer.send(producerRecord).get();  // get() method is how to wait for the result to come back before moving on
+
+System.out.printf("offset = %d, topic = %s,
+timestamp = %Tc %n", result.offset(), result.topic(), result.timestamp());
+```
+
+### Example Producer Code
+
+#### Health Trending Producer
+
+- Track sensor health status over time. 
+- Care about the info about one sensor at a time. 
+- Use sensor id as key to group sensor events. 
+
+```java
+Properties props = new Properties();
+
+props.put("bootstrap.servers", "localhost:9092,localhost:9093");
+// serialize custom Alert object into a key
+props.put("key.serializer", "com.yourpackagename.serde.AlertKeySerde");  
 props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-// producers are thread-safe
-Producer<String, String> producer = new KafkaProducer<>(props);  
+Producer<Alert, String> producer = new KafkaProducer<>(props);
 
-ProducerRecord producerRecord = new ProducerRecord<String, String>
-("helloworld", null, "hello world again!");  // (topic, key, value)
+Alert alert = new Alert(0, "Stage 0", "CRITICAL", "Stage 0 stopped");
+
+ProducerRecord<Alert, String> producerRecord = new ProducerRecord<>("healthtrendtopic", alert, alert.getAlertMessage());
 
 producer.send(producerRecord);
-
-producer.close();
 ```
+
+#### Alert Producer
+
+- Have any alerts quickly processed. 
+- Use sensor id as key to group sensor events.
+- Look at only the last event for that sensor id. 
+- Do not care about the history of the status checks.
+- Partition alerts in order to have access to the critical alerts specifically.
+
+```java
+Properties props = new Properties()l
+
+props.put("bootstrap.servers", "localhost:9092,localhost:9093");
+// serialize custom Alert object into a key
+props.put("key.serializer", "com.yourpackagename.serde.AlertKeySerde");
+props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+props.put("partitioner.class", "com.yourpackagename.partitioner.AlertLevelPartitioner");
+
+Producer<Alert, String> producer = new KafkaProducer<>(props);
+
+Alert alert = new Alert(1, "Stage 1", "CRITICAL", "Stage 1 stopped");
+
+ProducerRecord<Alert, String> producerRecord = new ProducerRecord<>("alerttopic", alert, alert.getAlertMessage());
+
+// use callback to handle successful completion or failure of an asynchronous send call
+producer.send(producerRecord, new AlertCallback());
+```
+
+```java
+public class AlertCallback implements Callback {
+  public void onCompletion(RecordMetadata metadata, Exception exception) {
+    if (exception != null) {
+      System.out.printf("Error sending message: "+ "offset = %d, topic = %s, timestamp = %Tc %n", metadata.offset(), metadata.topic(), metadata.timestamp());
+    }
+  }
+}
+```
+
+### Client and Broker Versions
+
+Kafka and clients versions do not always have to match. For instance, Kafka version is 1.0 and Java producer client version is 0.10 (dependency version in pom). However, there could be some cost due to the version mismatch.
 
 ---
 
@@ -436,7 +586,7 @@ Make sure you terminate the program after you done reading messages.
 Java consumer client is **NOT** thread-safe.
 
 ```java
-/*
+/**
  * an example of a simple consumer
  */
 
