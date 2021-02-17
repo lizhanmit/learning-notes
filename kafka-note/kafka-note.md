@@ -25,6 +25,7 @@
     - [Client and Broker Versions](#client-and-broker-versions)
   - [Consumers](#consumers)
     - [Java Client Consumer](#java-client-consumer)
+    - [Consumer Configuration](#consumer-configuration)
   - [Write & Read](#write--read)
   - [Various Source Code Packages](#various-source-code-packages)
     - [Kafka Streams](#kafka-streams)
@@ -577,13 +578,22 @@ Kafka and clients versions do not always have to match. For instance, Kafka vers
 
 ## Consumers
 
+Consumers are not listener to the brokers, but polling data from brokers. Consumers themselves control the rate of consumption.
+
+Consumers control where to start reading data:
+
+- from the beginning.
+- from a location after the last read your client had previous committed.
+- from the present and ignoring any
+earlier messages.
+
 Start a console consumer: `bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloworld --from-beginning`
 
 ### Java Client Consumer
 
 Make sure you terminate the program after you done reading messages.
 
-Java consumer client is **NOT** thread-safe.
+Java consumer client is **NOT** thread-safe. You can get a `ConcurrentModificationException` if you have many threads going at once. One consumer per thread.
 
 ```java
 /**
@@ -594,9 +604,10 @@ Properties props = new Properties();
 
 // properties are set the same way as producers
 props.put("bootstrap.servers", "localhost:9092,localhost:9093");
-props.put("group.id", "helloconsumer");
+props.put("group.id", "helloconsumer");  // group multiple consumers
 props.put("enable.auto.commit", "true");
 props.put("auto.commit.interval.ms", "1000");
+// make sure the deserializers for key and value match the serializers in producer 
 props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
@@ -607,11 +618,21 @@ consumer.subscribe(Arrays.asList("helloworld"));
 
 while (true) {
   // no messages, one message, or many messages could all come back with a single poll
-  ConsumerRecords<String, String> records = consumer.poll(100);
+  ConsumerRecords<String, String> records = consumer.poll(100);  // 100 milliseconds, amount of time we are willing to wait if data is not available
   for (ConsumerRecord<String, String> record : records)
     System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
 }
 ```
+
+### Consumer Configuration 
+
+- `client.id`: An id used for being able to identify a client.
+- `fetch.min.bytes`: How many bytes your consumer should wait for until a timeout happens.
+- `heartbeat.interval.ms`: The time between when the consumer pings the group coordinator.
+- `max.partition.fetch.bytes`: The max amount of data the server will return. This is a per-partition value.
+- `session.timeout.ms`: How long until a consumer not contacting a broker will be removed from the group as a failure.
+
+Make sure `session.timeout.ms` > `heartbeat.interval.ms` in order to make sure that your consumer is letting other consumers know you are likely still processing the messages.
 
 ---
 
@@ -625,7 +646,8 @@ Only committed messages are ever given out to the consumer.
 
 For producers, they have the option of either waiting for the message to be committed or not, depending on their preference for tradeoff between latency and durability.
 
-One application reading a message off of the message brokers does not remove it from other applications that might want to consume it as well.
+One application reading a message off of the message brokers does not remove it from other applications that might want to consume it as well. Developer mistakes, application logic mistakes, and even dependent
+application failures have a chance to be corrected with our topics not removing the data once read one time.
 
 ---
 
