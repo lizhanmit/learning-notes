@@ -24,8 +24,11 @@
       - [Alert Producer](#alert-producer)
     - [Client and Broker Versions](#client-and-broker-versions)
   - [Consumers](#consumers)
+    - [How Consumers Read from Brokers](#how-consumers-read-from-brokers)
     - [Java Client Consumer](#java-client-consumer)
     - [Consumer Configuration](#consumer-configuration)
+    - [Offsets](#offsets)
+    - [Stop a Consumer](#stop-a-consumer)
   - [Write & Read](#write--read)
   - [Various Source Code Packages](#various-source-code-packages)
     - [Kafka Streams](#kafka-streams)
@@ -63,7 +66,7 @@ Using Kafka as a hub:
 
 ZooKeeper helps maintain consensus in the cluster.
 
-The reliance on ZooKeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Clients no longer store offsets in ZooKeeper.
+The reliance on ZooKeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Consumer clients no longer store offsets in ZooKeeper, but inside a Kafka internal topic instead. (Consumer clients do not have to store their offsets in either or these locations.)
 
 ZooKeeper should have been running before you started your brokers. 
 
@@ -193,7 +196,8 @@ Kafka splits a topic into partitions.
 
 - Messages (= records) are byte arrays of data with String, JSON, and Avro being the most common.
 - Each message consists of a key, a value and a timestamp. A key is not required.
-- Each message is assigned a unique sequential identifier or key called **offset**. Messages with the same key arrive at the same partition.
+- Each message is assigned a unique sequential identifier called **offset**. 
+- Messages with the same key arrive at the same partition.
 - Messages are replicated across the cluster and persisted to disk.
 - Kafka retains all messages for a configurable period of time.
 
@@ -267,7 +271,7 @@ Once the producer is connected to the cluster, it can then obtain metadata. The 
 
 The record accumulators job is to "accumulate" the messages into batches, which improves throughput and allow for a higher compression ratio than one messages at a time if compression for the messages is used. (If each and every message was sent one at a time, a slow down likely could be seen in regards to how fast your messages are being processed.)
 
-**NOTE**: If one message in the batch fails, then the entire batch fails for that partition. Thus, there is already the built-in retry logic.
+**NOTE**: If one message in the batch fails, then the entire batch fails for that partition. For this problem, there is already the built-in retry logic.
 
 If ordering of the messages is important,
 
@@ -589,6 +593,31 @@ earlier messages.
 
 Start a console consumer: `bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloworld --from-beginning`
 
+### How Consumers Read from Brokers
+
+Find the leader partition by means of the topic. Then find the index-based offset.
+
+Consumers only read from the consumer’s leader partition. Replicas are used in the case of failure but are not actively serving consumer fetch requests.
+
+![partition-leaders.png](img/partition-leaders.png)
+
+Q: How do consumers figure out what partition to connect to, and where the leader exists for that partition?
+
+A: For each consumer group, one of the brokers takes on the role of a **group coordinator**. The client will talk
+to this coordinator in order to get an assignment of which details it needs to consume.
+
+The group coordinator play a role: 
+
+- in assigning which consumers read which partitions at the beginning of the group startup.
+- when consumers are add or fail and exit the group.
+
+If there are more consumers in a group than the number of partitions, then some consumers will be idle. This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly.
+
+The number of partitions determines the amount of parallel consumers you can have. 
+
+- Many partitions might increase end-to-end latency. If milliseconds count in your application, you might not be able to wait until a partition is replicated between brokers. 
+- If you do not have a 1-to-1 mapping of a partition to a consumer, the more partitions a consumer consumes will likely have more memory needs overall.
+
 ### Java Client Consumer
 
 Make sure you terminate the program after you done reading messages.
@@ -618,7 +647,7 @@ consumer.subscribe(Arrays.asList("helloworld"));
 
 while (true) {
   // no messages, one message, or many messages could all come back with a single poll
-  ConsumerRecords<String, String> records = consumer.poll(100);  // 100 milliseconds, amount of time we are willing to wait if data is not available
+  ConsumerRecords<String, String> records = consumer.poll(100);  // 100 milliseconds: amount of time we are willing to wait if data is not available
   for (ConsumerRecord<String, String> record : records)
     System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
 }
@@ -633,6 +662,56 @@ while (true) {
 - `session.timeout.ms`: How long until a consumer not contacting a broker will be removed from the group as a failure.
 
 Make sure `session.timeout.ms` > `heartbeat.interval.ms` in order to make sure that your consumer is letting other consumers know you are likely still processing the messages.
+
+### Offsets
+
+Offsets are index position in the commit log that the consumer sends to the broker to let it know what messages it wants to consume from where.
+
+The default is latest.
+
+Offsets are always increasing for each partition. Even if
+that message is removed at a later point, the offset number will not be used again.
+
+Offset value is a `long` data type.
+
+### Stop a Consumer 
+
+One common use case of stopping a consumer is adding calling `close()` in consumer client code. This will stop the client properly and inform the broker.
+
+The group coordinator should be sent notification about membership of the group being changed due to the client leaving. If the coordinator does not receive a heartbeat within a specific time, then the coordinator considers the client as dead and reassigns the partitions to the existing consumer clients. This heartbeat timeout is set by using the property `session.timeout.ms`.
+
+```java
+public class KafkaConsumerThread implements Runnable {
+  private final AtomicBoolean stopping = new AtomicBoolean(false); 
+
+  // construct props
+  // ...
+
+  private final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props); 
+
+  public void run() {
+    try {
+      consumer.subscribe(Arrays.asList("webclickstopic"));
+      while (!stopping.get()) {
+        ConsumerRecords<String, String> records = consumer.poll(100);
+
+        // process records
+        // ...
+      }
+    } catch (WakeupException e) {
+      if (!stopping.get()) throw e;
+    } finally {
+      consumer.close();
+    }
+  }
+
+  // this method can be called from a different thread in order to stop the client in the proper way
+  public void shutdown() {
+    stopping.set(true);
+    consumer.wakeup();
+  }
+}
+```
 
 ---
 
