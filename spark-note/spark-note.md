@@ -145,6 +145,10 @@
     - [Spark Core Coding](#spark-core-coding)
       - [RDD Coding](#rdd-coding)
       - [DataFrame Coding](#dataframe-coding)
+      - [Pivot](#pivot)
+      - [Complex Pivot](#complex-pivot)
+      - [Pivot List](#pivot-list)
+      - [Pivot Consolidate](#pivot-consolidate)
       - [Null Value](#null-value)
       - [UDF](#udf)
     - [`import spark.implicits._`](#import-sparkimplicits_)
@@ -1921,6 +1925,59 @@ aDF.union(cDF).show()
 ```
 
 `unionAll()` was deprecated in Spark 2.0, and for all future reference, `union()` is the only recommended method. In either case, `union` or `unionAll`, both do not do a SQL style deduplication of data. In order to remove any duplicate rows, just use `union()` followed by a `distinct()`. 
+
+#### Pivot
+
+![pivot.png](img/pivot.png)
+
+```scala
+val pivotedDF: DataFrame = df.groupBy("id")
+      .pivot("type", Seq("t1", "t2"))  // Seq("ti", "t2") is optional. Having it is better for performance if you know all values of column "type".
+      .agg(first("value"))
+```
+
+#### Complex Pivot
+
+![complex-pivot.png](img/complex-pivot.png)
+
+```scala
+val complexPivotedDF: DataFrame = df2.groupBy("id")
+  .pivot("type", Seq("t1", "t2"))
+  .agg(first("value").as("value"),
+    first("value2").as("value2")
+    )
+```
+
+#### Pivot List
+
+![pivot-list.png](img/pivot-list.png)
+
+```scala
+val window = Window.partitionBy("id").orderBy("ranking_num")
+
+val pivotListedDF: DataFrame = df3
+  .withColumn("ranking_num", $"ranking".cast(IntegerType))
+  .withColumn("value_list_sorted_by_ranking", collect_list("value").over(window))
+  .groupBy("id")
+  .agg(max("value_list_sorted_by_ranking").as("value_list"))
+```
+
+#### Pivot Consolidate
+
+![pivot-consolidate.png](img/pivot-consolidate.png)
+
+```scala
+val window = Window.partitionBy("id", "type").orderBy("ranking_num")
+
+val pivotConsolidatedDF: DataFrame = df4
+  .withColumn("ranking_num", $"ranking".cast(IntegerType))
+  .withColumn("value_list_sorted_by_ranking", collect_list("value").over(window))
+  .groupBy("id", "type")
+  .agg(max("value_list_sorted_by_ranking").as("value_list"))
+  .groupBy("id")
+  .pivot("type", Seq("a", "b"))
+  .agg(first("value_list"))
+```
 
 #### Null Value
 
