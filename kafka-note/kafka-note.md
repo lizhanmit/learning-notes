@@ -29,6 +29,7 @@
     - [Consumer Configuration](#consumer-configuration)
     - [Offsets](#offsets)
     - [Stop a Consumer](#stop-a-consumer)
+    - [Consumer Groups](#consumer-groups)
   - [Write & Read](#write--read)
   - [Various Source Code Packages](#various-source-code-packages)
     - [Kafka Streams](#kafka-streams)
@@ -667,7 +668,7 @@ Make sure `session.timeout.ms` > `heartbeat.interval.ms` in order to make sure t
 
 Offsets are index position in the commit log that the consumer sends to the broker to let it know what messages it wants to consume from where.
 
-The default is latest.
+The default offset is latest.
 
 Offsets are always increasing for each partition. Even if
 that message is removed at a later point, the offset number will not be used again.
@@ -712,6 +713,18 @@ public class KafkaConsumerThread implements Runnable {
   }
 }
 ```
+
+### Consumer Groups
+
+When starting a new consumer group, there will be no stored offsets.
+
+If a consumer joins an existing group that already stored offsets, this consumer will resume where it left off reading from any previous runs.
+
+It is often the case that you will have many consumers reading from the same topic.
+
+It is often the case that you will have many consumers reading from the same topic. Each consumer that uses the same `group.id` as another consumer will be considered to be working together to consume the partitions and offsets of the topic as one logical application.
+
+The key to letting your consumer clients work together is a unique combination of the following: group, topic, and partition number.
 
 ---
 
