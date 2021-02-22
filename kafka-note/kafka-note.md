@@ -25,11 +25,12 @@
     - [Client and Broker Versions](#client-and-broker-versions)
   - [Consumers](#consumers)
     - [How Consumers Read from Brokers](#how-consumers-read-from-brokers)
+    - [Offsets](#offsets)
+    - [Consumer Groups](#consumer-groups)
+      - [Group Coordinator](#group-coordinator)
     - [Java Client Consumer](#java-client-consumer)
     - [Consumer Configuration](#consumer-configuration)
-    - [Offsets](#offsets)
     - [Stop a Consumer](#stop-a-consumer)
-    - [Consumer Groups](#consumer-groups)
   - [Write & Read](#write--read)
   - [Various Source Code Packages](#various-source-code-packages)
     - [Kafka Streams](#kafka-streams)
@@ -604,20 +605,59 @@ Consumers only read from the consumer’s leader partition. Replicas are used in
 
 Q: How do consumers figure out what partition to connect to, and where the leader exists for that partition?
 
-A: For each consumer group, one of the brokers takes on the role of a **group coordinator**. The client will talk
+A: For each consumer group, one of the brokers takes on the role of a *group coordinator*. The client will talk
 to this coordinator in order to get an assignment of which details it needs to consume.
+
+The number of partitions determines the amount of parallel consumers you can have. 
+
+- Many partitions might increase end-to-end latency. If milliseconds count in your application, you might not be able to wait until a partition is replicated between brokers. 
+- If you do not have a 1-to-1 mapping of a partition to a consumer, the more partitions a consumer consumes will likely have more memory needs overall.
+
+### Offsets
+
+Offsets are index position in the commit log that the consumer sends to the broker to let it know what messages it wants to consume from where.
+
+The default offset is latest.
+
+Offsets are always increasing for each partition. Even if that message is removed at a later point, the offset number will not be used again.
+
+Offset value is a `long` data type.
+
+### Consumer Groups
+
+When starting a new consumer group, there will be no stored offsets.
+
+If a consumer joins an existing group that already stored offsets, this consumer will resume where it left off reading from any previous runs.
+
+It is often the case that you will have many consumers reading from the same topic.
+
+It is often the case that you will have many consumers reading from the same topic. Each consumer that uses the same `group.id` as another consumer will be considered to be working together to consume the partitions and offsets of the topic as one logical application.
+
+The key to letting your consumer clients work together is a unique combination of the following: group, topic, and partition number.
+
+As a general rule, one partition is consumed by only one consumer for any given consumer group.
+
+![consumers-in-separate-groups.png](img/consumers-in-separate-groups.png)
+
+When a consumer fails or leaves a group, the partitions that need to be read are re-assigned. An existing consumer will take the place of reading a partition that was being read with the consumer that dropped out of the group.
+
+![consumers-in-a-group.png](img/consumers-in-a-group.png)
+
+
+
+If there are more consumers in a group than the number of partitions, then some consumers will be idle. This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly. In other words, you want to make sure a consumer is ready to handle a partition in case of a failure.
+
+
+#### Group Coordinator
+
+The group coordinator works with the consumer clients to keep track of where that specific group has read from the topic.
 
 The group coordinator play a role: 
 
 - in assigning which consumers read which partitions at the beginning of the group startup.
 - when consumers are add or fail and exit the group.
 
-If there are more consumers in a group than the number of partitions, then some consumers will be idle. This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly.
 
-The number of partitions determines the amount of parallel consumers you can have. 
-
-- Many partitions might increase end-to-end latency. If milliseconds count in your application, you might not be able to wait until a partition is replicated between brokers. 
-- If you do not have a 1-to-1 mapping of a partition to a consumer, the more partitions a consumer consumes will likely have more memory needs overall.
 
 ### Java Client Consumer
 
@@ -664,17 +704,6 @@ while (true) {
 
 Make sure `session.timeout.ms` > `heartbeat.interval.ms` in order to make sure that your consumer is letting other consumers know you are likely still processing the messages.
 
-### Offsets
-
-Offsets are index position in the commit log that the consumer sends to the broker to let it know what messages it wants to consume from where.
-
-The default offset is latest.
-
-Offsets are always increasing for each partition. Even if
-that message is removed at a later point, the offset number will not be used again.
-
-Offset value is a `long` data type.
-
 ### Stop a Consumer 
 
 One common use case of stopping a consumer is adding calling `close()` in consumer client code. This will stop the client properly and inform the broker.
@@ -713,18 +742,6 @@ public class KafkaConsumerThread implements Runnable {
   }
 }
 ```
-
-### Consumer Groups
-
-When starting a new consumer group, there will be no stored offsets.
-
-If a consumer joins an existing group that already stored offsets, this consumer will resume where it left off reading from any previous runs.
-
-It is often the case that you will have many consumers reading from the same topic.
-
-It is often the case that you will have many consumers reading from the same topic. Each consumer that uses the same `group.id` as another consumer will be considered to be working together to consume the partitions and offsets of the topic as one logical application.
-
-The key to letting your consumer clients work together is a unique combination of the following: group, topic, and partition number.
 
 ---
 
