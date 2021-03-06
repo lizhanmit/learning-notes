@@ -27,6 +27,9 @@
     - [How Consumers Read from Brokers](#how-consumers-read-from-brokers)
     - [Offsets](#offsets)
     - [Consumer Groups](#consumer-groups)
+      - [Consumer Failure](#consumer-failure)
+      - [More Consumers than Partitions](#more-consumers-than-partitions)
+      - [Consumer Rebalance](#consumer-rebalance)
       - [Group Coordinator](#group-coordinator)
     - [Java Client Consumer](#java-client-consumer)
     - [Consumer Configuration](#consumer-configuration)
@@ -629,8 +632,6 @@ When starting a new consumer group, there will be no stored offsets.
 
 If a consumer joins an existing group that already stored offsets, this consumer will resume where it left off reading from any previous runs.
 
-It is often the case that you will have many consumers reading from the same topic.
-
 It is often the case that you will have many consumers reading from the same topic. Each consumer that uses the same `group.id` as another consumer will be considered to be working together to consume the partitions and offsets of the topic as one logical application.
 
 The key to letting your consumer clients work together is a unique combination of the following: group, topic, and partition number.
@@ -639,14 +640,25 @@ As a general rule, one partition is consumed by only one consumer for any given 
 
 ![consumers-in-separate-groups.png](img/consumers-in-separate-groups.png)
 
+#### Consumer Failure
+
 When a consumer fails or leaves a group, the partitions that need to be read are re-assigned. An existing consumer will take the place of reading a partition that was being read with the consumer that dropped out of the group.
 
 ![consumers-in-a-group.png](img/consumers-in-a-group.png)
 
+One way a consumer can drop out of a group is by failure to send a heartbeat to the GroupCoordinator. Failure to send these heartbeats can happen in a couple of ways: 
 
+- Stop the consumer client by either termination of the process or failure due to a fatal exception.
+- If taking longer time than the setting of `max.poll.interval.ms`to process messages.
+
+#### More Consumers than Partitions
 
 If there are more consumers in a group than the number of partitions, then some consumers will be idle. This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly. In other words, you want to make sure a consumer is ready to handle a partition in case of a failure.
 
+#### Consumer Rebalance
+
+**NOTE**: During a rebalance, consumption is paused. **Adding and losing consumer from a group are all key details to watch** and make sure that your leaders are not being rebalanced
+across clients and repeatedly causing pauses in your consumption.
 
 #### Group Coordinator
 
@@ -655,7 +667,7 @@ The group coordinator works with the consumer clients to keep track of where tha
 The group coordinator play a role: 
 
 - in assigning which consumers read which partitions at the beginning of the group startup.
-- when consumers are add or fail and exit the group.
+- when consumers are added or fail and exit the group.
 
 
 
@@ -701,6 +713,8 @@ while (true) {
 - `heartbeat.interval.ms`: The time between when the consumer pings the group coordinator.
 - `max.partition.fetch.bytes`: The max amount of data the server will return. This is a per-partition value.
 - `session.timeout.ms`: How long until a consumer not contacting a broker will be removed from the group as a failure.
+- `max.poll.interval.ms`: (introduced as
+part of Kafka 0.10.1) How long it takes for messages processing. If you take longer time than this setting to process messages, the consumer will be considered dead and drop out of the group.
 
 Make sure `session.timeout.ms` > `heartbeat.interval.ms` in order to make sure that your consumer is letting other consumers know you are likely still processing the messages.
 
