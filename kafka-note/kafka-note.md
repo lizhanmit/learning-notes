@@ -27,10 +27,10 @@
     - [How Consumers Read from Brokers](#how-consumers-read-from-brokers)
     - [Offsets](#offsets)
     - [Consumer Groups](#consumer-groups)
-      - [Consumer Failure](#consumer-failure)
-      - [More Consumers than Partitions](#more-consumers-than-partitions)
-      - [Consumer Rebalance](#consumer-rebalance)
       - [Group Coordinator](#group-coordinator)
+    - [Consumer Failure](#consumer-failure)
+    - [If More Consumers than Partitions](#if-more-consumers-than-partitions)
+    - [Consumer Rebalance](#consumer-rebalance)
     - [Java Client Consumer](#java-client-consumer)
     - [Consumer Configuration](#consumer-configuration)
     - [Stop a Consumer](#stop-a-consumer)
@@ -71,7 +71,7 @@ Using Kafka as a hub:
 
 ZooKeeper helps maintain consensus in the cluster.
 
-The reliance on ZooKeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Consumer clients no longer store offsets in ZooKeeper, but inside a Kafka internal topic instead. (Consumer clients do not have to store their offsets in either or these locations.)
+The reliance on ZooKeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Consumer clients no longer store offsets in ZooKeeper, but inside a Kafka internal topic instead by default. (Consumer clients do not have to store their offsets in either or these locations.)
 
 ZooKeeper should have been running before you started your brokers. 
 
@@ -640,7 +640,16 @@ As a general rule, one partition is consumed by only one consumer for any given 
 
 ![consumers-in-separate-groups.png](img/consumers-in-separate-groups.png)
 
-#### Consumer Failure
+#### Group Coordinator
+
+The group coordinator works with the consumer clients to keep track of where that specific group has read from the topic.
+
+The group coordinator play a role: 
+
+- in assigning which consumers read which partitions at the beginning of the group startup.
+- when consumers are added or fail and exit the group.
+
+### Consumer Failure
 
 When a consumer fails or leaves a group, the partitions that need to be read are re-assigned. An existing consumer will take the place of reading a partition that was being read with the consumer that dropped out of the group.
 
@@ -651,23 +660,46 @@ One way a consumer can drop out of a group is by failure to send a heartbeat to 
 - Stop the consumer client by either termination of the process or failure due to a fatal exception.
 - If taking longer time than the setting of `max.poll.interval.ms`to process messages.
 
-#### More Consumers than Partitions
+### If More Consumers than Partitions
 
 If there are more consumers in a group than the number of partitions, then some consumers will be idle. This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly. In other words, you want to make sure a consumer is ready to handle a partition in case of a failure.
 
-#### Consumer Rebalance
+### Consumer Rebalance
 
 **NOTE**: During a rebalance, consumption is paused. **Adding and losing consumer from a group are all key details to watch** and make sure that your leaders are not being rebalanced
 across clients and repeatedly causing pauses in your consumption.
 
-#### Group Coordinator
+Ways to keep informed of consumer rebalances: 
 
-The group coordinator works with the consumer clients to keep track of where that specific group has read from the topic.
+- Look at log files.
+- Print offset metadata from consumer clients. 
+- Implement the interface `ConsumerRebalanceListener`.
 
-The group coordinator play a role: 
+```java
+/*
+ * manual partition assign
+ */
 
-- in assigning which consumers read which partitions at the beginning of the group startup.
-- when consumers are added or fail and exit the group.
+public class MaintainOffsetsOnRebalance implements ConsumerRebalanceListener {
+
+  // ...
+
+  public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+    for (TopicPartition partition: partitions) {
+      // store your offsets to your own storage instead of letting Kafka take care of it by default to its internal topics
+      saveOffsetInStorage(consumer.position(partition)); 
+    }
+  }
+
+  public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+    for (TopicPartition partition: partitions) {
+      consumer.seek(partition, readOffsetFromStorage(partition));
+    }
+  }
+}
+```
+
+All consumer processes will call the `onPartitionsRevoked` methods before calling any `onPartitionsAssigned` code. You cannot usually be sure that your client would handle the same partitions after the rebalance that they did before. 
 
 
 
