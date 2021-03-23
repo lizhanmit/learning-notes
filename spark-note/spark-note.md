@@ -141,16 +141,15 @@
     - [Spark Installation](#spark-installation)
       - [Modify log4j](#modify-log4j)
       - [Set Up Spark Projects in IDE](#set-up-spark-projects-in-ide)
-    - [Spark Shell Coding](#spark-shell-coding)
-    - [Spark Core Coding](#spark-core-coding)
-      - [RDD Coding](#rdd-coding)
-      - [DataFrame Coding](#dataframe-coding)
-      - [Pivot](#pivot)
+    - [`spark-shell`](#spark-shell)
+    - [RDD](#rdd)
+    - [DataFrame](#dataframe)
+    - [Pivot](#pivot)
       - [Complex Pivot](#complex-pivot)
       - [Pivot List](#pivot-list)
       - [Pivot Consolidate](#pivot-consolidate)
-      - [Null Value](#null-value)
-      - [UDF](#udf)
+    - [Null Value](#null-value)
+    - [UDF](#udf)
     - [`import spark.implicits._`](#import-sparkimplicits_)
     - [Scala Object VS Scala App](#scala-object-vs-scala-app)
     - [Read Files](#read-files)
@@ -167,7 +166,7 @@
   - [How Spark Works](#how-spark-works)
     - [Lazy Evaluation](#lazy-evaluation-1)
     - [In-Memory Persistence and Memory Management](#in-memory-persistence-and-memory-management)
-    - [RDD](#rdd)
+    - [RDD](#rdd-1)
       - [Actions](#actions)
       - [Transformations](#transformations)
   - [Spark Tuning](#spark-tuning)
@@ -1831,9 +1830,7 @@ You must call `Graph.partitionBy` before calling `Graph.groupEdges` because it r
 4. Right click the project -> "Configure" -> "Add Scala Nature" to add Scala library.
 5. Add dependencies in pom.xml.
 
----
-
-### Spark Shell Coding
+### `spark-shell`
 
 ```scala
 // in spark shell
@@ -1877,11 +1874,7 @@ val distinctElementsRDD = numRDD.distinct
 distinctElementsRDD.collect
 ```
 
----
-
-### Spark Core Coding
-
-#### RDD Coding
+### RDD 
 
 - Get keys of RDD: `<rdd_var>.keys`
 - Get values of RDD: `<rdd_var>.values`
@@ -1897,7 +1890,7 @@ distinctElementsRDD.collect
 - Create a new key for RDD: `<rdd_var>.keyBy(<func>)`
   - E.g. `<rdd_var>.keyBy(<tuple> => <tuple._1>)`
 
-#### DataFrame Coding
+### DataFrame
 
 - `myDF.show()`
 - `myDF.select("someFieldName")`
@@ -1926,7 +1919,7 @@ aDF.union(cDF).show()
 
 `unionAll()` was deprecated in Spark 2.0, and for all future reference, `union()` is the only recommended method. In either case, `union` or `unionAll`, both do not do a SQL style deduplication of data. In order to remove any duplicate rows, just use `union()` followed by a `distinct()`. 
 
-#### Pivot
+### Pivot
 
 ![pivot.png](img/pivot.png)
 
@@ -1979,26 +1972,22 @@ val pivotConsolidatedDF: DataFrame = df4
   .agg(first("value_list"))
 ```
 
-#### Null Value
+### Null Value
 
 Add a new string type column to dataframe with null value: `df.withColumn("columnName", lit(null).cast("string"))`
 
-#### UDF
+### UDF
 
 ```scala
 val myUDF = (x => <userDefinedFunction>)
 val myNewDF = myDF.withColumn("newColumnName", myUDF('columnName'))
 ```
 
----
-
 ### `import spark.implicits._`
 
 When to use:
 
 - when using `$<columnName>` to convert a string to a column.
-
----
 
 ### Scala Object VS Scala App
 
@@ -2011,8 +2000,6 @@ When coding in IDE, you will be choosing to create a Scala Object or a Scala App
 - Scala App
   - Extends `App`.
   - Without main function.
-
----
 
 ### Read Files
 
@@ -2033,8 +2020,6 @@ val df = spark.read.
     .csv("/file/path")
 ```
 
----
-
 ### Write Files
 
 By default, Spark will throw an error if you try to save a data frame to a file that
@@ -2047,8 +2032,6 @@ You can control Spark's behavior by specifying `SaveMode`:
 - `Ignore`
 
 For instance, `df.write.mode(SaveMode.Ignore).parquet("file.parquet")`
-
----
 
 ### Running on Cluster
 
@@ -2074,8 +2057,6 @@ Take Amazon EMR (Elastic MapReduce) as an example.
 4. Copy driver program's .jar file and any other files it needs to the master node using `aws s3 cp s3://<bucket_name>/<file_name> ./`.
 5. Run `spark-submit`.
 6. Terminate your cluster when you are done.
-
----
 
 ### Tips
 
