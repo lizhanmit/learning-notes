@@ -608,7 +608,7 @@ Consumers only read from the consumer’s leader partition. Replicas are used in
 
 Q: How do consumers figure out what partition to connect to, and where the leader exists for that partition?
 
-A: For each consumer group, one of the brokers takes on the role of a *group coordinator*. The client will talk
+A: **For each consumer group, one of the brokers takes on the role of a *group coordinator*.** The client will talk
 to this coordinator in order to get an assignment of which details it needs to consume.
 
 The number of partitions determines the amount of parallel consumers you can have. 
