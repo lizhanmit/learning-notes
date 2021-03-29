@@ -611,7 +611,7 @@ Q: How do consumers figure out what partition to connect to, and where the leade
 A: **For each consumer group, one of the brokers takes on the role of a *group coordinator*.** The client will talk
 to this coordinator in order to get an assignment of which details it needs to consume.
 
-The number of partitions determines the amount of parallel consumers you can have. 
+**The number of partitions determines the amount of parallel consumers you can have.** 
 
 - Many partitions might increase end-to-end latency. If milliseconds count in your application, you might not be able to wait until a partition is replicated between brokers. 
 - If you do not have a 1-to-1 mapping of a partition to a consumer, the more partitions a consumer consumes will likely have more memory needs overall.
@@ -636,7 +636,7 @@ It is often the case that you will have many consumers reading from the same top
 
 The key to letting your consumer clients work together is a unique combination of the following: group, topic, and partition number.
 
-As a general rule, one partition is consumed by only one consumer for any given consumer group.
+**As a general rule, one partition is consumed by only one consumer for any given consumer group.**
 
 ![consumers-in-separate-groups.png](img/consumers-in-separate-groups.png)
 
@@ -968,6 +968,7 @@ Steps:
 > Delete a topic:
 > Topic deletion is disabled by default.
 > To enable: `delete.topic.enable=true`.
+> 
 > `bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic hello_topic`.
 
 ---
