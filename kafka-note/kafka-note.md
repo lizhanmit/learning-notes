@@ -831,10 +831,9 @@ that no separate processing cluster is needed.
 
 ### Kafka Connect
 
-This framework was created to make integration with other systems easier. It is already part of Kafka that really can make it simple to use pieces (connectors) that have been already been built to start your streaming journey.
+This framework was created to make integration with other systems easier. It is already part of Kafka that really can make it simple to use pieces (connectors) that have already been built to start your streaming journey.
 
-The purpose of Connect is to help move data in or out of Kafka without having to deal with
-writing our own producers and clients.
+The purpose of Connect is to help move data in or out of Kafka without having to deal with writing our own producers and clients.
 
 In many ways, it can be thought to help replace other tools such as Camus, Apache Gobblin, and Apache Flume. Using a direct comparison to Flume features are not the intention or sole goals of Connect.
 
