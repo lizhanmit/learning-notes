@@ -1,5 +1,39 @@
 # Hive Note
 
+## Best Practices
+
+### Execution Engine
+
+Hive uses MapReduce as a **default** processing engine that runs MapReduce job for executing a query in the background. **Recommend** setting the default engine to Tez, which optimizes Hive query response time, not uses a MapReduce engine, prepares and optimizes a DAG plan and executes queries. 
+
+`set hive.execution.enginer=tez`
+
+### Avoid Managed Table
+
+If a user drops the table, the data will be deleted from the target location on which the Hive table was created. **Recommend** using external tables in production. 
+
+### Choosing File Format
+
+The file format plays an important role in performance and managing schema evolution. 
+
+If the Hive tables are used for reports, choose columnar file format such as ORC.
+
+Choose Avro to deal with schema evolution.
+
+From Hive 0.13.0, support Parquet.
+
+### Partitioning
+
+In most cases we should partition it.
+
+### Normalization
+
+Joining is a costly operation in Hive because it requires data to be shuffled across a network.
+
+The tables in Hive should not be in normalization form.
+
+---
+
 ## Basics
 
 - Hive is a **data warehousing** component based on Hadoop, which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
@@ -10,6 +44,7 @@
   - Tableau along with Apache Hive can be used for Data Visualization.
   - Apache Tez integration with Hive will provide you real time processing capabilities.
 - Stores data in HDFS by default. Also supports Amazon S3.
+- Hive can be used to process terabytes to petabytes of data.
 
 ### Data Units
 
