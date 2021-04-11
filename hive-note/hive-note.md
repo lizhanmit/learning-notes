@@ -17,9 +17,13 @@
   - [Storage Formats](#storage-formats)
     - [Row Format](#row-format)
     - [File Format](#file-format)
+      - [Query performance](#query-performance)
+      - [Disk Usage and Compression](#disk-usage-and-compression)
+      - [Schema Change / Evolution](#schema-change--evolution)
   - [Managed Tables VS External Tables](#managed-tables-vs-external-tables)
   - [Traditional DB VS Hive](#traditional-db-vs-hive)
   - [Locking](#locking)
+  - [ACID in Hive](#acid-in-hive)
   - [Indexes](#indexes)
     - [Compact Indexes](#compact-indexes)
     - [Bitmap Indexes](#bitmap-indexes)
@@ -29,6 +33,7 @@
       - [Embedded Metastore Configuration](#embedded-metastore-configuration)
       - [Local Metastore Configuration](#local-metastore-configuration)
       - [Remote Metastore Configuration](#remote-metastore-configuration)
+    - [HCatalog](#hcatalog)
     - [Job Execution Flow](#job-execution-flow)
     - [Mode of Hive](#mode-of-hive)
       - [Local Mode](#local-mode)
@@ -102,11 +107,15 @@ Used to enforce security for a user or group of users.
 
 ### Partitions
 
-- Each Table can have one or more partition keys which determines how the data is stored.
-- Each unique value of the partition keys defines a partition of the Table.
-- Partitions allow the user to efficiently identify the rows that satisfy a specified criteria. You can run the query only on the relevant partition of the table, thereby speeding up the analysis.
+Partitioning divides large amount of data into multiple slices based on the value of a table column.
 
-**NOTE** that the value of the partition key does not mean it contains all or only relevant data. It is the user's job to guarantee the relationship between partition name and data content.
+Each Table can have one or more partition keys which determines how the data is stored.
+
+Each unique value of the partition keys defines a partition of the table.
+
+Partitions allow the user to efficiently identify the rows that satisfy a specified criteria. You can run the query only on the relevant partition of the table, thereby speeding up the analysis.
+
+Partition does not solve the responsiveness problem in the case of data skewing towards a particular partition value. 
 
 Example: 
 
@@ -134,16 +143,22 @@ PARTITION (dt='2001-01-01', country='GB');
 
 Partitions are not divided by the value of the data, but specified by the user. In the above example, there could be no value of "dt" and "country" in the data.
 
+Hive can only add partitions every fifteen minutes to an hour. 
+
+Drawback to having too many partitions: the large number of Hadoop files and directories that are created unnecessarily and the overhead to NameNode, since it must keep all metadata for the filesystem in memory.
+
 ### Buckets / Clusters
 
-Data in each partition may be subdivided further into Buckets based on the value of a hash function of some column of the Table.
+Bucketing decomposes data into more manageable or equal parts.
 
-For example the page_views table may be bucketed by userid, which is one of the columns, other than the partitions columns, of the page_view table. 
+Data in each partition may be subdivided further into buckets based on the value of a hash function of some column of the table.
+
+For example the "page_views" table may be bucketed by "userid", which is one of the columns, other than the partitions columns, of the "page_view" table. 
 
 Advantages: 
 
 - enable more efficient queries.
-    - a join of two tables that are bucketed on the same columns, map-side join
+    - A join of two tables that are bucketed on the same columns, efficient map-side join. Because of equal volumes of data in each partition, joins at map side will be quicker.
 - make sampling more efficient.
 
 Bucketing is used to avoid data skew.
@@ -182,6 +197,10 @@ SELECT * FROM bucketed_users TABLESAMPLE(BUCKET 1 OUT OF 4 ON id);
 
 Bucket numbering is 1-based.
 
+For example, suppose a table using "date" as the top-level partition and "employee_id" as the second-level partition leads to too many small partitions. Instead, if we bucket the "employee" table and use "employee_id" as the bucketing column, the value of this column will be hashed by a user-defined number into buckets. Records with the same "employee_id" will always be stored in the same bucket. Assuming the number of "employee_id" is much greater than the number of buckets, each bucket will have many "employee_id". 
+
+The number of buckets is fixed so it does not fluctuate with data. 
+
 ---
 
 ## Data Types 
@@ -217,7 +236,39 @@ Hive supports:
 - RCFILE 
 - Avro
 - Parquet (from Hive 0.13)
-  
+
+Important factors to consider when choosing file formats for tables:
+
+- Query performance
+- Disk usage and compression
+- Schema change / evolution
+
+#### Query performance 
+
+The write performance can be increased by choosing a file in a non-compressed format as compression takes more time.
+
+If data is compressed, more data will be processed at a single mapper when being read.
+
+Hadoop is designed for write once read many. Therefore, **always go for compression**.
+
+For partial data read or only reading a few columns, columnar file format such as ORC is a better option.
+
+#### Disk Usage and Compression
+
+Compression help reduce space when storing data.
+
+AVRO without compression can reduce disk usage by up to 10%, while AVRO with compression can reduce it by up to 40-50%.
+
+Parquet can reduce it to 80% by using specific compression techniques. 
+
+Compression also helps in reducing network I/O.
+
+#### Schema Change / Evolution
+
+Data with a flexible structure can have fields added, updated, or deleted over time and even varies amongst concurrently ingested records.
+
+Almost all of the file format choices focus on managing flexibly structured data.  
+
 ---
 
 ## Managed Tables VS External Tables
@@ -259,6 +310,29 @@ Hive supports for table- and partition-level locking using ZooKeeper.
 For instance, it prevents one process from dropping a table while another is reading from it.  
 
 By default, locks are not enabled.
+
+---
+
+## ACID in Hive
+
+By default, transactions are configured to be off. Tables must be bucketed to make use of these features.
+
+External tables cannot be made ACID tables 
+
+Hive transaction manager must be set to `org.apache.hadoop.hive.ql.lockmgr.DbTxnManager` in order to work with ACID tables.
+
+Transactions are provided at the row level in Hive 0.14. 
+
+Make sure you have set all the following properties to enable transactional capability on Hive:
+
+```sql
+set hive.support.concurrency = true;
+set hive.enforce.bucketing = true;
+set hive.exec.dynamic.partition.mode = nonstrict;
+set hive.txn.manager = org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;
+set hive.compactor.initiator.on = true;
+set hive.compactor.worker.threads = 1;
+```
 
 ---
 
@@ -323,6 +397,19 @@ Better manageability and security because the database tier can be completely fi
 
 **In the real production environment, it always configures an external relational database as the Hive metastore.**
 
+### HCatalog
+
+HCatalog is a table and storage management service.
+
+HCatalog is built on top of the Hive Metastore service. It enables users to view data like relational tables without worrying about where the data is stored and what the format of a file is.  
+
+![hcatalog-architecture.png](img/hcatalog-architecture.png)
+
+The tables in HCatalog are immutable, which means data in the table and the partition are not appendable in nature. 
+
+- In the case of the partition table, data can be appended to a new partition without affecting the old partition.
+- In the case of the non-partitioned table, table must be deleted before executing the Pig script.
+
 ### Job Execution Flow
 
 ![job-execution-flow.png](img/job-execution-flow.png)
@@ -376,7 +463,9 @@ Hive2 architecture:
 
 ![hive2-architecture.png](img/hive2-architecture.png)
 
-hiveserver2 has an enhanced server designed for multiple client concurrency and improved authentication.
+Hiveserver2 has an enhanced server designed for multiple client concurrency and improved authentication.
+
+It provides better support for open API clients such as JDBC and ODBC.
 
 **Recommend** using `beeline` as the major Hive CLI instead of the `hive` command.
 
@@ -386,6 +475,8 @@ The primary difference between two version:
 client. The `hive` command directly connects to the Hive
 drivers, so we need to install the Hive library on the client. 
 - `beeline` is a JDBC client, which connects to hiveserver2 through JDBC connections without installing Hive libraries on the client. That means we can run `beeline` remotely from outside the cluster.
+
+HiveServer2 allocates one worker thread per TCP connection. Disadvantage: a thread will be allocated to a connection even if a connection is idle, which leads to a decrease in performance.
 
 ---
 
