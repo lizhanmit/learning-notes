@@ -41,29 +41,28 @@
     - [MapReduce Application Patterns](#mapreduce-application-patterns)
     - [MapReduce Coding](#mapreduce-coding)
   - [File Formats](#file-formats)
-    - [Types](#types)
-      - [Text](#text)
-      - [Sequence File](#sequence-file)
-      - [Avro](#avro)
-      - [ORC (Optimized Row Columnar)](#orc-optimized-row-columnar)
-      - [Parquet](#parquet)
+    - [Text](#text)
+    - [Sequence File](#sequence-file)
+    - [Avro](#avro)
+    - [ORC (Optimized Row Columnar)](#orc-optimized-row-columnar)
+    - [Parquet](#parquet)
   - [Data Compression](#data-compression)
     - [Pros](#pros)
     - [Comparison](#comparison)
     - [Choice](#choice)
-    - [Types](#types-1)
+    - [Types](#types)
       - [Gzip](#gzip)
       - [BZip2](#bzip2)
       - [LZO (Lempel-Ziv-Oberhumer)](#lzo-lempel-ziv-oberhumer)
       - [Snappy](#snappy)
   - [Serialization](#serialization)
   - [Data Ingestion](#data-ingestion)
-    - [Types](#types-2)
+    - [Types](#types-1)
       - [Batch Ingestion](#batch-ingestion)
       - [Micro Batch Ingestion](#micro-batch-ingestion)
       - [Real-time Ingestion](#real-time-ingestion)
   - [Data Processing](#data-processing)
-    - [Types](#types-3)
+    - [Types](#types-2)
       - [Batch Processing](#batch-processing)
       - [Micro Batch Processing](#micro-batch-processing)
       - [Real-time Processing](#real-time-processing)
@@ -523,9 +522,7 @@ In order to know when to use what, there are four parameters to be considered fo
     - For archival purposes: the most compact compression.
     - For data used in processing jobs: splittable format.
 
-### Types
-
-#### Text
+### Text
 
 The **main use case of Hadoop** is the storage and analysis of web logs and server logs.
 
@@ -534,7 +531,7 @@ Cons:
 - Text files take in considerable space on Hadoop cluster.
 - Overhead of type conversion associated with storing the data.
 
-#### Sequence File
+### Sequence File
 
 - **Row-based**
 - Each record in a Sequence file contains record related metadata, followed by key and value bytes (key-value pair).
@@ -544,7 +541,7 @@ Cons:
   - Block level: Both keys and values are compressed.
     - Configure the size of block: `io.seqfile.compress.blocksize`
 
-#### Avro
+### Avro
 
 - **Container format file**
 - Avro is developed to remove the language dependency of Hadoop writable.
@@ -569,7 +566,7 @@ Add this dependency to pom.xml to use Avro in Maven project.
 </dependency>
 ```
 
-#### ORC (Optimized Row Columnar)
+### ORC (Optimized Row Columnar)
 
 - ORC is designed for high performance when Hive is reading, writing, and processing data; to maximize storage and query efficiency.
 - **Columnar** format, highly efficient for **compression** and storage.
@@ -584,7 +581,7 @@ Components:
 
 Facebook uses ORC to save tens of petabytes in their data warehouse and demonstrated that ORC is **significantly faster than RC File or Parquet**.
 
-#### Parquet
+### Parquet
 
 - Developed by Cloudera and Twitter.
 - **Container format file**
