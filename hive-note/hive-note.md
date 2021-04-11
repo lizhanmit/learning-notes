@@ -1,5 +1,65 @@
 # Hive Note
 
+- [Hive Note](#hive-note)
+  - [Basics](#basics)
+  - [Best Practices](#best-practices)
+    - [Execution Engine](#execution-engine)
+    - [Avoid Managed Table](#avoid-managed-table)
+    - [Choosing File Format](#choosing-file-format)
+    - [Partitioning](#partitioning)
+    - [Normalization](#normalization)
+  - [Data Units](#data-units)
+    - [Databases](#databases)
+    - [Partitions](#partitions)
+    - [Buckets / Clusters](#buckets--clusters)
+  - [Data Types](#data-types)
+    - [String Types](#string-types)
+  - [Storage Formats](#storage-formats)
+    - [Row Format](#row-format)
+    - [File Format](#file-format)
+  - [Managed Tables VS External Tables](#managed-tables-vs-external-tables)
+  - [Traditional DB VS Hive](#traditional-db-vs-hive)
+  - [Locking](#locking)
+  - [Indexes](#indexes)
+    - [Compact Indexes](#compact-indexes)
+    - [Bitmap Indexes](#bitmap-indexes)
+  - [Hive Web UI](#hive-web-ui)
+  - [Architecture](#architecture)
+    - [Metastore](#metastore)
+      - [Embedded Metastore Configuration](#embedded-metastore-configuration)
+      - [Local Metastore Configuration](#local-metastore-configuration)
+      - [Remote Metastore Configuration](#remote-metastore-configuration)
+    - [Job Execution Flow](#job-execution-flow)
+    - [Mode of Hive](#mode-of-hive)
+      - [Local Mode](#local-mode)
+      - [Map Reduce Mode](#map-reduce-mode)
+  - [Hive 2](#hive-2)
+  - [Limitations](#limitations)
+  - [Spark x Hive](#spark-x-hive)
+    - [Spark on Hive](#spark-on-hive)
+    - [Hive over Spark](#hive-over-spark)
+  - [Coding](#coding)
+    - [Create Tables](#create-tables)
+    - [Load Data](#load-data)
+    - [beeline](#beeline)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+
+## Basics
+
+- Hive is a **data warehousing** component based on Hadoop, which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
+- Enables users to do ad-hoc querying, summarization and data analysis and data mining easily that does not require real time processing.
+- Hive's query response time is typically much faster than others on the same volume of big datasets.
+- Hive internally gets converted into **MapReduce** programs.
+- You can couple Hive with other tools to use it in many other domains. For example,
+  - Tableau along with Apache Hive can be used for Data Visualization.
+  - Apache Tez integration with Hive will provide you real time processing capabilities.
+- Stores data in HDFS by default. Also supports Amazon S3.
+- Hive can be used to process terabytes to petabytes of data.
+- **Hive is not a storage database. It is just an abstraction layer over a file stored on HDFS/S3.**
+
+---
+
 ## Best Practices
 
 ### Execution Engine
@@ -20,8 +80,6 @@ If the Hive tables are used for reports, choose columnar file format such as ORC
 
 Choose Avro to deal with schema evolution.
 
-From Hive 0.13.0, support Parquet.
-
 ### Partitioning
 
 In most cases we should partition it.
@@ -34,27 +92,15 @@ The tables in Hive should not be in normalization form.
 
 ---
 
-## Basics
+## Data Units
 
-- Hive is a **data warehousing** component based on Hadoop, which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
-- Enables users to do ad-hoc querying, summarization and data analysis and data mining easily that does not require real time processing.
-- Hive's query response time is typically much faster than others on the same volume of big datasets.
-- Hive internally gets converted into **MapReduce** programs.
-- You can couple Hive with other tools to use it in many other domains. For example,
-  - Tableau along with Apache Hive can be used for Data Visualization.
-  - Apache Tez integration with Hive will provide you real time processing capabilities.
-- Stores data in HDFS by default. Also supports Amazon S3.
-- Hive can be used to process terabytes to petabytes of data.
-
-### Data Units
-
-#### Databases
+### Databases
 
 Used to enforce security for a user or group of users.
 
 **Namespaces** are used to avoid naming conflicts for tables, views, partitions, columns, and so on.
 
-#### Partitions
+### Partitions
 
 - Each Table can have one or more partition keys which determines how the data is stored.
 - Each unique value of the partition keys defines a partition of the Table.
@@ -88,7 +134,7 @@ PARTITION (dt='2001-01-01', country='GB');
 
 Partitions are not divided by the value of the data, but specified by the user. In the above example, there could be no value of "dt" and "country" in the data.
 
-#### Buckets / Clusters
+### Buckets / Clusters
 
 Data in each partition may be subdivided further into Buckets based on the value of a hash function of some column of the Table.
 
@@ -138,9 +184,9 @@ Bucket numbering is 1-based.
 
 ---
 
-### Data Types 
+## Data Types 
 
-#### String Types
+### String Types
 
 - STRING: sequence of characters in a specified character set.
 - VARCHAR: sequence of characters in a specified character set with a maximum length.
@@ -150,29 +196,31 @@ Implicit conversion of STRING to DOUBLE is allowed.
 
 ---
 
-### Storage Formats
+## Storage Formats
 
-#### Row Format
+### Row Format
 
 Row format: how rows, and the fields in a particular row, are stored. Defined by a SerDe.
 
 - deserializer: querying a table
 - serializer: `INSERT` or `CREATE TABLE ... AS SELECT ...`
 
-#### File Format
+### File Format
 
 File format: the container format for fields in a row.
 
-Hive supports 4 file formats: 
+Hive supports: 
 
 - TEXTFILE (plain-text file, simplest one)
 - SEQUENCEFILE
 - ORC 
 - RCFILE 
-
+- Avro
+- Parquet (from Hive 0.13)
+  
 ---
 
-### Managed Tables & External Tables
+## Managed Tables VS External Tables
 
 [Differences between managed tables & external tables:](http://www.aboutyun.com/thread-7458-1-1.html)
 
@@ -190,7 +238,7 @@ How to check a table is managed or external: `desc formatted <table_name>`. See 
 
 ---
 
-### Traditional DB VS Hive
+## Traditional DB VS Hive
 
 Traditional database: 
 
@@ -204,7 +252,7 @@ Hive:
 
 ---
 
-### Locking
+## Locking
 
 Hive supports for table- and partition-level locking using ZooKeeper.
 
@@ -214,22 +262,22 @@ By default, locks are not enabled.
 
 ---
 
-### Indexes
+## Indexes
 
 Two types: 
 
-#### Compact Indexes
+### Compact Indexes
 
 - Store the HDFS block numbers of each value, rather than each file offset.
 - Do not take up much disk space.
 
-#### Bitmap Indexes
+### Bitmap Indexes
 
 Appropriate for low-cardinality columns (such as gender or country).
 
 ---
 
-### Hive Web UI
+## Hive Web UI
 
 Hive has its own built-in web IDE,
 Hive Web Interface. However, it is not powerful and seldom used. 
@@ -254,7 +302,7 @@ Instead, both Ambari Hive View and Hue (http:/​/​gethue.​com/​) are popu
 
 #### Embedded Metastore Configuration
 
-By default, the metastore service runs in the same JVM as the Hive service and contains an embedded Derby database instance backed by the local disk.
+**By default**, the metastore service runs in the same JVM as the Hive service and contains an embedded **Derby** database instance backed by the local disk.
 
 However, only one embedded Derby database can access the database files on disk at any one time,
 which means you can have only one Hive session open at a time that accesses the same metastore. By contrast, configured relational database offers a shared service so that all hive users can see the same metadata set.
@@ -275,8 +323,6 @@ Better manageability and security because the database tier can be completely fi
 
 **In the real production environment, it always configures an external relational database as the Hive metastore.**
 
----
-
 ### Job Execution Flow
 
 ![job-execution-flow.png](img/job-execution-flow.png)
@@ -296,8 +342,6 @@ Better manageability and security because the database tier can be completely fi
 8. Fetching results from driver.
 9. Sending results to Execution engine. Once the results fetched from data nodes to the EE, it will send results back to driver and to UI (front end).
 
----
-
 ### Mode of Hive
 
 Hive can operate in two modes depending on the size of data nodes in Hadoop.
@@ -314,7 +358,6 @@ When to use:
 - when the data size is smaller in term of limited to single local machine.
 
 Processing will be very fast on smaller data sets present in the local machine.
-
 
 #### Map Reduce Mode
 
@@ -393,6 +436,44 @@ All Hive keywords, table names and column names are **case-insensitive**.
 - `! <command>`: In Hive shell, execute Linux commands. For instance, `! ls`.
 - Need alias when order by count. Otherwise, error "Not yet supported place for UDAF 'count'". For instance, `select count(*) as cnt, brand_id from user_log where action='2' group by brand_id order by cnt desc;`.
 - Save the result of Hive query to text file: `hive -e 'desc dbName.tableName;' > ~/descriptionOfTable.txt`.
+- `explain <query_statement>`: gives the detail plans of execution in stages, which is important when you are debugging queries for optimization.
+
+Hive queries can be written in a file with the `.hql` extension and can be run using the `hive -f <filename>` command.
+
+### Create Tables
+
+```sql
+CREATE TABLE IF NOT EXISTS product(
+product_id int,
+product_name String,
+product_catagory
+price String,
+manufacturer String
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+location '/user/packt/products;
+
+--external table
+--partitioning
+CREATE EXTERNAL TABLE IF NOT EXISTS product(
+product_id int,
+product_name String,
+product_catagory
+price String,
+manufacturer String
+)
+PARTITIONED BY (manufacturer_country STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+location '/user/packt/products;
+```
+
+The location is optional. If not specified, it will search for data in the Hive warehouse directory and if the directory is not present, then it will create one directory with the table name. The default warehouse directory is `/user/hive/warehouse`. In the above example, the data should be in `/user/hive/warehouse/product`.
 
 ### Load Data
 
@@ -400,11 +481,13 @@ There are multiple ways to load data into Hive tables.
 
 If there is already legacy data in HDFS, steps: 
 
-1. Copy a data file into the specified location using HDFS `put` or `copy` commands.
-2. Create an external table pointing to this location with all relevant row format info. 
-3. Transform or load data and insert into Hive tables.
+1. Copy a data file into the specified location using HDFS "put" or "copy" commands.
 
-Example:
+```
+hadoop dfs -put /tmp/pv_2008-06-08.txt /user/data/staging/page_view
+```
+
+2. Create an external table pointing to this location with all relevant row format info.
 
 ```sql
 CREATE EXTERNAL TABLE page_view_stg(viewTime INT, userid BIGINT,
@@ -415,9 +498,11 @@ COMMENT 'This is the staging page view table'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '44' LINES TERMINATED BY '12'
 STORED AS TEXTFILE
 LOCATION '/user/data/staging/page_view';
- 
-hadoop dfs -put /tmp/pv_2008-06-08.txt /user/data/staging/page_view
- 
+```
+
+3. Transform or load data and insert into Hive tables.
+
+```sql
 FROM page_view_stg pvs
 INSERT OVERWRITE TABLE page_view PARTITION(dt='2008-06-08', country='US')
 SELECT pvs.viewTime, pvs.userid, pvs.page_url, pvs.referrer_url, null, null, pvs.ip
@@ -426,9 +511,9 @@ WHERE pvs.country = 'US';
 
 If loading data from a file in the local files system directly into a Hive table where the input data format is the same as the table format, you can do it like the following: 
 
-Example:
-
 `LOAD DATA LOCAL INPATH '/tmp/pv_2008-06-08_us.txt' INTO TABLE page_view PARTITION(date='2008-06-08', country='US')`
+
+If data is copied from one location to the target tables partition location using "copy" command, and data in partitions are not loaded via the Hive interface, then you must run `msck repair table <table_name>;`  to update partition information in the metastore DB. 
 
 ### beeline
 
@@ -437,6 +522,14 @@ Example:
 `dfs` command may be disabled in beeline for permissions control in some Hadoop distributions.
 
 `!history`: show the command's history.
+
+---
+
+## Installation 
+
+Hive requires Hadoop and Java 1.7 or later already installed on the machine.
+
+Check Hive version: `hive --version`
 
 ---
 
