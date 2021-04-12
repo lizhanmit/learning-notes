@@ -1,22 +1,57 @@
 # HBase Note
 
-HBase is a NoSQL database, a distributed, scalable, **column-oriented** database running on top of HDFS, which is modeled after Google's BigTable.
+- [HBase Note](#hbase-note)
+  - [Concepts](#concepts)
+  - [Data Model](#data-model)
+    - [Namespace](#namespace)
+    - [Cells](#cells)
+    - [Rows](#rows)
+    - [Columns](#columns)
+    - [HBase VS RDBMS](#hbase-vs-rdbms)
+      - [Column- VS Row-Oriented](#column--vs-row-oriented)
+  - [Architecture](#architecture)
+    - [HBase Master (HMaster)](#hbase-master-hmaster)
+    - [Region Server](#region-server)
+    - [Region](#region)
+    - [ZooKeeper](#zookeeper)
+    - [HDFS](#hdfs)
+    - [Catalog Table](#catalog-table)
+    - [BlockCache](#blockcache)
+    - [Write-Ahead Log (WAL)](#write-ahead-log-wal)
+    - [MemStore](#memstore)
+    - [HFile](#hfile)
+  - [Operations](#operations)
+    - [New Client Connection](#new-client-connection)
+    - [Write Data](#write-data)
+    - [Read Data](#read-data)
+    - [Compaction](#compaction)
+      - [Minor Compaction](#minor-compaction)
+      - [Major Compaction](#major-compaction)
+      - [Compaction & Deletions](#compaction--deletions)
+      - [Compaction & Versions](#compaction--versions)
+  - [Failure Recovery](#failure-recovery)
+  - [Coding](#coding)
+  - [Integration with Spark](#integration-with-spark)
+
+## Concepts
+
+HBase is a NoSQL database, a distributed, scalable, **column-oriented database** running on top of HDFS, which is modeled after Google's BigTable.
 
 When to use: 
 
-- HBase is used to host very large tables - **billions of rows * millions of columns**. You should have enough data. Otherwise, use RDBMS for a few thousand/million rows.
-- Use HBase when you need **random, real-time read/write** access to your Big Data. 
-- A great amount of data is stored redundantly for performant analysis.
+- HBase is used to host very large tables - **billions of rows * millions of columns**. **You should have enough data.** Otherwise, use RDBMS for a few thousand/million rows.
+- Use HBase as **key/value store** when you need **random, real-time read/write** access to your Big Data. 
+- A great amount of data is stored **redundantly** for performant analysis.
 - HBase is not relational. Does not support SQL. Use it if you do not need some RDBMS features (e.g. typed columns, secondary indexes, transactions, advanced query languages, etc.).
-- When you have enough hardware. HDFS does not do well with anything less than 5 DataNodes plus a NameNode.
+- When you have enough hardware, **HDFS does not do well with anything less than 5 DataNodes plus a NameNode**.
 
-## Basics
+---
 
-### Data Model
+## Data Model
 
 ![hbase-data-model.png](img/hbase-data-model.png)
 
-#### Namespace
+### Namespace
 
 A logical grouping of tables analogous to a database in RDBMS, which indicates the division of business logic.
 
@@ -26,13 +61,13 @@ It is used for multi-tenancy related features:
 - Namespace Security Administration: Provide another level of security administration for tenants.
 - Region server groups: A namespace/table can be pinned onto a subset of RegionServers thus guaranteeing a coarse level of isolation.
 
-#### Cells
+### Cells
 
 The timestamp is auto-assigned by HBase at the time of cell insertion.
 
 A cell’s content is an uninterpreted **array of bytes**.
 
-#### Rows
+### Rows
 
 Rows are sorted by row key. The sort is byte-ordered.
 
@@ -40,7 +75,7 @@ Row keys are **byte arrays**, so anything can serve as a row key.
 
 Row updates are atomic.
 
-#### Columns
+### Columns
 
 Format: `<column_family>:<qualifier>`
 
@@ -56,7 +91,7 @@ Column family attributes:
 - How many versions of a cell to keep by specifying `ColumnFamilyDescriptorBuilder.setMaxVersions(int versions)`. The default value is 1.
 
 
-#### HBase VS RDBMS
+### HBase VS RDBMS
 
 For HBase,
 
@@ -81,7 +116,7 @@ For RDBMS,
 - Complex inner and outer joins
 - Costly hardware
 
-##### Column- VS Row-Oriented
+#### Column- VS Row-Oriented
 
 Column-oriented: analytical application, high data compression ratio
 
@@ -99,6 +134,23 @@ Row-oriented: more transactional operations, low data compression ratio
 
 ![hbase-access-interface.png](img/hbase-access-interface.png)
 
+### HBase Master (HMaster)
+
+lightly loaded
+
+- Bootstrap a virgin install.
+- Assign regions to registered Region Servers.
+- Provide an interface for creating, deleting and updating tables.
+- The active HMaster sends heartbeats to the Zookeeper while the inactive HMaster listens for the notification send by active HMaster. If the active HMaster fails to send a heartbeat the session is deleted and the inactive HMaster becomes active.
+
+### Region Server
+
+- Handle client read/write requests.
+- Manage region splits.
+- Communicate with HBase master.
+
+A Region Server can serve approximately 1000 regions to the client.
+
 ### Region
 
 Tables are automatically partitioned horizontally by HBase into regions.
@@ -109,23 +161,6 @@ Regions are the units that get distributed over an HBase cluster. Each node host
 
 A region has a default size of 256MB which can be configured. 
 
-### HBase Master (HMaster)
-
-lightly loaded
-
-- Bootstrap a virgin install.
-- Assign regions to registered regionservers.
-- Provide an interface for creating, deleting and updating tables.
-- The active HMaster sends heartbeats to the Zookeeper while the inactive HMaster listens for the notification send by active HMaster. If the active HMaster fails to send a heartbeat the session is deleted and the inactive HMaster becomes active.
-
-### RegionServer
-
-- Handle client read/write requests.
-- Manage region splits.
-- Communicate with HBase master.
-
-A Region Server can serve approximately 1000 regions to the client.
-
 ### ZooKeeper
 
 - Host vitals:
@@ -133,7 +168,7 @@ A Region Server can serve approximately 1000 regions to the client.
   - address of the current cluster master
 - Assignment of regions is mediated via ZooKeeper, which hosts the assignment transaction state in and makes it recovery.
 - Every Region Server along with HMaster Server sends continuous heartbeat at regular interval to Zookeeper and it checks which server is alive and available.
-- Provide server failure notifications so that, recovery measures can be executed.
+- Provide server failure notifications, so that recovery measures can be executed.
 
 ### HDFS
 
