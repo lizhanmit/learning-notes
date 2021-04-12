@@ -1,7 +1,7 @@
 # Hive Note
 
 - [Hive Note](#hive-note)
-  - [Basics](#basics)
+  - [Concepts](#concepts)
   - [Best Practices](#best-practices)
     - [Execution Engine](#execution-engine)
     - [Avoid Managed Table](#avoid-managed-table)
@@ -50,7 +50,7 @@
   - [Installation](#installation)
   - [Configuration](#configuration)
 
-## Basics
+## Concepts
 
 - Hive is a **data warehousing** component based on Hadoop, which performs reading, writing and managing large data sets in a distributed environment using SQL-like interface: HiveQL.
 - Enables users to do ad-hoc querying, summarization and data analysis and data mining easily that does not require real time processing.
