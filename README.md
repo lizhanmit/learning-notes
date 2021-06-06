@@ -82,6 +82,7 @@
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Scala](https://github.com/lizhanmit/scala-tutorial)
 - [SonarQube](https://github.com/lizhanmit/learning-notes/blob/master/sonarQube-note/sonarQube-note.md)
+- [Testing](https://github.com/lizhanmit/learning-notes/blob/master/testing-note/testing-note.md)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
 - [Web API](https://github.com/lizhanmit/learning-notes/blob/master/web-api-note/web-api-note.md)
   
