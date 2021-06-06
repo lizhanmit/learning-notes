@@ -5,12 +5,15 @@
   - [Code Execution Order](#code-execution-order)
   - [Interfaces](#interfaces)
     - [Interface Naming Conventions](#interface-naming-conventions)
+    - [Functional Interfaces](#functional-interfaces)
   - [Collections](#collections)
   - [StringBuilder & StringBuffer](#stringbuilder--stringbuffer)
   - [Variable Arguments (VarArgs)](#variable-arguments-varargs)
   - [Autoboxing & Unboxing](#autoboxing--unboxing)
   - [Enum](#enum)
     - [Enum with Abstract Methods](#enum-with-abstract-methods)
+  - [Exception Handling](#exception-handling)
+    - [Deciding Between Unchecked and Checked](#deciding-between-unchecked-and-checked)
   - [Reflection（反射）](#reflection反射)
     - [Constructor 类](#constructor-类)
     - [Field 类](#field-类)
@@ -105,6 +108,10 @@ Interfaces can have properties, but they must be `public static final`.
 
 - Interface should be a good object name.
 - **DO NOT** start with "I", e.g. `IList`.
+
+### Functional Interfaces
+
+An interface that only contains a single abstract method is called a functional interface since Java 8. You can annotate it using the `@FunctionalInterface` annotation to make the intent of the interface clearer.
 
 ---
 
@@ -225,6 +232,26 @@ public enum TrafficLight {
 ```
 
 If there is only one member in the enum, this can be used as an implementation of singleton pattern.
+
+---
+
+## Exception Handling
+
+Two kinds of exceptions in Java: 
+
+- Checked exceptions: These are errors that you are expected to be able to recover from. You have to declare a method with a list of checked exceptions it can throw, or provide a suitable try/catch block.
+- Unchecked exceptions: These are errors that can be thrown at any time during the program execution. You should not expect to catch and recover from them. 
+
+![exceptions-hierarchy-in-Java.png](img/exceptions-hierarchy-in-Java.png)
+
+### Deciding Between Unchecked and Checked
+
+Use unchecked exceptions for: 
+
+- Errors due to business logic validation (e.g., wrong format or arithmetic), as they would add a lot of try/catch clutter in your code. 
+- System errors (e.g., disk ran out of space), as there is nothing the client can do.
+
+**Recommendation**: use unchecked exceptions and only use checked exceptions sparingly to avoid significant try/catch clutter in the code.
 
 ---
 
