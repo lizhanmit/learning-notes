@@ -251,7 +251,7 @@ Use unchecked exceptions for:
 - Errors due to business logic validation (e.g., wrong format or arithmetic), as they would add a lot of try/catch clutter in your code. 
 - System errors (e.g., disk ran out of space), as there is nothing the client can do.
 
-**Recommendation**: use unchecked exceptions and only use checked exceptions sparingly to avoid significant try/catch clutter in the code.
+**Recommendation**: Use unchecked exceptions and only use checked exceptions sparingly to avoid significant try/catch clutter in the code.
 
 ---
 
