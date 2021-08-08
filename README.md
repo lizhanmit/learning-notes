@@ -9,6 +9,7 @@
 - [Big Data Environment Setup](https://github.com/lizhanmit/learning-notes/blob/master/big-data-environment-setup-note/big-data-environment-setup-note.md)
 - [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
 - [Data Science](https://github.com/lizhanmit/learning-notes/blob/master/data-science-note/data-science-note.md)
+- [Data Stream Development with Apache Spark, Kafka, and Spring Boot](https://github.com/lizhanmit/learning-notes/blob/master/data-stream-development-with-apache-spark-kafka-and-spring-boot-note/data-stream-development-with-apache-spark-kafka-and-spring-boot-note.md)
 - [Data Warehouse](https://github.com/lizhanmit/learning-notes/blob/master/data-warehouse-note/data-warehouse-note.md)
 - [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
 - [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
@@ -73,6 +74,7 @@
 
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [CI CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
+- [Computer Science](https://github.com/lizhanmit/learning-notes/blob/master/computer-science-note/computer-science-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
 - [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
