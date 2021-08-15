@@ -2,6 +2,8 @@
 
 **Use case: Analyzing Meetup RSVPs in Real-Time.**
 
+![meetup-rsvps-analyzer-architecture.png](img/meetup-rsvps-analyzer-architecture.png)
+
 ## Data Collection Tier 
 
 Collection tier is built as a Spring Boot application that uses the Spring WebSocket API to communicate with the Meetup RSVP WebSocket endpoint.
@@ -63,7 +65,7 @@ The collection tier triggers a single request to the data streaming API. This wi
 
 ![stream-pattern.png](img/stream-pattern.png)
 
-**For the use case, this is the interaction pattern that will be used for Meetup RSVPs.**
+**For the Meetup RSVPs use case, this is the interaction pattern that will be used.**
 
 ![interaction-pattern-used-for-meetup-rsvps.png](img/interaction-pattern-used-for-meetup-rsvps.png)
 
@@ -124,3 +126,85 @@ Conclusion: Good performance. Allows us to provide a more resilient API. **High 
 
 #### Server-Sent Events Push Proxy Variation 
 
+Useful for mobile devices in order to save battery. 
+
+Mobile delegates a proxy server to hold the connection open. 
+
+Proxy will use a handset-specific push technology. 
+
+Mobile devices wake to process the messages and then resume saving battery mode. 
+
+![server-sent-events-push-proxy-variation.png](img/server-sent-events-push-proxy-variation.png)
+
+#### WebSockets 
+
+Full-duplex protocol that uses TCP for the communication transport. 
+
+WebSockets use HTTP for the initial handshake and protocol upgrade request, and then switch to TCP. The streaming API sends updates to the collection tier via TCP.
+
+The connection can be closed at any moment by the collection tier or the streaming API.
+
+WebSockets use port 80 or 443 and URL scheme ws:// or wss://.
+
+All major desktop and mobile browsers support WebSockets.
+
+![websocket-protocol.png](img/websocket-protocol.png)
+
+![websocket-protocol-2.png](img/websocket-protocol-2.png)
+
+Advantages: 
+
+- TCP is used for communication transport. Low latency, and supports high rate of updates. 
+- Bidirectional from the beginning to the end. Allows us to build fault tolerant and reliable semantics into it.
+
+Conclusion: This is one of the **most-used protocols for streaming**. **High efficiency**. 
+
+**For the Meetup RSVPs use case, this is the protocol that will be used.**
+
+#### Comparison of Protocols 
+
+![comparison-of-protocols.png](img/comparison-of-protocols.png)
+
+#### Scaling Collection Tier and WebSocket Problem
+
+Problem: WebSockets are powerful for real-time applications, but more difficult to scale. It can be seen as below, the connection for the first instance is persistent while the other two instances are idle.
+
+![websocket-protocol-scaling-problem.png](img/websocket-protocol-scaling-problem.png)
+
+Solution 1: Add a buffer layer in the middle.
+
+The single collection node is vertically scaled. 
+
+![solution-1-add-a-buffer-layer.png](img/solution-1-add-a-buffer-layer.png)
+
+Solution 2: Add a full-featured broker, such as Kafka or RabbitMQ. 
+
+![solution-2-add-a-broker.png](img/solution-2-add-a-broker.png)
+
+---
+
+## Message Queuing Tier
+
+### What is the Point of Message Queuing Tier? 
+
+If there is no message queuing tier, it seems the data pipeline is faster and simpler. But there are coupled tiers. 
+
+**Rule 1**: In distributed architectures, we want to decouple tiers.
+
+Coupled tiers mean a lower level of abstraction. 
+
+**Rule 2**: We strive for working with higher level of abstraction.
+
+**Rule 3**: What is apparently simpler does not really mean that it is simpler.
+
+Backpressure issue: 
+
+![backpressure-issue.png](img/backpressure-issue.png)
+
+Data durability issue: 
+
+![data-durability-issue.png](img/data-durability-issue.png)
+
+Data delivery semantics issue:
+
+![data-delivery-semantics-issue.png](img/data-delivery-semantics-issue.png)
