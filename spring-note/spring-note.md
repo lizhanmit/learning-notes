@@ -1,5 +1,34 @@
 # Spring Note
 
+- [Spring Note](#spring-note)
+  - [Spring](#spring)
+    - [Basic Concepts](#basic-concepts)
+      - [Dependency Injection (DI)](#dependency-injection-di)
+      - [Inversion of Control (IoC)](#inversion-of-control-ioc)
+    - [Spring Bean Life Cycle](#spring-bean-life-cycle)
+    - [Spring Configuration](#spring-configuration)
+    - [Spring Bean Scopes](#spring-bean-scopes)
+    - [External Properties](#external-properties)
+      - [Properties Files](#properties-files)
+      - [Environment Properties](#environment-properties)
+  - [Spring MVC](#spring-mvc)
+  - [Spring Boot](#spring-boot)
+    - [JPA Entity Relationships](#jpa-entity-relationships)
+      - [Unidirectional VS Bidirectional](#unidirectional-vs-bidirectional)
+      - [Owning Side VS Referencing Side](#owning-side-vs-referencing-side)
+      - [Fetch Types](#fetch-types)
+      - [Cascade Types](#cascade-types)
+      - [Inheritance](#inheritance)
+      - [Create and Update Timestamps](#create-and-update-timestamps)
+    - [DDL VS DML](#ddl-vs-dml)
+    - [SQL Files for Database Initialization](#sql-files-for-database-initialization)
+    - [Run Applications](#run-applications)
+    - [application.properties File](#applicationproperties-file)
+    - [Spring Boot `ApplicationRunner`](#spring-boot-applicationrunner)
+  - [Practical Skills](#practical-skills)
+
+---
+
 ## Spring
 
 ### Basic Concepts
@@ -283,6 +312,7 @@ How to access properties in code? - Use annotation.
 @Value("${property_name}")
 private String property_name;
 ```
+
 **In real projects, there should be three properties files.**
 
 - application-dev.properties: Configures properties for development environment.
@@ -293,6 +323,12 @@ private String property_name;
   - If there are repetitive properties in "application-<environment_type>.properties" file and "application.properties" file, the latter one will be overridden.
 
 When you run the project in terminal, you can specify which one you will use. `java -jar <project_name>.jar --spring.profiles.active=prod`.
+
+---
+
+### Spring Boot `ApplicationRunner`
+
+The Spring Boot `ApplicationRunner` is useful when you want to execute some piece of code exactly before the application startup completes. 
 
 ---
 
