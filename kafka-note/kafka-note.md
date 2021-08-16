@@ -1,9 +1,16 @@
 # Kafka Note
 
 - [Kafka Note](#kafka-note)
-  - [Architecture](#architecture)
+  - [Messaging Systems](#messaging-systems)
+    - [Design Patterns](#design-patterns)
+  - [Kafka Architecture](#kafka-architecture)
     - [ZooKeeper Ensemble](#zookeeper-ensemble)
   - [Overview](#overview)
+    - [Application Scenarios](#application-scenarios)
+    - [Three Types of Kafka Clusters](#three-types-of-kafka-clusters)
+    - [Message Delivery Semantics](#message-delivery-semantics)
+    - [Kafka Context Overview](#kafka-context-overview)
+    - [Other Considerations](#other-considerations)
   - [Commit Log](#commit-log)
   - [Topic, Partition & Message](#topic-partition--message)
     - [Messages](#messages)
@@ -14,7 +21,7 @@
     - [How Producers Write to Brokers](#how-producers-write-to-brokers)
     - [Java Client Producer](#java-client-producer)
     - [Producer Configuration](#producer-configuration)
-      - [`acks`](#acks)
+      - [`acks` / Durability](#acks--durability)
       - [`compression.type`](#compressiontype)
       - [Custom Serializer](#custom-serializer)
       - [Custom Partitioner](#custom-partitioner)
@@ -34,6 +41,7 @@
     - [Java Client Consumer](#java-client-consumer)
     - [Consumer Configuration](#consumer-configuration)
     - [Stop a Consumer](#stop-a-consumer)
+  - [Replication](#replication)
   - [Write & Read](#write--read)
   - [Various Source Code Packages](#various-source-code-packages)
     - [Kafka Streams](#kafka-streams)
@@ -51,7 +59,18 @@
 
 ---
 
-## Architecture
+## Messaging Systems 
+
+### Design Patterns 
+
+- Point to point messaging (Queue destination/semantics/topology)
+- Pub/Sub messaging (Topic destination/semantics/topology)
+
+Kafka supports both.
+
+---
+
+## Kafka Architecture
 
 Typical connection way without Kafka:  
 
@@ -67,11 +86,15 @@ Using Kafka as a hub:
 
 ![kafka-architecture-3.png](img/kafka-architecture-3.png)
 
+![kafka-architecture.png](img/kafka-architecture.png)
+
+![producer-broker-consumer.png](img/producer-broker-consumer.png)
+
 ### ZooKeeper Ensemble
 
 ZooKeeper helps maintain consensus in the cluster.
 
-The reliance on ZooKeeper has been lessened with later client versions. In recent client versions, the only real interactions with ZooKeeper are brokers. Consumer clients no longer store offsets in ZooKeeper, but inside a Kafka internal topic instead by default. (Consumer clients do not have to store their offsets in either or these locations.)
+The reliance on ZooKeeper has been lessened with later client versions. In recent client versions (Kafka version 0.9+), the only real interactions with ZooKeeper are brokers. Consumer clients no longer store offsets in ZooKeeper, but inside a Kafka internal topic instead by default. (Consumer clients do not have to store their offsets in either or these locations.)
 
 ZooKeeper should have been running before you started your brokers. 
 
@@ -109,7 +132,7 @@ Special features that make Kafka standout from other message brokers:
 - replayable messages 
 - multiple consumers features
 
-Application scenarios:
+### Application Scenarios
 
 - messaging system
 - website activity tracking - clickstream
@@ -126,13 +149,15 @@ When Kafka might **NOT** be the right fit:
 - When you need exact ordering of messages in Kafka for the entire topic.
 - With larger messages, you start to see memory pressure increase.
 
-Three types of Kafka clusters:
+### Three Types of Kafka Clusters
 
 - Single node – single broker
 - Single node – multiple broker
 - Multiple node – multiple broker
 
-**Three ways to deliver messages**:
+### Message Delivery Semantics
+
+Three ways to deliver messages:
 
 - At least once (**by default**): The messages are never lost. 
   - If a message from a producer has a failure or is not acknowledged, the producer will resend the message.
@@ -148,9 +173,11 @@ Three types of Kafka clusters:
   - The broker will only allow one message.
   - Consumers will only see the message once.
 
-Kafka context overview: 
+### Kafka Context Overview
 
 ![kafka-context-overview.png](img/kafka-context-overview.png)
+
+### Other Considerations
 
 The answer to the questions below will impact various parts of implementation (configuration options): 
 
@@ -172,7 +199,7 @@ As each new message comes in, it is added to the end of the log. The log is immu
 
 Users will use offsets to know where they are in that log.
 
-Commit logs are retained by period of time or size configuration properties. In various companies, after the data in the Kafka commit logs hits a configurable size or time retention period, the data is often moved into a permanent store like S3 or HDFS.
+Commit logs are retained by period of time or size configuration properties. In various companies, after the data in the Kafka commit logs hits a configurable size or time retention period (default is 7 days), the data is often moved into a permanent store like S3 or HDFS. 
 
 When systems make changes, it creates events or changes. A log is like a never ending stream of these changes to a specific category or entity.
 
@@ -200,7 +227,7 @@ Kafka splits a topic into partitions.
 ### Messages 
 
 - Messages (= records) are byte arrays of data with String, JSON, and Avro being the most common.
-- Each message consists of a key, a value and a timestamp. A key is not required.
+- Each message is stored as a key-value pair. Each message consists of a key, a value and a timestamp. The key is not required.
 - Each message is assigned a unique sequential identifier called **offset**. 
 - Messages with the same key arrive at the same partition.
 - Messages are replicated across the cluster and persisted to disk.
@@ -208,7 +235,7 @@ Kafka splits a topic into partitions.
 
 ### Partitions
 
-Partition: how many parts you want the topic to be split into.
+Partition: How many parts you want the topic to be split into.
 
 Each partition is an ordered immutable sequence of messages.
 
@@ -217,6 +244,8 @@ The partition is further broken up into **segment files** (the actual files) wri
 A single partition only exists on one broker and will not be split between brokers.
 
 One of the partition copies (replicas) will be the leader. Producers and consumers will only read or write from or to the leader.
+
+Message ordering is only guaranteed within a partition for a topic, NOT between different partitions in a topic.
 
 ### Topics 
 
@@ -234,9 +263,6 @@ populate another topic.
 - Describe a topic: `bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic helloworld`
 
 ![describe-a-topic.png](img/describe-a-topic.png)
-
-
-
 
 ---
 
@@ -290,6 +316,11 @@ Alternatively, set with the one configuration property `enable.idempotence`.
 
 Do not have to worry about that one producer getting in the way of another producer’s data. Data will not be overwritten, but handled by the log itself and appended on the brokers log.
 
+Producers can decide in which partition each message goes by: 
+
+- round-robin mechanism 
+- semantic partitioning based on a key in the message
+
 ### Java Client Producer
 
 Pre-requisite: add the following dependency in pom.xml if using Maven.
@@ -334,7 +365,7 @@ producer.close();
 
 ### Producer Configuration
 
-#### `acks`
+#### `acks` / Durability
 
 It controls how many acknowledgments the producer needs to receive from the leader before it returns a complete request.
 
@@ -358,6 +389,8 @@ Set to `all` or `-1`:
 - Best for durability
 - Not the quickest
 - Suitable for the situation where data loss is not acceptable.  
+
+![durability-configuration.png](img/durability-configuration.png)
 
 #### `compression.type`
 
@@ -443,7 +476,7 @@ public class AlertKeySerde implements Serializer<Alert>, Deserializer<Alert> {
 
 #### Custom Partitioner 
 
-Kafka uses hash partitioning. 
+Kafka uses hash partitioning. `key.hashCode() % numberOfPartitions`
 
 If there are specific keys that you might want to avoid all being hashed to the same partition due to the volume you expect, the client can write custom partitioner class to control what partition it writes to, which load-balances the data over the partitions. 
 
@@ -587,6 +620,10 @@ Kafka and clients versions do not always have to match. For instance, Kafka vers
 
 ## Consumers
 
+**One consumer can read from one or more partitions.**
+
+Multiple consumers can read from the same or different topics.
+
 Consumers are not listener to the brokers, but polling data from brokers. Consumers themselves control the rate of consumption.
 
 Consumers control where to start reading data:
@@ -640,6 +677,14 @@ The key to letting your consumer clients work together is a unique combination o
 
 ![consumers-in-separate-groups.png](img/consumers-in-separate-groups.png)
 
+Multiple consumers can read the same message if they belong to different groups.
+
+Consumers from the same group read messages in the manner of queue topology.
+
+Consumers within a group can consume more partitions than their number. 
+
+![consumers-in-a-group-can-consume-more-partitions-than-their-number.png](img/consumers-in-a-group-can-consume-more-partitions-than-their-number.png)
+
 #### Group Coordinator
 
 The group coordinator works with the consumer clients to keep track of where that specific group has read from the topic.
@@ -658,11 +703,13 @@ When a consumer fails or leaves a group, the partitions that need to be read are
 One way a consumer can drop out of a group is by failure to send a heartbeat to the GroupCoordinator. Failure to send these heartbeats can happen in a couple of ways: 
 
 - Stop the consumer client by either termination of the process or failure due to a fatal exception.
-- If taking longer time than the setting of `max.poll.interval.ms`to process messages.
+- If taking longer time than the setting of `max.poll.interval.ms` to process messages.
 
 ### If More Consumers than Partitions
 
-If there are more consumers in a group than the number of partitions, then some consumers will be idle. This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly. In other words, you want to make sure a consumer is ready to handle a partition in case of a failure.
+If there are more consumers in a group than the number of partitions, then some consumers will be idle. 
+
+This makes sense in some instances, e.g. you might want to make sure that a similar rate of consumption will occur if a consumer dies unexpectedly. In other words, you want to make sure a consumer is ready to handle a partition in case of a failure.
 
 ### Consumer Rebalance
 
@@ -700,8 +747,6 @@ public class MaintainOffsetsOnRebalance implements ConsumerRebalanceListener {
 ```
 
 All consumer processes will call the `onPartitionsRevoked` methods before calling any `onPartitionsAssigned` code. You cannot usually be sure that your client would handle the same partitions after the rebalance that they did before. 
-
-
 
 ### Java Client Consumer
 
@@ -788,6 +833,18 @@ public class KafkaConsumerThread implements Runnable {
   }
 }
 ```
+
+---
+
+## Replication 
+
+Only when all followers sync the message, it can be sent to consumers.
+
+When a follower rejoins after a downtime, it can re-sync messages.
+
+![replication.png](img/replication.png)
+
+A common fault tolerance technique consists in designing the system with a tolerance up to a predefined number of simultaneous failures, in which case we say that the system is k-fault tolerant, where k represents the number of simultaneous failures. **For a broker replication factor n, Kafka can tolerate up to n-1 broker failures without losing any committed messages.**
 
 ---
 
