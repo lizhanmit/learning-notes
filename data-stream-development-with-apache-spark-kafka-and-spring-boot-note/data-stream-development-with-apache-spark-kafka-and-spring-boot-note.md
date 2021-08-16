@@ -1,6 +1,36 @@
 # Data Stream Development with Apache Spark, Kafka, and Spring Boot Note 
 
+- [Data Stream Development with Apache Spark, Kafka, and Spring Boot Note](#data-stream-development-with-apache-spark-kafka-and-spring-boot-note)
+  - [Architecture](#architecture)
+  - [Data Collection Tier](#data-collection-tier)
+    - [Interaction Patterns](#interaction-patterns)
+      - [Request Response Pattern](#request-response-pattern)
+      - [Request Acknowledge Pattern](#request-acknowledge-pattern)
+      - [Pub/Sub Pattern](#pubsub-pattern)
+      - [One Way (Fire-and-Forget-Message) Pattern](#one-way-fire-and-forget-message-pattern)
+      - [Stream Pattern](#stream-pattern)
+    - [Protocols For Ingesting Data](#protocols-for-ingesting-data)
+      - [Webhooks](#webhooks)
+      - [HTTP Long Polling](#http-long-polling)
+      - [Server-Sent Events](#server-sent-events)
+      - [Server-Sent Events Push Proxy Variation](#server-sent-events-push-proxy-variation)
+      - [WebSockets](#websockets)
+      - [Comparison of Protocols](#comparison-of-protocols)
+      - [Scaling Collection Tier and WebSocket Problem](#scaling-collection-tier-and-websocket-problem)
+  - [Message Queuing Tier](#message-queuing-tier)
+    - [What is the Point of Message Queuing Tier?](#what-is-the-point-of-message-queuing-tier)
+  - [Between Collection and Message Queuing Tier](#between-collection-and-message-queuing-tier)
+    - [Spring Cloud Stream](#spring-cloud-stream)
+    - [Source, Processor & Sink Channel](#source-processor--sink-channel)
+    - [Message Binders](#message-binders)
+
+---
+
 **Use case: Analyzing Meetup RSVPs in Real-Time.**
+
+---
+
+## Architecture
 
 ![meetup-rsvps-analyzer-architecture.png](img/meetup-rsvps-analyzer-architecture.png)
 
@@ -208,3 +238,36 @@ Data durability issue:
 Data delivery semantics issue:
 
 ![data-delivery-semantics-issue.png](img/data-delivery-semantics-issue.png)
+
+---
+
+## Between Collection and Message Queuing Tier
+
+### Spring Cloud Stream 
+
+Spring Cloud Stream is a framework dedicated to microservice environments that relies on event/message-driven paradigm. It simplifies the writing of event/message-driven applications. 
+
+It provides a pluggable Binder API to connect source, processor and sink channels to the middleware layer. 
+
+![spring-cloud-stream.png](img/spring-cloud-stream.png)
+
+### Source, Processor & Sink Channel
+
+![source-processor-sink-channel.png](img/source-processor-sink-channel.png)
+
+### Message Binders
+
+Message binders are used for connecting applications to physical destinations. 
+
+`@EnableBinding` turns Spring applications to Spring Cloud Stream applications, e.g. `@EnableBinding(Source.class)`.
+
+![message-binder.png](img/message-binder.png)
+
+![kafka-binder.png](img/kafka-binder.png)
+
+Here producer and consumer are Spring Cloud Stream applications. 
+
+Properties file `spring.cloud.stream.kafka.binder.brokers` is used for configuring producers and consumers. 
+
+
+
