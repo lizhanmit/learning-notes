@@ -2182,11 +2182,14 @@ Find out what type an RDD is by using the `toDebugString` function of RDDs.
 
 #### Actions
 
-- bring information back to the driver including `collect`, `count`, `collectAsMap`, `sample`, `reduce`, and `take`. **Best practice**: use actions like `take`, `count`, and `reduce`, which bring back a fixed amount of data to the driver.
-- write the data to stable storage including `saveAsTextFile`, `saveAsSequenceFile`, and
+- Actions bring information back to the driver including `collect`, `count`, `collectAsMap`, `sample`, `reduce`, and `take`. **Best practice**: use actions like `take`, `count`, and `reduce`, which bring back a fixed amount of data to the driver.
+- Actions write the data to stable storage including `saveAsTextFile`, `saveAsSequenceFile`, and
 `saveAsObjectFile`.
+- Functions that return nothing, such as `foreach`, are also actions.
 
 #### Transformations
+
+Most of the power of the Spark API is in its transformations.
 
 Spark transformations are **coarse-grained**.
 
