@@ -1,7 +1,7 @@
 # Data Stream Development with Apache Spark, Kafka, and Spring Boot Note 
 
 - [Data Stream Development with Apache Spark, Kafka, and Spring Boot Note](#data-stream-development-with-apache-spark-kafka-and-spring-boot-note)
-  - [Architecture](#architecture)
+  - [Blueprint Architecture](#blueprint-architecture)
   - [Data Collection Tier](#data-collection-tier)
     - [Interaction Patterns](#interaction-patterns)
       - [Request Response Pattern](#request-response-pattern)
@@ -23,6 +23,17 @@
     - [Spring Cloud Stream](#spring-cloud-stream)
     - [Source, Processor & Sink Channel](#source-processor--sink-channel)
     - [Message Binders](#message-binders)
+  - [Data Access Tier](#data-access-tier)
+    - [Writing Analyzed Data in Long-Term Storage](#writing-analyzed-data-in-long-term-storage)
+      - [Write Every Analyzed Single Data at Stream Speed](#write-every-analyzed-single-data-at-stream-speed)
+      - [Write in Batch Model](#write-in-batch-model)
+      - [Message Queuing and Batch Loader](#message-queuing-and-batch-loader)
+    - [Query Data from Long-Term Storage](#query-data-from-long-term-storage)
+    - [In-Memory Storage](#in-memory-storage)
+    - [Caching Systems](#caching-systems)
+      - [Read Caching Strategies](#read-caching-strategies)
+      - [Write Caching Strategies](#write-caching-strategies)
+    - [In-Memory DBs (IMDBs) & In-Memory Data Grids (IMDGs)](#in-memory-dbs-imdbs--in-memory-data-grids-imdgs)
 
 ---
 
@@ -30,7 +41,7 @@
 
 ---
 
-## Architecture
+## Blueprint Architecture
 
 ![meetup-rsvps-analyzer-architecture.png](img/meetup-rsvps-analyzer-architecture.png)
 
@@ -269,5 +280,113 @@ Here producer and consumer are Spring Cloud Stream applications.
 
 Properties file `spring.cloud.stream.kafka.binder.brokers` is used for configuring producers and consumers. 
 
+---
 
+## Data Access Tier
+
+When deciding to use what as the long-term storage, consider how you write data to and query from the storage.
+
+### Writing Analyzed Data in Long-Term Storage
+
+#### Write Every Analyzed Single Data at Stream Speed
+
+- The long-term storage must be able to keep up with the stream speed. 
+- This can be an issue when using RDBMs because each writing may require a new connection and/or transaction. 
+- Performance of stream processing will slow.
+- NoSQL DBs can be a good choice. For instance, Cassandra is a good fit for write-intensive applications.
+
+#### Write in Batch Model
+
+- A batch acts as an in-memory buffer of data at stream speed.
+- Better than directly writing at stream speed.
+- Fits naturally for systems where data is loaded by batch and then processed, e.g. Spark. 
+- Fits well for RDBMs and NoSQL DBs, which typically support batch-inserts. 
+
+#### Message Queuing and Batch Loader 
+
+![message-queuing-and-batch-loader.png](img/message-queuing-and-batch-loader.png)
+
+- Uses message queuing as an intermediary.
+- Decouples analysis tier and supports the performance of stream processing. 
+
+### Query Data from Long-Term Storage
+
+- When data is perishable, Time-To-Live (TTL) can be used. MongoDB supports TTL feature. You have to set up the amount of time to keep the data (expiration time of the data).
+- Reactive capable storages: If you try to deliver the data to the clients at the speed of arrival in the long-term storage, then you need to take into account the backpressure. Not all the clients will be capable to process the same amount of data per unit of time. In order to avoid the scenario in which the clients are overwhelmed by the amount of data, we can consider reactive capable storages such as MongoDB, Cassandra, and Redis.
+
+### In-Memory Storage
+
+Keep analyzed data in memory only when you need to access to it in real time. Otherwise, avoid in-memory embedded data stores, and better to rely on caching systems or in-memory DBs and grids.
+
+Embedded data storage examples: 
+
+- DerbyDB
+- RocksDB
+- SQLite
+- H2
+- HSQL
+- LMDB
+
+### Caching Systems
+
+- Caching systems are optimized for managing data in-memory.
+- Typically, they rely on key-value model. 
+- Caching strategy is one of the key aspects.
+
+#### Read Caching Strategies
+
+- Read Through strategy
+
+![read-through-strategy.png](img/read-through-strategy.png)
+
+To avoid stale data, you need to set an eviction time for the cache, and invalidate data on updates.
+
+- Cache Aside strategy
+
+![cache-aside-strategy.png](img/cache-aside-strategy.png)
+
+To avoid stale data, you need to set an eviction time for the cache, and invalidate data on updates.
+
+- Read Ahead strategy
+
+![read-ahead-strategy.png](img/read-ahead-strategy.png)
+
+#### Write Caching Strategies
+
+- Write Through strategy
+
+![write-through-strategy.png](img/write-through-strategy.png)
+
+- Write Back strategy
+
+![write-back-strategy.png](img/write-back-strategy.png)
+
+- Write around strategy
+  
+![write-around-strategy.png](img/write-around-strategy.png)
+
+Only the data that is read and has a higher potential to be read again, it will be cached.
+
+Caching system examples:
+
+- Memcached
+- Redis
+- Hazelcast
+- DynaCache
+- EHCache
+- OSCache
+
+### In-Memory DBs (IMDBs) & In-Memory Data Grids (IMDGs)
+
+- Use disk for data persistence whereas caching systems hold data in memory all the time.
+- Use memory as the first option and disk as the second.
+
+Examples: 
+
+- Hazelcast
+- Couchbase
+- Apache Ignite
+- Inifispan
+- Apache Geode
+- Aerospike
 
