@@ -12,7 +12,7 @@
     - [Protocols For Ingesting Data](#protocols-for-ingesting-data)
       - [Webhooks](#webhooks)
       - [HTTP Long Polling](#http-long-polling)
-      - [Server-Sent Events](#server-sent-events)
+      - [Server-Sent Events (SSE)](#server-sent-events-sse)
       - [Server-Sent Events Push Proxy Variation](#server-sent-events-push-proxy-variation)
       - [WebSockets](#websockets)
       - [Comparison of Protocols](#comparison-of-protocols)
@@ -21,13 +21,13 @@
     - [What is the Point of Message Queuing Tier?](#what-is-the-point-of-message-queuing-tier)
   - [Between Collection and Message Queuing Tier](#between-collection-and-message-queuing-tier)
     - [Spring Cloud Stream](#spring-cloud-stream)
-    - [Source, Processor & Sink Channel](#source-processor--sink-channel)
-    - [Message Binders](#message-binders)
+      - [Source, Processor & Sink Channel](#source-processor--sink-channel)
+      - [Message Binders](#message-binders)
   - [Data Access Tier](#data-access-tier)
     - [Writing Analyzed Data in Long-Term Storage](#writing-analyzed-data-in-long-term-storage)
-      - [Write Every Analyzed Single Data at Stream Speed](#write-every-analyzed-single-data-at-stream-speed)
-      - [Write in Batch Model](#write-in-batch-model)
-      - [Message Queuing and Batch Loader](#message-queuing-and-batch-loader)
+      - [Write Every Analyzed Single Data at Stream Speed 👎](#write-every-analyzed-single-data-at-stream-speed-)
+      - [Write in Batch Model 👍](#write-in-batch-model-)
+      - [Message Queuing and Batch Loader 👍👍](#message-queuing-and-batch-loader-)
     - [Query Data from Long-Term Storage](#query-data-from-long-term-storage)
     - [In-Memory Storage](#in-memory-storage)
     - [Caching Systems](#caching-systems)
@@ -146,7 +146,7 @@ Disadvantages:
 
 Conclusion: Considering the rise of asynchronous programming in client side, this protocol has **average efficiency**.
 
-#### Server-Sent Events
+#### Server-Sent Events (SSE)
 
 Client connects to the server side.
 
@@ -262,11 +262,11 @@ It provides a pluggable Binder API to connect source, processor and sink channel
 
 ![spring-cloud-stream.png](img/spring-cloud-stream.png)
 
-### Source, Processor & Sink Channel
+#### Source, Processor & Sink Channel
 
 ![source-processor-sink-channel.png](img/source-processor-sink-channel.png)
 
-### Message Binders
+#### Message Binders
 
 Message binders are used for connecting applications to physical destinations. 
 
@@ -288,21 +288,23 @@ When deciding to use what as the long-term storage, consider how you write data 
 
 ### Writing Analyzed Data in Long-Term Storage
 
-#### Write Every Analyzed Single Data at Stream Speed
+**For the Meetup RSVPs use case, MongoDB will be used as the long-term storage.**
+
+#### Write Every Analyzed Single Data at Stream Speed 👎
 
 - The long-term storage must be able to keep up with the stream speed. 
-- This can be an issue when using RDBMs because each writing may require a new connection and/or transaction. 
+- This can be an issue when using RDBMS because each writing may require a new connection and/or transaction. 
 - Performance of stream processing will slow.
 - NoSQL DBs can be a good choice. For instance, Cassandra is a good fit for write-intensive applications.
 
-#### Write in Batch Model
+#### Write in Batch Model 👍
 
 - A batch acts as an in-memory buffer of data at stream speed.
 - Better than directly writing at stream speed.
 - Fits naturally for systems where data is loaded by batch and then processed, e.g. Spark. 
-- Fits well for RDBMs and NoSQL DBs, which typically support batch-inserts. 
+- Fits well for RDBMS and NoSQL DBs, which typically support batch-inserts. 
 
-#### Message Queuing and Batch Loader 
+#### Message Queuing and Batch Loader 👍👍 
 
 ![message-queuing-and-batch-loader.png](img/message-queuing-and-batch-loader.png)
 
