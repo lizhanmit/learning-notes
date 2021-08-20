@@ -1,7 +1,9 @@
 # Data Stream Development with Apache Spark, Kafka, and Spring Boot Note 
 
 - [Data Stream Development with Apache Spark, Kafka, and Spring Boot Note](#data-stream-development-with-apache-spark-kafka-and-spring-boot-note)
+  - [Concepts](#concepts)
   - [Blueprint Architecture](#blueprint-architecture)
+    - [Alternative Technologies](#alternative-technologies)
   - [Data Collection Tier](#data-collection-tier)
     - [Interaction Patterns](#interaction-patterns)
       - [Request Response Pattern](#request-response-pattern)
@@ -34,6 +36,25 @@
       - [Read Caching Strategies](#read-caching-strategies)
       - [Write Caching Strategies](#write-caching-strategies)
     - [In-Memory DBs (IMDBs) & In-Memory Data Grids (IMDGs)](#in-memory-dbs-imdbs--in-memory-data-grids-imdgs)
+  - [Between Data Access Tier and Data Consumers/Clients](#between-data-access-tier-and-data-consumersclients)
+    - [Communication Patterns](#communication-patterns)
+      - [Pub/Sub Pattern](#pubsub-pattern-1)
+      - [Remote Method Invocation (RMI) / Remote Procedure Call (RPC) Pattern](#remote-method-invocation-rmi--remote-procedure-call-rpc-pattern)
+      - [Simple Messaging Pattern](#simple-messaging-pattern)
+      - [Data Sync Pattern](#data-sync-pattern)
+  - [Data Analysis Tier](#data-analysis-tier)
+    - [Continuous Query Model](#continuous-query-model)
+    - [Distributed Stream Processing Architecture](#distributed-stream-processing-architecture)
+    - [Stream Framework Comparison](#stream-framework-comparison)
+    - [State Management](#state-management)
+    - [Fault Tolerance](#fault-tolerance)
+    - [Stream Processing Constraints](#stream-processing-constraints)
+      - [Approximate Answers](#approximate-answers)
+      - [Concept Drift](#concept-drift)
+      - [Load Shedding](#load-shedding)
+    - [Stream Time & Event Time](#stream-time--event-time)
+    - [Sliding V.S. Tumbling Window](#sliding-vs-tumbling-window)
+    - [Data Stream Algorithms](#data-stream-algorithms)
 
 ---
 
@@ -41,9 +62,40 @@
 
 ---
 
+## Concepts
+
+Real-time systems are classified as: 
+
+- Hard: Microseconds to milliseconds
+- Soft: Milliseconds to seconds
+- Near: Seconds to minutes
+
+Securing streaming systems: 
+
+- This is a complex task. 
+- Involves multiple machines, data centers, and software components.
+- Implementation process is specific to different APIs.
+- Should we authenticate and authorize producers? 
+- Should we authenticate and authorize clients?
+- Should the processors authenticate each other? 
+- Should we encrypt the data on wires?
+
+Scaling streaming systems: 
+
+- First, use vertical scaling for matching the perfect resources toolset for a service. 
+- Further, use horizontal scaling to increase the throughput and fault-tolerance. 
+
+---
+
 ## Blueprint Architecture
 
 ![meetup-rsvps-analyzer-architecture.png](img/meetup-rsvps-analyzer-architecture.png)
+
+### Alternative Technologies
+
+![alternative-technologies.png](img/alternative-technologies.png)
+
+---
 
 ## Data Collection Tier 
 
@@ -392,3 +444,114 @@ Examples:
 - Apache Geode
 - Aerospike
 
+---
+
+## Between Data Access Tier and Data Consumers/Clients
+
+### Communication Patterns
+
+#### Pub/Sub Pattern
+
+![pub-sub-communication-pattern.png](img/pub-sub-communication-pattern.png)
+
+WebSockets, Server-Sent Event and HTTP Long Polling protocol fit well with this pattern.
+
+#### Remote Method Invocation (RMI) / Remote Procedure Call (RPC) Pattern
+
+![rmi-rpc-pattern.png](img/rmi-rpc-pattern.png)
+
+When new data is available, server will invoke a method on client via RMI/RPC. 
+
+#### Simple Messaging Pattern
+
+1. Clients request the most recent data, and use an offset metadata for tracking processed data.
+2. Server application fetches the most recent data from the storage using this offset.
+3. Server sends the most recent data to clients. 
+
+Without an offset, clients will fetch the same data duplicate times. Inefficient. 
+
+![simple-messaging-pattern.png](img/simple-messaging-pattern.png)
+
+#### Data Sync Pattern
+
+1. Clients initially connect to the server and fetch the entire dataset. 
+2. Changes to the dataset will be either pushed to or pulled by the clients.
+
+![data-sync-pattern.png](img/data-sync-pattern.png)
+
+If the size of the dataset is too big at initial connection request, there will be issues. 
+
+**For the Meetup RSVPs use case, this pattern will be used.**
+
+---
+
+## Data Analysis Tier
+
+### Continuous Query Model
+
+![continuous-query-model.png](img/continuous-query-model.png)
+
+### Distributed Stream Processing Architecture
+
+![distributed-stream-processing-architecture.png](img/distributed-stream-processing-architecture.png)
+
+### Stream Framework Comparison
+
+![stream-framework-comparison.png](img/stream-framework-comparison.png)
+
+### State Management
+
+- In memory
+  - Use this approach only when the risk and possible loss of data is acceptable.
+- Replicated queryable persistent storage
+
+### Fault Tolerance
+
+Streaming system approaches: 
+
+- State machine
+  - Based on replication. 
+  - Ensures that replicas remain consistent.
+  - Replicas must process requests in the same order. 
+  - Stream manager replicates the streaming jobs on independent nodes, and coordinates the replicas by sending the same input in the same order to all. 
+- Rollback recovery
+  - Periodically saves the state of processes on a different worker node or disk. 
+  - Failed processes or worker node can restart from a saved stated, namely, checkpoint. 
+
+![state-machine-and-rollback-recovery.png](img/state-machine-and-rollback-recovery.png)
+
+### Stream Processing Constraints
+
+#### Approximate Answers
+
+Most of the time, a streaming algorithm cannot provide 100% accuracy of answers. 
+
+#### Concept Drift
+
+Concept drift applies to predictive models. 
+
+It may occur over time when the data from a stream changes its underlying probability distribution A to B, which may have a serious impact in the results of predictive models.
+
+![no-concept-drift-detection-vs-with-detection.png](img/no-concept-drift-detection-vs-with-detection.png)
+
+#### Load Shedding
+
+Streaming data can come at unpredictable speed. It is needed to address the peak moments and make the system unavailable for all users. Solution: load shedding, which empower different algorithms to drop data that cannot be processed in time, e.g. random drop.
+
+### Stream Time & Event Time
+
+Time skew: The time that passes between the event time and the stream time.
+
+### Sliding V.S. Tumbling Window
+
+Sliding window example: The GUI should should be updated every n seconds, and  represent data for the last k minutes. 
+
+- n seconds: sliding interval
+- k minutes: window length
+
+Tumbling window example: The GUI should display how many events take place in n seconds, and allow k clicks on commands. 
+
+- n seconds: time-based tumbling
+- k clicks: count-based tumbling
+
+### Data Stream Algorithms 
