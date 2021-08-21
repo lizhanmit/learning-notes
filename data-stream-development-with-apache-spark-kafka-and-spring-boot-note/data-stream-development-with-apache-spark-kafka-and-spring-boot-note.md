@@ -55,6 +55,10 @@
     - [Stream Time & Event Time](#stream-time--event-time)
     - [Sliding V.S. Tumbling Window](#sliding-vs-tumbling-window)
     - [Data Stream Algorithms](#data-stream-algorithms)
+      - [Reservoir Sampling](#reservoir-sampling)
+      - [HyperLogLog / Count Me Once and Fast](#hyperloglog--count-me-once-and-fast)
+      - [Count-Min Sketch](#count-min-sketch)
+      - [Bloom Filter](#bloom-filter)
 
 ---
 
@@ -555,3 +559,52 @@ Tumbling window example: The GUI should display how many events take place in n 
 - k clicks: count-based tumbling
 
 ### Data Stream Algorithms 
+
+#### Reservoir Sampling
+
+Problem to solve: Take a random sample from a stream.
+
+![reservoir-sampling.png](img/reservoir-sampling.png)
+
+![reservoir-sampling-2.png](img/reservoir-sampling-2.png)
+
+#### HyperLogLog / Count Me Once and Fast
+
+Problem to solve: Count distinct items in a stream (approximate).
+
+![hyperloglog.png](img/hyperloglog.png)
+
+HyperLogLog can perform cardinality estimation for counts beyond 10^9, using the 1.5KB of memory with an error rate of 2%. 
+
+HyperLogLog++ is an improved version, which reduces the memory usage and increases the accuracy for a range of cardinalities.
+
+#### Count-Min Sketch
+
+Problem to solve: How many times has stream item X occurred?
+
+Can be used in three cases:
+
+- Point query
+- Range query
+- inner query
+
+![count-min-sketch.png](img/count-min-sketch.png)
+
+#### Bloom Filter
+
+Problem to solve: Has item X ever occurred in the stream before? 
+
+**NOTE**, Bloom Filter is false positive: 
+
+- Cannot ensure the item has occurred.
+- Can ensure the item has not occurred.
+
+The item has occurred before? 
+
+- Yes - may or may not be true
+- No - always be true
+
+The accuracy can be increased by adding more hash functions into the algorithm. 
+
+![bloom-filter.png](img/bloom-filter.png)
+
