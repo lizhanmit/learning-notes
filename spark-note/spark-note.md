@@ -3,6 +3,7 @@
 - [Spark Note](#spark-note)
   - [Basics](#basics)
     - [Architecture](#architecture)
+    - [Spark Job Architecture](#spark-job-architecture)
     - [Cluster Resource Manager](#cluster-resource-manager)
     - [Life Cycle of a Spark Application](#life-cycle-of-a-spark-application)
       - [Outside Spark (cluster mode)](#outside-spark-cluster-mode)
@@ -35,6 +36,8 @@
       - [When to Cache Data](#when-to-cache-data)
       - [Storage Level](#storage-level)
     - [Checkpointing](#checkpointing)
+      - [Reliable V.S. Local Checkpointing](#reliable-vs-local-checkpointing)
+      - [Metadata V.S. Data Checkpointing](#metadata-vs-data-checkpointing)
     - [Shuffle](#shuffle)
       - [External Shuffle Service](#external-shuffle-service)
     - [UDFs](#udfs)
@@ -189,6 +192,8 @@ A Stage gets broken into multiple Tasks that are distributed to nodes on the clu
 
 ![spark-architecture-2.png](img/spark-architecture-2.png)
 
+![spark-architecture-4.png](img/spark-architecture-4.png)
+
 - 1 worker node - n executors 
 - 1 executor - n threads
 - 1 thread - 1 task
@@ -199,6 +204,10 @@ There is a **BlockManager** storage module in **Executor**, which uses both RAM 
 When executing an application, Driver will apply resources from Cluster Manager, start up Executors, send program code and files to Executors, and then execute Tasks on Executors.
 
 ![spark-architecture-3.png](img/spark-architecture-3.png)
+
+### Spark Job Architecture
+
+![spark-job-architecture.png](img/spark-job-architecture.png)
 
 ---
 
@@ -289,7 +298,11 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 #### RDD Running Process
 
-![rdd-running-process.png](img/rdd-running-process.png)
+1. Create RDD objects.
+2. SparkContext calculates the dependency relationship between RDDs, and build DAG. 
+3. DAGScheduler splits the DAG into stages, each of which contains multiple tasks. 
+4. TaskScheduler distributes tasks to worker nodes, and launch them.
+5. Executors on the work nodes execute tasks.
 
 ![rdd-running-process-2.png](img/rdd-running-process-2.png)
 
@@ -577,12 +590,34 @@ Saving an RDD to disk.
 
 Future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source.
 
-**Not available in DataFrame API.** 
+In v2.1.0, Spark introduced checkpoints on data frames and datasets.
 
 ```scala
 spark.sparkContext.setCheckpointDir("/some/path/for/checkpointing")
-<rdd>.checkpoint()
+
+rdd.checkpoint()
+
+df.checkpoint()
 ```
+
+Spark relies on checkpoints to provide fault tolerance.
+
+#### Reliable V.S. Local Checkpointing 
+
+- Reliable checkpointing: Save RDD in a reliable distributed file system, e.g. HDFS. 
+- Local checkpointing: Specific to Spark Streaming and GraphX. 
+
+#### Metadata V.S. Data Checkpointing
+
+Metadata checkpointing: 
+
+- Configurations
+- Stream operations
+- Incomplete batches
+
+Data checkpointing:
+
+- Save RDD to storage.
 
 ---
 
