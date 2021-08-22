@@ -12,7 +12,8 @@
     - [RDDs](#rdds)
       - [Printing Elements of an RDD](#printing-elements-of-an-rdd)
       - [RDD Running Process](#rdd-running-process)
-      - [Stage Division & Dependencies](#stage-division--dependencies)
+      - [Dependencies](#dependencies)
+      - [Stage Division](#stage-division)
     - [Partitioning](#partitioning)
       - [Downsides](#downsides)
       - [Partitioning Rule](#partitioning-rule)
@@ -43,6 +44,7 @@
     - [UDFs](#udfs)
     - [Lazy Evaluation](#lazy-evaluation)
     - [API](#api)
+      - [`groupByKey()` V.S. `reduceByKey()`](#groupbykey-vs-reducebykey)
     - [Serialization](#serialization)
       - [Kryo](#kryo)
     - [Datasets](#datasets)
@@ -264,9 +266,12 @@ You can use Mesos and Yarn at the same time. Mesos is for **coarse-grained** man
 ### RDDs
 
 - A RDD (Resilient Distributed Dataset) is essentially a **read-only** immutable, partitioned collection of records. Each record is just a Scala, Java or Python object.
+- You can think a RDD like a collection in Java.
 - **Each RDD can be divided into multiple partitions.** Each partition is a dataset fragment. Each partition can be stored on different nodes in the cluster. (parallel computing)
 
 ![rdd-partition-record.png](img/rdd-partition-record.png)
+
+![partitioned-rdds.png](img/partitioned-rdds.png)
 
 - RDDs are stored in the executors or on worker nodes.
 - **Virtually everything in Spark is built on top of RDDs.**
@@ -282,7 +287,10 @@ There are lots of subclasses of RDD. You will likely only create two types:
 - generic RDD type
 - key-value RDD 
 
-**When to use RDDs:** when you need fine-grained control over the physical distribution of data (custom partitioning of data).
+**When to use RDDs:** 
+
+- When you need fine-grained control over the physical distribution of data (custom partitioning of data).
+- RDD is preferable for unstructured data.
 
 #### Printing Elements of an RDD
 
@@ -311,19 +319,46 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 ![spark-transformations-dag.png](img/spark-transformations-dag.png)
 
 
-#### Stage Division & Dependencies
+#### Dependencies
 
-- Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1.
-- Wide dependencies: The relationship between RDDs is 1 : many or many : many.
+Two types of transformations: 
 
-Create a new stage when it comes across wide dependencies.
+- Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1. Data does not move between partitions. Examples:
+  - `filter`
+  - `flatMap`
+  - `map`
+  - `union`
+  - `sample`
+- Wide dependencies: The relationship between RDDs is 1 : many or many : many. It requires the data to be partitioned in a particular way depending on the transformation type. Transformation need data from other partitions. Data moves between partitions - shuffle. Examples:
+  - `intersection`
+  - `groupByKey`
+  - `distinct`
+  - `cartesian`
+  - `sortByKey`
 
-![stage-division-according-to-dependencies.png](img/stage-division-according-to-dependencies.png)
+Generally, `join` operation is wide dependency, but it acts as narrow if it comes after `groupByKey`, which is known as "join with inputs co-partitioned".
+
+![join-as-narrow-or-wide-dependency.png](img/join-as-narrow-or-wide-dependency.png)
+
+You an show the list of dependencies of a RDD via `dependencies()` method. Spark will return: 
+
+- Narrow dependency objects: 
+  - OneToOneDependency
+  - PruneDependency
+  - RangeDependency
+- Wide dependency objects:
+  - ShuffleDependency
 
 Optimize for dependencies:  
 
 - Do as many narrow dependencies together before hitting a wide dependency.  
 - Try to group wide dependency transformations together, possibly inside a single function and do it once. 
+  
+#### Stage Division
+
+A new stage will be created when it comes across wide dependencies.
+
+![stage-division-according-to-dependencies.png](img/stage-division-according-to-dependencies.png)
 
 ---
 
@@ -569,7 +604,7 @@ rdd as unserialized Java objects.
 #### When to Cache Data
 
 - When doing data validation and cleansing.
-- When querying a small “hot” dataset.
+- When querying a small "hot" dataset.
 - Cache for iterative algorithm like PageRank.
 - Generally, **DO NOT** use for input data as input data is too large.
 - Likely to be referenced by multiple actions.
@@ -631,7 +666,8 @@ A shuffle represents a physical repartitioning of the data.
     - Spark has the "source" tasks (those sending data) write shuffle files to their local disks. 
     - Running a new job over data that has already been shuffled does not rerun the "source" side of the shuffle.
 - By default, when we perform a shuffle, Spark outputs 200 shuffle partitions. You can specify it through `spark.conf.set("spark.sql.shuffle.partitions", "<number_of_shuffle_you_want>")`.
-- Use minimal shuffle as possible and do them in late stages for better performance.  
+- **Use minimal shuffle as possible and do them in late stages for better performance.**  
+- Recovery after node failure is slower for shuffle transformations.
 
 No shuffle transformations:  
 
@@ -721,19 +757,6 @@ spark.sparkContext.parallelize(Seq("Hello", "World"), 2).glom.collect()
 // Array(Array(Hello), Array(World))
 ```
 
-**DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
-
-- `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which result in big overhead and transmission delay. And each executor must hold all values for a given key in memory before applying the function to them. If you have massive key skew, you will get OutOfMemoryErrors.
-- But if you have consistent value sizes for each key and know that they will fit in the memory of a given executor, you are going to be just fine.
-
-![groupByKey.png](img/groupByKey.png)
-
-![reduceByKey.png](img/reduceByKey.png)
-
-- `groupBy`: returns RelationalGroupedDataset
-- `groupByKey`: returns KeyValueGroupedDataset
-
-
 Very rare, very low-level aggregation methods: 
 
 - aggregate
@@ -748,6 +771,22 @@ Used to combine RDDs:
 - join
 - cartesian (**very dangerous**)
 - zip
+
+#### `groupByKey()` V.S. `reduceByKey()`
+
+![groupByKey.png](img/groupByKey.png)
+
+![reduceByKey.png](img/reduceByKey.png)
+
+**DO NOT** use `groupByKey() + reduce()` if you can use `reduceByKey()`.
+
+- `groupByKey()` does not receive functions as parameter. When invoking it, Spark will move all key-value pairs, which result in big overhead and transmission delay. And each executor must hold all values for a given key in memory before applying the function to them. If you have massive key skew, you will get OutOfMemoryErrors.
+- But if you have consistent value sizes for each key and know that they will fit in the memory of a given executor, you are going to be just fine.
+- `reduceByKey()` performs much better on large datasets. 
+- Another option: `combineByKey()` + `foldByKey()`.
+
+- `groupBy`: returns RelationalGroupedDataset
+- `groupByKey`: returns KeyValueGroupedDataset
 
 ---
 
@@ -2217,7 +2256,7 @@ Find out what type an RDD is by using the `toDebugString` function of RDDs.
 
 #### Actions
 
-- Actions bring information back to the driver including `collect`, `count`, `collectAsMap`, `sample`, `reduce`, and `take`. **Best practice**: use actions like `take`, `count`, and `reduce`, which bring back a fixed amount of data to the driver.
+- Actions bring information back to the driver including `collect`, `count`, `collectAsMap`, `sample`, `reduce`, and `take`. **Best practice**: Use actions like `take`, `count`, and `reduce`, which bring back a fixed amount of data to the driver.
 - Actions write the data to stable storage including `saveAsTextFile`, `saveAsSequenceFile`, and
 `saveAsObjectFile`.
 - Functions that return nothing, such as `foreach`, are also actions.
