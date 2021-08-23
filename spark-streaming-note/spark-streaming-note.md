@@ -1,26 +1,61 @@
 # Spark Streaming Note
 
-## DStream API
+- [Spark Streaming Note](#spark-streaming-note)
+	- [Discretized Stream (DStream)](#discretized-stream-dstream)
+		- [Receiver Threads](#receiver-threads)
+		- [DStream API Coding Steps](#dstream-api-coding-steps)
+		- [Limitations](#limitations)
+	- [Continuous VS Micro-Batch Processing](#continuous-vs-micro-batch-processing)
+	- [DStream VS Structured Streaming](#dstream-vs-structured-streaming)
+	- [Structured Streaming](#structured-streaming)
+		- [Output Modes](#output-modes)
+		- [Triggers](#triggers)
+			- [Processing Time Trigger](#processing-time-trigger)
+			- [Once Trigger](#once-trigger)
+		- [Event-Time Processing](#event-time-processing)
+			- [Tumbling Windows](#tumbling-windows)
+			- [Sliding Windows](#sliding-windows)
+		- [Stateful Processing](#stateful-processing)
+			- [Arbitrary / Custom Stateful Processing](#arbitrary--custom-stateful-processing)
+		- [Watermarking](#watermarking)
+		- [Join Operations](#join-operations)
+		- [Streaming Deduplication](#streaming-deduplication)
+		- [Checkpointing](#checkpointing)
+	- [Updating Application](#updating-application)
+			- [Updating Streaming Application Code](#updating-streaming-application-code)
+			- [Updating Spark Version](#updating-spark-version)
+	- [Metrics & Monitoring](#metrics--monitoring)
+		- [Monitoring API](#monitoring-api)
+			- [Query Status](#query-status)
+			- [Recent Progress](#recent-progress)
+		- [Alerting](#alerting)
+		- [Advanced Monitoring](#advanced-monitoring)
+	- [How to use spark-submit to run spark application script （for real projects）](#how-to-use-spark-submit-to-run-spark-application-script-for-real-projects)
+	- [How to use spark-shell to run spark application script （for testing）](#how-to-use-spark-shell-to-run-spark-application-script-for-testing)
 
-If you want millisecond level, use stream computing framework, e.g. Storm.  
+---
+
+## Discretized Stream (DStream) 
+
+DStream is a sequence of RDDs arriving over time.
 
 ![spark-streaming-input-output.png](img/spark-streaming-input-output.png)
 
 ![spark-streaming.png](img/spark-streaming.png)
 
-### DStream API Coding Steps
-
-![dStream-api-coding-steps.png](img/dStream-api-coding-steps.png)
-
----
-
-### DStream API Working Principle 
-
 ![dStream-api-working-principle](img/dStream-api-working-principle.png)
+
+By default, a block of data is created every 200 ms.
+
+### Receiver Threads
+
+
 
 ![dStream-api-working-principle-2](img/dStream-api-working-principle-2.png)
 
----
+### DStream API Coding Steps
+
+![dStream-api-coding-steps.png](img/dStream-api-coding-steps.png)
 
 ### Limitations
 
@@ -28,6 +63,7 @@ If you want millisecond level, use stream computing framework, e.g. Storm.
 - Purely based on processing time. To handle event-time operations, applications need to implement them on their own. **DStream API does not support event-time processing.**
 - **No way to handle late data.**
 - Only operates in a micro-batch fashion, making it difficult to support alternative execution modes.
+- If you want millisecond level, use stream computing framework, e.g. Storm.  
 
 ---
 
