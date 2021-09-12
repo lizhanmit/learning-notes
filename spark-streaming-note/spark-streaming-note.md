@@ -3,7 +3,9 @@
 - [Spark Streaming Note](#spark-streaming-note)
 	- [Discretized Stream (DStream)](#discretized-stream-dstream)
 		- [Receiver Threads](#receiver-threads)
-		- [DStream API Coding Steps](#dstream-api-coding-steps)
+		- [DStream API](#dstream-api)
+			- [`foreachRDD`](#foreachrdd)
+			- [DStream API Coding Steps](#dstream-api-coding-steps)
 		- [Limitations](#limitations)
 	- [Continuous VS Micro-Batch Processing](#continuous-vs-micro-batch-processing)
 	- [DStream VS Structured Streaming](#dstream-vs-structured-streaming)
@@ -39,23 +41,69 @@
 
 DStream is a sequence of RDDs arriving over time.
 
+DStream is data stream divided in batches of RDDs at n seconds.
+
 ![spark-streaming-input-output.png](img/spark-streaming-input-output.png)
+
+Spark divides data into batches every n seconds. 
 
 ![spark-streaming.png](img/spark-streaming.png)
 
-![dStream-api-working-principle](img/dStream-api-working-principle.png)
+Spark accumulates data into each batch.
 
-By default, a block of data is created every 200 ms.
+Accumulated data is stored in blocks. By default, a block of data is created every 200 ms (block interval).
+
+![dStream-api-working-principle](img/dStream-api-working-principle.png)
 
 ### Receiver Threads
 
+Receiver threads are responsible to slice the incoming data into RDDs and distribute them across the cluster.
 
+![receiver-thread.png](img/receiver-thread.png)
+
+At the end of each batch interval, the blocks become partitions, and the RDD is processed.
+
+![receiver-thread-2.png](img/receiver-thread-2.png)
+
+Spark allocates more receiver threads for multiple streams so they can be processed at the same time.
+
+![receiver-thread-multiple-streams.png](img/receiver-thread-multiple-streams.png)
 
 ![dStream-api-working-principle-2](img/dStream-api-working-principle-2.png)
 
-### DStream API Coding Steps
+### DStream API
+
+The main entry point if all Spark Streaming functionality is `StreamingContext` object, by which you can create DStreams.  
+
+DStreams support many transformation operations available on normal Spark RDDs.
+
+#### `foreachRDD`
+
+One of the most important output operations is `foreachRDD`, which is generic approach of applying a function to each RDD in a DStream. Most commonly, it is used for sending RDDs to external systems. NOTE, it is executed in the driver process running the streaming application. 
+
+![foreachRDD.png](img/foreachRDD.png)
+
+The above code is not a good approach as the overhead of serialization and deserialization can be major over the network.
+
+Optimize: 
+
+![foreachRDD-optimize.png](img/foreachRDD-optimize.png)
+
+Problem: Connection is created, open, and closed for all records in each partition of an RDD. 
+
+Optimize further: 
+
+![foreachRDD-optimize-further.png](img/foreachRDD-optimize-further.png)
+
+Optimize more further: 
+
+![foreachRDD-optimize-more-further.png](img/foreachRDD-optimize-more-further.png)
+
+
+#### DStream API Coding Steps
 
 ![dStream-api-coding-steps.png](img/dStream-api-coding-steps.png)
+
 
 ### Limitations
 
