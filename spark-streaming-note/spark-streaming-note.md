@@ -7,6 +7,7 @@
 			- [`foreachRDD`](#foreachrdd)
 			- [DStream API Coding Steps](#dstream-api-coding-steps)
 		- [Limitations](#limitations)
+		- [Windowing](#windowing)
 	- [Continuous VS Micro-Batch Processing](#continuous-vs-micro-batch-processing)
 	- [DStream VS Structured Streaming](#dstream-vs-structured-streaming)
 	- [Structured Streaming](#structured-streaming)
@@ -32,8 +33,8 @@
 			- [Recent Progress](#recent-progress)
 		- [Alerting](#alerting)
 		- [Advanced Monitoring](#advanced-monitoring)
-	- [How to use spark-submit to run spark application script （for real projects）](#how-to-use-spark-submit-to-run-spark-application-script-for-real-projects)
-	- [How to use spark-shell to run spark application script （for testing）](#how-to-use-spark-shell-to-run-spark-application-script-for-testing)
+	- [How to use spark-submit to run spark application script (for real projects)](#how-to-use-spark-submit-to-run-spark-application-script-for-real-projects)
+	- [How to use spark-shell to run spark application script (for testing)](#how-to-use-spark-shell-to-run-spark-application-script-for-testing)
 
 ---
 
@@ -79,11 +80,11 @@ DStreams support many transformation operations available on normal Spark RDDs.
 
 #### `foreachRDD`
 
-One of the most important output operations is `foreachRDD`, which is generic approach of applying a function to each RDD in a DStream. Most commonly, it is used for sending RDDs to external systems. NOTE, it is executed in the driver process running the streaming application. 
+One of the most important output operations is `foreachRDD`, which is generic approach of applying a function to each RDD in a DStream. Most commonly, it is used for sending RDDs to external systems. **NOTE**, it is executed in the driver process running the streaming application. 
 
 ![foreachRDD.png](img/foreachRDD.png)
 
-The above code is not a good approach as the overhead of serialization and deserialization can be major over the network.
+The above code is not a good approach as the overhead of serialization and deserialization can be major over the network. (Connection is created on driver while "send" operation happens on executors. Thus, connection object needs to be sent across the network.)
 
 Optimize: 
 
@@ -112,6 +113,16 @@ Optimize more further:
 - **No way to handle late data.**
 - Only operates in a micro-batch fashion, making it difficult to support alternative execution modes.
 - If you want millisecond level, use stream computing framework, e.g. Storm.  
+
+### Windowing 
+
+The window length and sliding interval must be multiples of the batch interval of the source DStream.
+
+Common windowing transformations: 
+
+- `window`
+- `countByWindow`
+- `reduceByWindow`
 
 ---
 
@@ -430,7 +441,7 @@ Steps:
 
 ---
 
-## How to use spark-submit to run spark application script （for real projects）
+## How to use spark-submit to run spark application script (for real projects)
 
 Take processing socket text as an example.
 
@@ -457,7 +468,7 @@ spark-submit --master local[2] \
 
 ---
 
-## How to use spark-shell to run spark application script （for testing）
+## How to use spark-shell to run spark application script (for testing)
 
 Take processing socket text as an example. 
 
