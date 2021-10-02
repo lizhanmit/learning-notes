@@ -155,7 +155,6 @@
       - [Pivot Consolidate](#pivot-consolidate)
     - [Null Value](#null-value)
     - [UDF](#udf)
-    - [`import spark.implicits._`](#import-sparkimplicits_)
     - [Scala Object VS Scala App](#scala-object-vs-scala-app)
     - [Read Files](#read-files)
       - [Read CSV File as Dataset](#read-csv-file-as-dataset)
@@ -2057,12 +2056,6 @@ val myUDF = (x => <userDefinedFunction>)
 val myNewDF = myDF.withColumn("newColumnName", myUDF('columnName'))
 ```
 
-### `import spark.implicits._`
-
-When to use:
-
-- when using `$<columnName>` to convert a string to a column.
-
 ### Scala Object VS Scala App
 
 When coding in IDE, you will be choosing to create a Scala Object or a Scala App under a package.
@@ -2165,6 +2158,7 @@ Two things you can do with null values:
 #### Optimization
 
 - When reading a csv file as DataFrame, if you can know the schema ahead of time and **use `StructType` rather than `option("inferSchema", "true")`**, there will be a significant performance benefit **when the data set is very large**, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
+- Calling the UDF after `join` can save you from the shuffle if the tables are bucketed (or distributed according to some specific partitioning). 
 
 ---
 
