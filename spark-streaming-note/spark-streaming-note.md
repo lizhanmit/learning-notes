@@ -8,6 +8,7 @@
 			- [DStream API Coding Steps](#dstream-api-coding-steps)
 		- [Limitations](#limitations)
 		- [Windowing](#windowing)
+		- [Checkpointing](#checkpointing)
 	- [Continuous VS Micro-Batch Processing](#continuous-vs-micro-batch-processing)
 	- [DStream VS Structured Streaming](#dstream-vs-structured-streaming)
 	- [Structured Streaming](#structured-streaming)
@@ -23,7 +24,7 @@
 		- [Watermarking](#watermarking)
 		- [Join Operations](#join-operations)
 		- [Streaming Deduplication](#streaming-deduplication)
-		- [Checkpointing](#checkpointing)
+		- [Checkpointing](#checkpointing-1)
 	- [Updating Application](#updating-application)
 			- [Updating Streaming Application Code](#updating-streaming-application-code)
 			- [Updating Spark Version](#updating-spark-version)
@@ -122,7 +123,32 @@ Common windowing transformations:
 
 - `window`
 - `countByWindow`
+- `countByValueAndWindow`
 - `reduceByWindow`
+- `reduceByKeyAndWindow`
+
+For example, 
+
+```java
+private static final int BATCH_DURATION_INTERVAL_MS = 1000;
+private static final int WINDOW_LENGTH_MS = 30000;
+private static final int SLIDING_INTERVAL_MS = 5000;
+
+// in this DStream, each RDD has a single element: count number
+JavaDStream<Long> countStream = <stream>.countByWindow(new Duration(WINDOW_LENGTH_MS), new Duration(SLIDING_INTERVAL_MS));
+
+countStream.foreachRDD((JavaRDD<Long> countRDD) -> {
+  MongoSpark.save(countRDD.map(r -> Document.parse("{\"rsvps_count\":\"" + String.valueOf(r) + "\"}")));
+});
+```
+
+### Checkpointing
+
+Long running pipelines must be able to tolerate machine failures.
+
+Specifying a checkpoint directory can achieve fault tolerance. `streamingContext.checkpoint("<checkpoint_dir>")`
+
+Shared variables (accumulators and broadcast variables) cannot be recovered from checkpoint in Spark Streaming.
 
 ---
 
