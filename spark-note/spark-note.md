@@ -47,26 +47,6 @@
       - [`groupByKey()` V.S. `reduceByKey()`](#groupbykey-vs-reducebykey)
     - [Serialization](#serialization)
       - [Kryo](#kryo)
-    - [Datasets](#datasets)
-      - [Advantages](#advantages)
-      - [Disadvantages](#disadvantages)
-      - [`joinWith()`](#joinwith)
-        - [`join()` VS `joinWith()`](#join-vs-joinwith)
-    - [DataFrames](#dataframes)
-      - [RDD VS DataFrame VS Dataset](#rdd-vs-dataframe-vs-dataset)
-    - [RDD -> DataFrame](#rdd---dataframe)
-    - [Structured API Execution](#structured-api-execution)
-      - [Logical Plan](#logical-plan)
-      - [Physical Plan](#physical-plan)
-      - [Execution](#execution)
-    - [Schema](#schema)
-      - [Column](#column)
-      - [Row](#row)
-    - [Joins](#joins)
-      - [Big table–to–big table](#big-tabletobig-table)
-      - [Big table–to–small table](#big-tabletosmall-table)
-      - [Small table–to–small table](#small-tabletosmall-table)
-    - [Grouping Sets](#grouping-sets)
     - [Data Sources](#data-sources)
       - [JSON](#json)
       - [Parquet](#parquet)
@@ -87,6 +67,26 @@
       - [Spark-Managed Tables](#spark-managed-tables)
     - [Views](#views)
     - [Aggregations](#aggregations)
+    - [DataFrames](#dataframes)
+      - [RDD VS DataFrame VS Dataset](#rdd-vs-dataframe-vs-dataset)
+    - [RDD -> DataFrame](#rdd---dataframe)
+    - [Structured API Execution](#structured-api-execution)
+      - [Logical Plan](#logical-plan)
+      - [Physical Plan](#physical-plan)
+      - [Execution](#execution)
+    - [Schema](#schema)
+      - [Column](#column)
+      - [Row](#row)
+    - [Joins](#joins)
+      - [Big table–to–big table](#big-tabletobig-table)
+      - [Big table–to–small table](#big-tabletosmall-table)
+      - [Small table–to–small table](#small-tabletosmall-table)
+    - [Grouping Sets](#grouping-sets)
+  - [Datasets](#datasets)
+    - [Advantages](#advantages)
+    - [Disadvantages](#disadvantages)
+    - [`joinWith()`](#joinwith)
+      - [`join()` VS `joinWith()`](#join-vs-joinwith)
   - [Spark ML](#spark-ml)
     - [ML Workflow](#ml-workflow)
     - [Feature Transformation](#feature-transformation)
@@ -811,234 +811,6 @@ Since Spark 2.0.0, we internally use Kryo serializer when shuffling RDDs with si
 
 ---
 
-### Datasets
-
-Datasets and DataFrames are distributed table-like collections with well-defined rows and columns.
-
-After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported. **The trend in Spark is to use RDDs less and Datasets more.**
-
-Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
-
-Datasets can explicitly wrap a given struct or type. (Dataset[Person], Dataset[(String, Double)])
-
-The Dataset API gives users the ability to assign a Java/Scala class to the records within a DataFrame and manipulate it as a collection of typed objects.
-
-**Recommend** using Datasets only with user-defined encoding surgically and only where it makes sense. This might be at the beginning of a big data pipeline or at the end of one.
-
-Think of Datasets as a blend between the higher-level Structured APIs and the low-level RDD APIs.
-
-#### Advantages
-
-- Datasets are more efficient.
-  - They can be serialized very efficiently, even better than Kryo.
-  - Optimal execution plans can be determined at compile time.
-- Datasets allow for better interoperability.
-  - MLLib and Spark Streaming are moving toward using Datasets instead of RDDs for their primary API.  
-- Datasets simplify development.
-  - You can perform most SQL operations on a dataset with one line.
-
-Processing or transmitting over the network:
-
-- RDD: using Java serialization or Kryo.
-- Dataset: using a specialized Encoder to serialize the objects.
-  - This Encoder is highly optimized and generates bytecode at run time for serialization and deserialization.
-
-Two ways to create a Dataset:
-
-- from Hadoop InputFormats (such as HDFS files).
-- by transforming other Datasets.
-
-When to use Datasets: 
-
-- When your code needs high-level abstraction, rich semantics and domain specific APIs. 
-- If processing requires high-level expressions, filters, aggregations, SQL queries, columnar access.
-- If high degree of compile time and run time type safety is required.
-- To take advantage of performance optimizations from Catalyst. 
-- To take advantage of efficient dynamic code generation from Tungsten. 
-
-#### Disadvantages
-
-- Cost of performance: Spark converts the Row format (domain specifies type) to the object you specified (a case class or Java class).
-- By specifying a function, you are forcing Spark to evaluate this function on every row in your Dataset. This can be very resource intensive. For simple filters it is always **preferred** to write
-SQL expressions.
-
-#### `joinWith()`
-
-DatasetA `joinWith` DatasetB ends up with two nested Datasets. Each column represents one Dataset. 
-
-##### `join()` VS `joinWith()`
-
-![join-vs-joinWith.png](img/join-vs-joinWith.png)
-
-DataFrames can also join Datasets.
-
----
-
-### DataFrames 
-
-- A DataFrame simply represents a table of data with rows and columns. 
-- A DataFrame is a kind of distributed dataset on basis of RDD.
-- A DataFrame is a distributed set of `Row` objects or Dataset of type Row (`Dataset[Row]`).
-- Each `Row` object represents a row of record, which provides detailed schema info.
-- `Row` is an untyped JVM object.
-- Through DataFrame, Spark SQL is able to know column name and type of the dataset.
-- When you are using DataFrames, you are taking advantage of Spark's optimized internal Catalyst format. 
-- Can be created from:
-  - structured data files
-  - Hive tables
-  - external databases
-  - existing RDDs: `val myDF = spark.createDataFrame(myRDD, mySchema)`
-
-#### RDD VS DataFrame VS Dataset
-
-- For RDD, columns are accessed with position number: `rdd.filter(line => line.split(",")(1) == "Alice")`
-- For DataFrame, columns are accessed by column name: `df.filter(df("name") === "Alice")`
-- For Dataset, columns are accessed by object attribute: `ds.filter(obj => obj.name == "Alice")`
-
-DataFrame maps to a collection of Row-type objects. 
-
-Dataset maps to a collection of objects. 
-
-DataFrames schema is inferred at **runtime**; but a Dataset can be inferred at **compile time**, which implies faster detection of errors and better optimization.
-
-[A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
-
----
-
-### RDD -> DataFrame
-
-![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
-
-Two ways to convert RDD to DataFrame:
-
-- Use Reflection to infer the schema of the RDD that contains specific type data.
-  - Firstly define a case class. Then Spark will convert it to DataFrame implicitly.
-  - This way is suitable for the RDD whose data type is known.
-  - More concise code.
-  - Currently (Spark 2.4), Spark SQL does not support converting JavaBeans to DataFrames that contain Map field(s).
-- Use programming interface to construct a schema and apply it to an existing RDD.
-  - Construct Datasets when the columns and their types are not known until runtime.
-  - More verbose.
-  - Steps:
-    1. Create an RDD of `Rows` from the original RDD.
-    2. Create the schema represented by a `StructType` matching the structure of Rows in the RDD created in Step 1.
-    3. Apply the schema to the RDD of `Rows` via `createDataFrame()` method provided by `SparkSession`.
-
----
-
-### Structured API Execution
-
-Steps: 
-
-1. Write DataFrame / Dataset / SQL Code.
-2. If valid code, Spark converts this to a Logical Plan.
-3. Spark transforms this Logical Plan to a Physical Plan, checking for optimizations along the way through Catalyst Optimizer.
-4. Spark then executes this Physical Plan (RDD manipulations) on the cluster.
-
-![catalyst-optimizer.png](img/catalyst-optimizer.png)
-
-#### Logical Plan
-
-![logical-planning-process.png](img/logical-planning-process.png)
-
-#### Physical Plan 
-
-![physical-planning-process.png](img/physical-planning-process.png)
-
-#### Execution
-
-Spark performs further optimizations at runtime, generating native Java bytecode that can remove entire tasks or stages during execution.
-
----
-
-### Schema
-
-- Schema-on-read
-  - Infer schema automatically.
-  - Inaccurate, precision issues.
-- Define schema manually through `StructType` and `StructField`.
-  - Use this in production especially for untyped sources like CSV and JSON files.
-
-#### Column
-
-Different ways to construct or refer a column: 
-
-- `col("columnName")`
-- `column("columnName")`
-- `$"columnName"` (in Scala)
-- `'columnName` (in Scala)
-- `expr("columnName")` (the most flexible)
-
-- Columns are just expressions.
-- Columns and transformations of those columns compile to the same logical plan as parsed expressions. For example, `expr("columnName - 5")` = `expr("columnName") - 5`, because Spark compiles these to a logical tree specifying the order of operations.
-
-#### Row
-
-- Each row in a DataFrame is a single record.
-- A record is an object of type Row.
-- Row objects internally represent arrays of bytes. 
-
-- Create a Row: `val myRow = Row("hello", null, 1, false)`
-- Access a Row: 
-  - `myRow(0)`: type Any
-  - `myRow(0).asInstanceOf[String]`: type String
-  - `myRow.getString(0)`: type String
-  - `myRow.getInt(2)`: type Int
-
----
-
-### Joins
-
-**Partition data correctly prior to a join.**
-
-If data from two different DataFrames is already located on the same machine, Spark can avoid the shuffle.
-
-[SparkSQL-有必要坐下来聊聊Join](http://hbasefly.com/2017/03/19/sparksql-basic-join/?cwrmhw=4wzjj2)
-
-Communication Strategies
-
-- Shuffle join
-  - All-to-all communication.
-  - Every node talks to every other node. 
-  - Expensive, especially if your data is not partitioned well.
-- Broadcast join
-  - Replicate the small DataFrame onto every worker node.
-  - More efficient.
-  - Explicitly use a broadcast join: `<df1>.join(broadcast(<df2>), <joinExpr>)`.
-
-#### Big table–to–big table
-
-Use shuffle join.
-
-![join-two-big-tables.png](img/join-two-big-tables.png)
-
-#### Big table–to–small table
-
-Small: small enough to fit into the memory of a single worker node. 
-
-Use broadcast join.
-
-Steps:
-
-1. Use broadcast variable to broadcast small table onto every node.
-2. Joins will be performed on every single node individually. No further communication between nodes.
-
-![join-big-table-and-small-table.png](img/join-big-table-and-small-table.png)
-
-#### Small table–to–small table
-
-It is usually best to let Spark decide how to join them.
-
----
-
-### Grouping Sets
-
-`GROUPING SETS` operator is only available in SQL.
-
-When performing grouping sets, if you do not filter out null values, you will get incorrect results. This applies to cubes, rollups, and grouping sets.
-
----
-
 ### Data Sources
 
 Six core data sources:
@@ -1114,21 +886,22 @@ When writing files, you can control file sizes by controlling the number of reco
 - Cannot communicate with the Thrift JDBC server.
 - To start Spark SQL CLI, in terminal under the Spark directory, `./bin/spark-sql`.
 
----
-
 ### Spark SQL Thrift JDBC/ODBC Server
 
 ![sparkSQL-shell-access.png](img/sparkSQL-shell-access.png)
-
----
 
 ### Spark SQL Optimization
 
 ![spark-sql-optimization.jpg](img/spark-sql-optimization.jpg)
 
----
+Spark SQL takes advantage of Catalyst and Tungsten optimizer. 
+
+- Catalyst: Query optimization framework.
+- Tungsten: Improves Spark execution by optimizing Spark jobs for CPU and memory efficiency. 
 
 ### SparkSession
+
+SparkSession is the entry point of all Spark SQL functionality. 
 
 From Spark 2.0, `SparkSession` interface was introduced to realize all functions of `SQLContext` and `HiveContext`.
 
@@ -1159,8 +932,6 @@ SQLContext focuses on the higher-level tools like Spark SQL.
 
 You should **never need to use the SQLContext.**
 
----
-
 ### Spark SQL & Hive
 
 It is compulsory to add Hive support for Spark in order to access Hive using Spark.
@@ -1173,8 +944,6 @@ Spark SQL can connect to Hive metastores. To connect to the Hive metastore, ther
 - `spark.sql.hive.metastore.jars`
 - `spark.sql.hive.metastore.sharedPrefixes`
 
----
-
 ### Catalog
 
 The highest level abstraction in Spark SQL.
@@ -1182,8 +951,6 @@ The highest level abstraction in Spark SQL.
 It is an abstraction for the storage of metadata about the data stored in your tables, databases, tables, functions, and views.
 
 It is a repository of all table and DataFrame information.
-
----
 
 ### Tables
 
@@ -1197,19 +964,246 @@ Core difference between tables and DataFrames:
 - When you define a table from files on disk, you are defining an **unmanaged table**.
 - When you use `saveAsTable` on a DataFrame, you are creating a **Spark-managed table**.
 
----
-
 ### Views
 
 - A view specifies a set of transformations on top of an existing table. 
 - It basically just saves query plans, which can be convenient for organizing or reusing your query logic.
 - Spark will perform it only at query time.
 
----
-
 ### Aggregations
 
 [SparkSQL 中group by、grouping sets、rollup和cube方法详解](https://www.jianshu.com/p/45cf609f5a61)
+
+### DataFrames 
+
+Introduced in Spark 1.3.
+
+- The main goal is to process large amount of structured data (data with schema).
+- A DataFrame simply represents a table of data with rows and columns. 
+- A DataFrame is a kind of distributed dataset on basis of RDD.
+- A DataFrame is a distributed set of `Row` objects or Dataset of type Row (`Dataset[Row]`).
+- Each `Row` object represents a row of record, which provides detailed schema info.
+- `Row` is an untyped JVM object.
+- Through DataFrame, Spark SQL is able to know column name and type of the dataset.
+- When you are using DataFrames, you are taking advantage of Spark's optimized internal Catalyst format. 
+- Can be created from:
+  - structured data files
+  - Hive tables
+  - external databases, e.g. MySQL, Cassandra, PostgreSQL, H2
+  - ElasticSearch
+  - JSON 
+  - existing RDDs: `val myDF = spark.createDataFrame(myRDD, mySchema)`
+  - ...
+- The main drawback: not compile-time safety.
+
+#### RDD VS DataFrame VS Dataset
+
+![rdd-vs-dataframe-vs-dataset.png](img/rdd-vs-dataframe-vs-dataset.png)
+
+![rdd-vs-dataframe-vs-dataset-data-classification.png](img/rdd-vs-dataframe-vs-dataset-data-classification.png)
+
+- For RDD, columns are accessed with position number: `rdd.filter(line => line.split(",")(1) == "Alice")`
+- For DataFrame, columns are accessed by column name: `df.filter(df("name") === "Alice")`
+- For Dataset, columns are accessed by object attribute: `ds.filter(obj => obj.name == "Alice")`
+
+DataFrame maps to a collection of Row-type objects. 
+
+Dataset maps to a collection of objects. 
+
+DataFrames schema is inferred at **runtime**; but a Dataset can be inferred at **compile time**, which implies faster detection of errors and better optimization.
+
+[A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)
+
+### RDD -> DataFrame
+
+![difference-between-rdd-and-dataframe.png](img/difference-between-rdd-and-dataframe.png)
+
+Two ways to convert RDD to DataFrame:
+
+- Use Reflection to infer the schema of the RDD that contains specific type data.
+  - Firstly define a case class. Then Spark will convert it to DataFrame implicitly.
+  - This way is suitable for the RDD whose data type is known.
+  - More concise code.
+  - Currently (Spark 2.4), Spark SQL does not support converting JavaBeans to DataFrames that contain Map field(s).
+- Use programming interface to construct a schema and apply it to an existing RDD.
+  - Construct Datasets when the columns and their types are not known until runtime.
+  - More verbose.
+  - Steps:
+    1. Create an RDD of `Rows` from the original RDD.
+    2. Create the schema represented by a `StructType` matching the structure of Rows in the RDD created in Step 1.
+    3. Apply the schema to the RDD of `Rows` via `createDataFrame()` method provided by `SparkSession`.
+
+### Structured API Execution
+
+Steps: 
+
+1. Write DataFrame / Dataset / SQL Code.
+2. If valid code, Spark converts this to a Logical Plan.
+3. Spark transforms this Logical Plan to a Physical Plan, checking for optimizations along the way through Catalyst Optimizer.
+4. Spark then executes this Physical Plan (RDD manipulations) on the cluster.
+
+![catalyst-optimizer.png](img/catalyst-optimizer.png)
+
+#### Logical Plan
+
+![logical-planning-process.png](img/logical-planning-process.png)
+
+#### Physical Plan 
+
+![physical-planning-process.png](img/physical-planning-process.png)
+
+#### Execution
+
+Spark performs further optimizations at runtime, generating native Java bytecode that can remove entire tasks or stages during execution.
+
+### Schema
+
+- Schema-on-read
+  - Infer schema automatically.
+  - Inaccurate, precision issues.
+- Define schema manually through `StructType` and `StructField`.
+  - Use this in production especially for untyped sources like CSV and JSON files.
+
+#### Column
+
+Different ways to construct or refer a column: 
+
+- `col("columnName")`
+- `column("columnName")`
+- `$"columnName"` (in Scala)
+- `'columnName` (in Scala)
+- `expr("columnName")` (the most flexible)
+
+- Columns are just expressions.
+- Columns and transformations of those columns compile to the same logical plan as parsed expressions. For example, `expr("columnName - 5")` = `expr("columnName") - 5`, because Spark compiles these to a logical tree specifying the order of operations.
+
+#### Row
+
+- Each row in a DataFrame is a single record.
+- A record is an object of type Row.
+- Row objects internally represent arrays of bytes. 
+
+- Create a Row: `val myRow = Row("hello", null, 1, false)`
+- Access a Row: 
+  - `myRow(0)`: type Any
+  - `myRow(0).asInstanceOf[String]`: type String
+  - `myRow.getString(0)`: type String
+  - `myRow.getInt(2)`: type Int
+
+### Joins
+
+**Partition data correctly prior to a join.**
+
+If data from two different DataFrames is already located on the same machine, Spark can avoid the shuffle.
+
+[SparkSQL-有必要坐下来聊聊Join](http://hbasefly.com/2017/03/19/sparksql-basic-join/?cwrmhw=4wzjj2)
+
+Communication Strategies
+
+- Shuffle join
+  - All-to-all communication.
+  - Every node talks to every other node. 
+  - Expensive, especially if your data is not partitioned well.
+- Broadcast join
+  - Replicate the small DataFrame onto every worker node.
+  - More efficient.
+  - Explicitly use a broadcast join: `<df1>.join(broadcast(<df2>), <joinExpr>)`.
+
+#### Big table–to–big table
+
+Use shuffle join.
+
+![join-two-big-tables.png](img/join-two-big-tables.png)
+
+#### Big table–to–small table
+
+Small: small enough to fit into the memory of a single worker node. 
+
+Use broadcast join.
+
+Steps:
+
+1. Use broadcast variable to broadcast small table onto every node.
+2. Joins will be performed on every single node individually. No further communication between nodes.
+
+![join-big-table-and-small-table.png](img/join-big-table-and-small-table.png)
+
+#### Small table–to–small table
+
+It is usually best to let Spark decide how to join them.
+
+### Grouping Sets
+
+`GROUPING SETS` operator is only available in SQL.
+
+When performing grouping sets, if you do not filter out null values, you will get incorrect results. This applies to cubes, rollups, and grouping sets.
+
+---
+
+## Datasets
+
+Unified Spark 2.0 API (2016). 
+
+In Spark 2.0, `DataFrame` is `Dataset<Row>`.
+
+Datasets and DataFrames are distributed table-like collections with well-defined rows and columns.
+
+After Spark 2.0, RDDs are replaced by Datasets. The RDD interface is still supported. **The trend in Spark is to use RDDs less and Datasets more.**
+
+Datasets are similar to RDDs but are **strongly typed** that mapped to relational schema.
+
+Datasets can explicitly wrap a given struct or type, e.g. `Dataset[Person]`, `Dataset[(String, Double)]`.
+
+The Dataset API gives users the ability to assign a Java/Scala class to the records within a DataFrame and manipulate it as a collection of typed objects.
+
+**Recommend** using Datasets only with user-defined encoding surgically and only where it makes sense. This might be at the beginning of a big data pipeline or at the end of one.
+
+Think of Datasets as a blend between the higher-level Structured APIs and the low-level RDD APIs.
+
+### Advantages
+
+- Datasets are more efficient.
+  - They can be serialized very efficiently, even better than Kryo.
+  - Optimal execution plans can be determined at compile time.
+- Datasets allow for better interoperability.
+  - MLLib and Spark Streaming are moving toward using Datasets instead of RDDs for their primary API.  
+- Datasets simplify development.
+  - You can perform most SQL operations on a dataset with one line.
+
+Processing or transmitting over the network:
+
+- RDD: using Java serialization or Kryo.
+- Dataset: using a specialized Encoder to serialize the objects.
+  - This Encoder is highly optimized and generates bytecode at run time for serialization and deserialization.
+
+Two ways to create a Dataset:
+
+- from Hadoop InputFormats (such as HDFS files).
+- by transforming other Datasets.
+
+When to use Datasets: 
+
+- When your code needs high-level abstraction, rich semantics and domain specific APIs. 
+- If processing requires high-level expressions, filters, aggregations, SQL queries, columnar access.
+- If high degree of compile time and run time type safety is required.
+- To take advantage of performance optimizations from Catalyst. 
+- To take advantage of efficient dynamic code generation from Tungsten. 
+
+### Disadvantages
+
+- Cost of performance: Spark converts the Row format (domain specifies type) to the object you specified (a case class or Java class).
+- By specifying a function, you are forcing Spark to evaluate this function on every row in your Dataset. This can be very resource intensive. For simple filters it is always **preferred** to write
+SQL expressions.
+
+### `joinWith()`
+
+DatasetA `joinWith` DatasetB ends up with two nested Datasets. Each column represents one Dataset. 
+
+#### `join()` VS `joinWith()`
+
+![join-vs-joinWith.png](img/join-vs-joinWith.png)
+
+DataFrames can also join Datasets.
 
 ---
 
