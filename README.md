@@ -19,6 +19,7 @@
 - [HBase](https://github.com/lizhanmit/learning-notes/blob/master/hbase-note/hbase-note.md)
 - [Hive](https://github.com/lizhanmit/learning-notes/blob/master/hive-note/hive-note.md)
 - [Kafka](https://github.com/lizhanmit/learning-notes/blob/master/kafka-note/kafka-note.md)
+- [Machine Learning](https://github.com/lizhanmit/learning-notes/blob/master/machine-learning-note/machine-learning-note.md)
 - [Pig](https://github.com/lizhanmit/learning-notes/blob/master/pig-note/pig-note.md)
 - [Power BI](https://github.com/lizhanmit/learning-notes/blob/master/power-bi-note/power-bi-note.md)
 - [Python Data Science Libraries](https://github.com/lizhanmit/learning-notes/blob/master/python-data-science-libraries-note/python-data-science-libraries-note.md)
