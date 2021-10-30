@@ -3,6 +3,7 @@
 - [AWS Note](#aws-note)
   - [Quick Look](#quick-look)
   - [Overview](#overview)
+    - [Architecture](#architecture)
   - [Global Infrastructure](#global-infrastructure)
     - [AWS Regions](#aws-regions)
     - [Availability Zones (AZ)](#availability-zones-az)
@@ -70,6 +71,8 @@ Four primary benefits of using cloud services:
 - fault tolerant
 - scalability
 - elasticity
+
+### Architecture
 
 ![aws-architecture.png](img/aws-architecture.png)
 
