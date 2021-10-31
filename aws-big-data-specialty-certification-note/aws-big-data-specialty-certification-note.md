@@ -1,5 +1,7 @@
 # AWS Big Data Specialty Certification Note
 
+[(Based on tutorial: AWS Certified Data Analytics Specialty 2021 – Hands-On!)](https://learning.oreilly.com/videos/aws-certified-data/9781838983383/)
+
 - [AWS Big Data Specialty Certification Note](#aws-big-data-specialty-certification-note)
   - [Simple Queue Service (SQS)](#simple-queue-service-sqs)
     - [Overview](#overview)
@@ -58,6 +60,11 @@
     - [Partitions Internal](#partitions-internal)
     - [APIs](#apis)
     - [Indexes](#indexes)
+    - [DynamoDB Accelerator (DAX)](#dynamodb-accelerator-dax)
+    - [DynamoDB Streams](#dynamodb-streams)
+    - [DynamoDB Time to Live (TTL)](#dynamodb-time-to-live-ttl)
+    - [Security & Other Features](#security--other-features)
+    - [Storing Large Objects](#storing-large-objects)
 
 ---
 
@@ -360,6 +367,8 @@ The exam will mainly try to make you choose between Kafka and Kinesis based on s
 
 ### Overview
 
+DynamoDB is a great place to store data when you need to **read it very very often**. For under-used data which is not read very often, using S3 (to store data itself) + DynamoDB (to store metadata) is a better solution.
+
 ![dynamodb.png](img/dynamodb.png)
 
 ![dynamodb-basics.png](img/dynamodb-basics.png)
@@ -406,12 +415,50 @@ The exam will mainly try to make you choose between Kafka and Kinesis based on s
 
 ### Indexes
 
-(really important)
+**(really important)**
 
 ![dynamodb-lsi.png](img/dynamodb-lsi.png)
 
 ![dynamodb-gsi.png](img/dynamodb-gsi.png)
 
+### DynamoDB Accelerator (DAX)
 
+DAX is a fully-managed, highly-available, in-memory caching service for DynamoDB.
 
+It is not free.
+
+It is not auto-scale. You have to provision in advance.
+
+It improves DynamoDB performance if you have high read throughput. 
+
+You need SDK to use DAX.
+
+![dynamodb-dax.png](img/dynamodb-dax.png)
+
+### DynamoDB Streams
+
+![dynamodb-streams.png](img/dynamodb-streams.png) 
+
+Two choices to consume DynamoDB Streams:
+
+- AWS Lambda
+- KCL library with Kinesis Adapter
+
+![dynamodb-streams-kinesis-adapter.png](img/dynamodb-streams-kinesis-adapter.png)
+
+### DynamoDB Time to Live (TTL)
+
+Use DynamoDB TTL when you need to delete data based on time.
+ 
+![dynamodb-ttl.png](img/dynamodb-ttl.png) 
+
+### Security & Other Features
+
+![dynamodb-security-and-other.png](img/dynamodb-security-and-other.png)
+
+### Storing Large Objects
+
+![dynamodb-storing-large-objects.png](img/dynamodb-storing-large-objects.png)
+
+![dynamodb-price-comparison-for-300kb.png](img/dynamodb-price-comparison-for-300kb.png)
 
