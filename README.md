@@ -74,6 +74,7 @@
 ---
 
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
+- [AWS Big Data Specialty Certification](https://github.com/lizhanmit/learning-notes/blob/master/aws-big-data-specialty-certification-note/aws-big-data-specialty-certification-note.md)
 - [CI CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
 - [Computer Science](https://github.com/lizhanmit/learning-notes/blob/master/computer-science-note/computer-science-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
