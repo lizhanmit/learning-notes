@@ -3,13 +3,15 @@
 [(Based on tutorial: AWS Certified Data Analytics Specialty 2021 – Hands-On!)](https://learning.oreilly.com/videos/aws-certified-data/9781838983383/)
 
 - [AWS Big Data Specialty Certification Note](#aws-big-data-specialty-certification-note)
+  - [Kinesis](#kinesis)
+    - [**Exam Preparation**](#exam-preparation)
   - [Simple Queue Service (SQS)](#simple-queue-service-sqs)
     - [Overview](#overview)
     - [SQS Queue](#sqs-queue)
     - [SQS Use Cases](#sqs-use-cases)
     - [SQS Limits](#sqs-limits)
     - [SQS Security](#sqs-security)
-    - [**Exam Preparation**](#exam-preparation)
+    - [**Exam Preparation**](#exam-preparation-1)
     - [Kinesis VS. SQS](#kinesis-vs-sqs)
   - [IoT](#iot)
     - [Overview](#overview-1)
@@ -21,7 +23,7 @@
     - [Device Shadow](#device-shadow)
     - [Rules Engine](#rules-engine)
     - [Greengrass](#greengrass)
-    - [**Exam Preparation**](#exam-preparation-1)
+    - [**Exam Preparation**](#exam-preparation-2)
   - [Database Migration Service (DMS)](#database-migration-service-dms)
   - [Direct Connect](#direct-connect)
   - [Snow Family](#snow-family)
@@ -39,7 +41,7 @@
     - [Security](#security)
     - [Monitoring](#monitoring)
     - [Kinesis Data Streams VS. MSK](#kinesis-data-streams-vs-msk)
-    - [**Exam Preparation**](#exam-preparation-2)
+    - [**Exam Preparation**](#exam-preparation-3)
   - [Simple Storage Service (S3)](#simple-storage-service-s3)
     - [Overview](#overview-3)
     - [Consistency Model](#consistency-model)
@@ -65,6 +67,16 @@
     - [DynamoDB Time to Live (TTL)](#dynamodb-time-to-live-ttl)
     - [Security & Other Features](#security--other-features)
     - [Storing Large Objects](#storing-large-objects)
+
+---
+
+## Kinesis
+
+### **Exam Preparation**
+
+Kinesis Firehose is near real-time. It can only deliver data with the minimum interval of 60 seconds. If you need to deliver data on 1 second basis, you should not choose it. 
+
+Kinesis Stream, 1 shard - 1 MB/sec for write - 1000 records/sec for write - 2 MB/sec for read. 
 
 ---
 
