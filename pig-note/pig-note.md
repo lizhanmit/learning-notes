@@ -64,7 +64,7 @@ Need to register the custom UDF or put the UDF in an Pig class path before using
 
 Apache Pig provides an API to integrate Apache Hive using the Hive metastore called HCatalog.
 
-Execute Pig script in command: `pig �CuseHCatalog employeeprocess.pig`
+Execute Pig script in command: `pig -useHCatalog employeeprocess.pig`
 
 If you do not use the `-useHCatalog` option then Pig will go through an exception of not recognizing `HCatLoader` or `HCatStorer`.
 
