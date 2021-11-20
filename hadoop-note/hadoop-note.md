@@ -159,7 +159,7 @@ Hadoop provides an API to get the cluster ID of a DataNode. Client can call this
 
 How to determine which replication of data block to read:
 
-When the client is reading data, it gets the list of places (DataNodes) where different replications of data block are stored from the NameNode. You can get ID of the cluster that the client and these DataNodes belong to by call the API. If finding the cluster ID for one replication of data block is the same as the one for client, then read this replication in the first place. Otherwise, read the replication randomly.
+When the client is reading data, it gets the list of places (DataNodes) where different replications of data block are stored from the NameNode. You can get ID of the cluster that the client and these DataNodes belong to by calling the API. If finding the cluster ID for one replication of data block is the same as the one for client, then read this replication in the first place. Otherwise, read the replication randomly.
 
 ![hdfs-read-data-2.png](img/hdfs-read-data-2.png)
 
