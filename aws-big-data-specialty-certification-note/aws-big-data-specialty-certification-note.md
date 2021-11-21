@@ -67,6 +67,12 @@
     - [DynamoDB Time to Live (TTL)](#dynamodb-time-to-live-ttl)
     - [Security & Other Features](#security--other-features)
     - [Storing Large Objects](#storing-large-objects)
+  - [ElastiCache](#elasticache)
+    - [**Exam Preparation**](#exam-preparation-4)
+    - [Overview](#overview-5)
+    - [Redis](#redis)
+    - [Memcached](#memcached)
+  - [Lambda](#lambda)
 
 ---
 
@@ -474,3 +480,30 @@ Use DynamoDB TTL when you need to delete data based on time.
 
 ![dynamodb-price-comparison-for-300kb.png](img/dynamodb-price-comparison-for-300kb.png)
 
+---
+
+## ElastiCache
+
+### **Exam Preparation** 
+
+ElastiCache does not come up very often in the exam. 
+
+### Overview
+
+![elasticache-overview.png](img/elasticache-overview.png)
+
+### Redis
+
+![redis-overview.png](img/redis-overview.png)
+
+### Memcached
+
+![memcached-overview.png](img/memcached-overview.png)
+
+---
+
+## Lambda
+
+Serverless data processing
+
+![lambda.png](img/lambda.png)
