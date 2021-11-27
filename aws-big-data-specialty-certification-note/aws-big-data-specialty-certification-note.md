@@ -73,6 +73,8 @@
     - [Redis](#redis)
     - [Memcached](#memcached)
   - [Lambda](#lambda)
+    - [Overview](#overview-6)
+    - [Lambda Integration](#lambda-integration)
 
 ---
 
@@ -504,6 +506,34 @@ ElastiCache does not come up very often in the exam.
 
 ## Lambda
 
+### Overview
+
 Serverless data processing
 
 ![lambda.png](img/lambda.png)
+
+Lambda is not always used for big data. A common use of Lambda is in use of a serverless website.
+
+Serverless website example:
+
+![lambda-serverless-website-example.png](img/lambda-serverless-website-example.png)
+
+Order history app example:
+
+![lambda-order-history-app-example.png](img/lambda-order-history-app-example.png)
+
+Transaction rate alarm example:
+
+![lambda-transaction-rate-alarm-example.png](img/lambda-transaction-rate-alarm-example.png)
+
+Lambda is still running on servers under the hood, but they are not servers that you manage.
+
+![lambda-why-not-just-run-a-server.png](img/lambda-why-not-just-run-a-server.png)
+
+### Lambda Integration
+
+![main-use-of-lambda.png](img/main-use-of-lambda.png)
+
+![lambda-triggers.png](img/lambda-triggers.png)
+
+When integrating Lambda with Kinesis streams, under the hood, Lambda is actually pulls the Kinesis streams periodically and collects information from it in a batch manner. Stream is not pushing data into Lambda.
