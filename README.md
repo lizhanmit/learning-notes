@@ -66,7 +66,7 @@
 ## Java
 
 - [Java](https://github.com/lizhanmit/learning-notes/blob/master/java-note/java-note.md)
-- [Java 8 Lambda Expression](https://github.com/lizhanmit/java-8-lambda)
+- [Java 8](https://github.com/lizhanmit/java-8)
 - [Java Concurrency](https://github.com/lizhanmit/java-concurrency)
 - [Java Concurrency Web](https://github.com/lizhanmit/java-concurrency-web)
 - [Java Design Patterns](https://github.com/lizhanmit/java-design-patterns)
