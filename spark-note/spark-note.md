@@ -2153,6 +2153,10 @@ Two things you can do with null values:
 
 - When reading a csv file as DataFrame, if you can know the schema ahead of time and **use `StructType` rather than `option("inferSchema", "true")`**, there will be a significant performance benefit **when the data set is very large**, since Spark will not need to perform an extra pass over the data to figure out the data type of each column.
 - Calling the UDF after `join` can save you from the shuffle if the tables are bucketed (or distributed according to some specific partitioning). 
+- If you have multiple wide transformations on one or more columns, you can repartition the data by these columns first to reduce shuffle in the wide transformations. 
+- Big tables join: 
+  - Basic approach: Repartition one table by the join key, and then join another table. 
+  - Another approach: Use bucketed join. Bucket both tables by the join key, which results in both tables having their data chunks to be made available in the same nodes for join, because the location of nodes are chosen using the hash of the bucket key. Code: `df.write.bucketBy() ...`
 
 ---
 
