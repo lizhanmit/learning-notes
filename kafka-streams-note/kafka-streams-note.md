@@ -10,6 +10,11 @@
     - [High Level DSL VS. Low Level API](#high-level-dsl-vs-low-level-api)
     - [Internal Topics](#internal-topics)
     - [Scaling Applications](#scaling-applications)
+    - [KStreams](#kstreams)
+    - [KTables](#ktables)
+    - [KStreams VS. KTables](#kstreams-vs-ktables)
+    - [Stateless VS. Stateful](#stateless-vs-stateful)
+    - [Operations](#operations)
   - [Coding](#coding)
     - [Console Code](#console-code)
     - [Kafka Streams App Properties](#kafka-streams-app-properties)
@@ -60,6 +65,32 @@
 ![scaling-applications-2.png](img/scaling-applications-2.png)
 
 **NOTE**: The maximum parallelism is the number of input partitions in the topic.
+
+### KStreams
+
+![kstreams.png](img/kstreams.png)
+
+### KTables
+
+![ktables.png](img/ktables.png)
+
+### KStreams VS. KTables
+
+![kstreams-vs-ktables.png](img/kstreams-vs-ktables.png)
+
+### Stateless VS. Stateful
+
+![stateless-vs-stateful.png](img/stateless-vs-stateful.png)
+
+### Operations
+
+![mapvalues-and-map.png](img/mapvalues-and-map.png)
+
+![filter-and-filternot.png](img/filter-and-filternot.png)
+
+![flatmapvalues-and-flatmap.png](img/flatmapvalues-and-flatmap.png)
+
+![branch.png](img/branch.png)
 
 ---
 
