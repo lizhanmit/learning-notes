@@ -85,6 +85,7 @@
   - [Datasets](#datasets)
     - [Advantages](#advantages)
     - [Disadvantages](#disadvantages)
+    - [Dataset Encoders](#dataset-encoders)
     - [`joinWith()`](#joinwith)
       - [`join()` VS `joinWith()`](#join-vs-joinwith)
   - [Spark ML](#spark-ml)
@@ -148,6 +149,7 @@
       - [Set Up Spark Projects in IDE](#set-up-spark-projects-in-ide)
     - [`spark-shell`](#spark-shell)
     - [RDD](#rdd)
+    - [Dataset](#dataset)
     - [DataFrame](#dataframe)
     - [Pivot](#pivot)
       - [Complex Pivot](#complex-pivot)
@@ -1195,6 +1197,18 @@ When to use Datasets:
 - By specifying a function, you are forcing Spark to evaluate this function on every row in your Dataset. This can be very resource intensive. For simple filters it is always **preferred** to write
 SQL expressions.
 
+### Dataset Encoders 
+
+Datasets represents structured queries with encoders. 
+
+Encoders translate between JVM objects (domain objects) and Spark's internal binary format. 
+
+Spark has built-in very advanced encoders.
+
+Encoders generate byte-code to interact with off-heap data.
+
+Encoders perform serialization and deserialization much faster than Java and Kryo.
+
 ### `joinWith()`
 
 DatasetA `joinWith` DatasetB ends up with two nested Datasets. Each column represents one Dataset. 
@@ -1956,6 +1970,12 @@ distinctElementsRDD.collect
   - E.g. `(k, v1).join(k, v2)` Then you will get `(k, (v1, v2))`.
 - Create a new key for RDD: `<rdd_var>.keyBy(<func>)`
   - E.g. `<rdd_var>.keyBy(<tuple> => <tuple._1>)`
+
+### Dataset
+
+```java
+Dataset<Integer> intDS = sparkSession.createDataset(Arrays.asList(1, 2, 3, 4, 5), Encoders.INT());
+```
 
 ### DataFrame
 
