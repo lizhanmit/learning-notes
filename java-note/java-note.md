@@ -1337,7 +1337,11 @@ by keeping contiguous sections of free memory as large as possible.
 
 ## GC (Garbage Collection)
 
-[What is Java Garbage Collection? How It Works, Best Practices](https://stackify.com/what-is-java-garbage-collection/)
+[What is Java Garbage Collection? How It Works, Best Practices](https://dzone.com/articles/java-garbage-collection-best-practices-tutorials-and-more)
+
+[Garbage Collection in Java](https://www.geeksforgeeks.org/garbage-collection-java/)
+
+[Java Garbage Collection Basics](https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html)
 
 [五分钟了解JAVA垃圾回收](https://baijiahao.baidu.com/s?id=1610753983428990724&wfr=spider&for=pc)
 
@@ -1353,8 +1357,8 @@ Associate a "mark" bit with each object that identifies whether that object is l
 
 Steps: 
 
-1. When the GC happens, suspend all other activity.
-2. Clear the mark bits of all the objects currently allocated in the memory heap. (清掉所有的mark。)
+1. When the GC happens, suspend all other activities.
+2. Clear the mark bits of all the objects currently allocated in the memory heap. (Clear all marks.)
 3. Trace through the Java stacks of the currently running threads and we mark all the root objects in these stacks as "live".
 4. Mark other objects that are reachable from the root objects as "live".
 
