@@ -49,6 +49,9 @@
     - [beeline](#beeline)
   - [Installation](#installation)
   - [Configuration](#configuration)
+  - [Interview](#interview)
+
+---
 
 ## Concepts
 
@@ -635,3 +638,9 @@ SET mapred.output.compression.type=BLOCK;
 ```
 
 https://www.cloudera.com/documentation/enterprise/5-9-x/topics/introduction_compression_snappy.html
+
+---
+
+## Interview
+
+[Top Hadoop Interview Questions To Prepare In 2022 – Apache Hive](https://www.edureka.co/blog/interview-questions/hive-interview-questions/)
