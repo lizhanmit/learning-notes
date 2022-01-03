@@ -32,9 +32,6 @@
       - [Generic Classes](#generic-classes)
       - [Generic Array](#generic-array)
   - [Class](#class)
-  - [Class Loader](#class-loader)
-    - [Delegation Mechanism](#delegation-mechanism)
-    - [Customized Class Loader](#customized-class-loader)
   - [Object Class](#object-class)
     - [native](#native)
     - [clone()](#clone)
@@ -53,9 +50,13 @@
       - [CGLIB Dynamic Proxy](#cglib-dynamic-proxy)
       - [JDK VS CGLIB](#jdk-vs-cglib)
     - [Spring AOP](#spring-aop)
-  - [JMM (Java Memory Model)](#jmm-java-memory-model)
-  - [Java Memory Allocation](#java-memory-allocation)
-    - [Java Method Stack / Java Stack](#java-method-stack--java-stack)
+  - [JVM (Java Virtual Machine)](#jvm-java-virtual-machine)
+    - [Class Loader](#class-loader)
+      - [Delegation Mechanism](#delegation-mechanism)
+      - [Customized Class Loader](#customized-class-loader)
+    - [JMM (Java Memory Model)](#jmm-java-memory-model)
+    - [Java Memory Allocation](#java-memory-allocation)
+      - [Java Method Stack / Java Stack](#java-method-stack--java-stack)
     - [Memory Heap](#memory-heap)
       - [Memory Allocation Algorithms](#memory-allocation-algorithms)
   - [GC (Garbage Collection)](#gc-garbage-collection)
@@ -860,49 +861,6 @@ Demo DemoInstance = obj.newInstance();
 
 ---
 
-## Class Loader
-
-Source code is complied to binary class files, which are loaded by class loaders.
-
-There are many class loaders in JVM.
-
-Three system default class loaders:
-
-- BootStrap: The first class loader. (Special. It is not a class.)
-- ExtClassLoader
-  - Ext refers to extend.
-- AppClassLoader
-
-```java
-public class ClassLoaderDemo {
-
-	public static void main(String[] args) {
-		System.out.println(ClassLoaderDemo.class.getClassLoader().getClass().getName());  // sun.misc.Launcher$AppClassLoader
-		System.out.println(System.class.getClassLoader());  // null
-	}
-}
-```
-
-### Delegation Mechanism
-
-![class-loader-relationship.png](img/class-loader-relationship.png)
-
-When loading a class, the current class loader will delegate to parent class loader until BootStrap before searching the class file.
-
-For instance, AppClassLoader will delegate to ExtClassLoader, then delegate to BootStrap. If BootStrap finds the class file, it will load it. If not, BootStrap will ask ExtClassLoader to find and try to load it. Then AppClassLoader. If AppClassLoader cannot find the class file, throw exception.
-
-It will only be delegated to AppClassLoader as it was launched by AppClassLoader. So, it will not be delegated to MyClassLoader further.
-
----
-
-### Customized Class Loader
-
-When you create a class loader yourself, override `findClass()` rather than `loadClass()`.
-
-**Classes with package name cannot invoke classes without package name.**
-
----
-
 ## Object Class
 
 java.lang.Object是一个Java类，但并不是java.lang.Class的一个实例。
@@ -1268,15 +1226,60 @@ Using JDK or CGLIB dynamic proxy depends on:
 
 ---
 
-## JMM (Java Memory Model)
+## JVM (Java Virtual Machine)
+
+![jvm-architecture.png](img/jvm-architecture.png)
+
+[JVM Tutorial - Java Virtual Machine Architecture Explained for Beginners](https://www.freecodecamp.org/news/jvm-tutorial-java-virtual-machine-architecture-explained-for-beginners/)
+
+[The JVM Architecture Explained](https://dzone.com/articles/jvm-architecture-explained)
+
+### Class Loader
+
+Source code is complied to binary class files, which are loaded by class loaders.
+
+There are many class loaders in JVM.
+
+Three system default class loaders:
+
+- BootStrap: The first class loader. (Special. It is not a class.)
+- ExtClassLoader
+  - Ext refers to extend.
+- AppClassLoader
+
+```java
+public class ClassLoaderDemo {
+
+	public static void main(String[] args) {
+		System.out.println(ClassLoaderDemo.class.getClassLoader().getClass().getName());  // sun.misc.Launcher$AppClassLoader
+		System.out.println(System.class.getClassLoader());  // null
+	}
+}
+```
+
+#### Delegation Mechanism
+
+![class-loader-relationship.png](img/class-loader-relationship.png)
+
+When loading a class, the current class loader will delegate to parent class loader until BootStrap before searching the class file.
+
+For instance, AppClassLoader will delegate to ExtClassLoader, then delegate to BootStrap. If BootStrap finds the class file, it will load it. If not, BootStrap will ask ExtClassLoader to find and try to load it. Then AppClassLoader. If AppClassLoader cannot find the class file, throw exception.
+
+It will only be delegated to AppClassLoader as it was launched by AppClassLoader. So, it will not be delegated to MyClassLoader further.
+
+#### Customized Class Loader
+
+When you create a class loader yourself, override `findClass()` rather than `loadClass()`.
+
+**Classes with package name cannot invoke classes without package name.**
+
+### JMM (Java Memory Model)
 
 [Java内存模型详解](https://blog.csdn.net/weixin_40096176/article/details/80497137)
 
 [全面理解Java内存模型](https://blog.csdn.net/suifeng3051/article/details/52611310)
 
----
-
-## Java Memory Allocation
+### Java Memory Allocation
 
 [Java内存分配详解(堆内存、栈内存、常量池)](https://blog.csdn.net/jian_sheng_tan/article/details/78323327)
 
@@ -1291,7 +1294,7 @@ Using JDK or CGLIB dynamic proxy depends on:
 
 ![jvm-stack-and-heap.png](img/jvm-stack-and-heap.png)
 
-### Java Method Stack / Java Stack
+#### Java Method Stack / Java Stack
 
 ![java-method-stack.png](img/java-method-stack.png)
 
@@ -1304,8 +1307,6 @@ onto the stack. When it terminates, its frame is popped from the stack and the J
 resumes the processing of the previously suspended method.
 
 The JVM uses a stack to evaluate arithmetic expressions in Java.
-
----
 
 ### Memory Heap
 
