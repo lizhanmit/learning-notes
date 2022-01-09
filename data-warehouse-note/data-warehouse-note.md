@@ -1,5 +1,31 @@
 # Data Warehouse Note 
 
+- [Data Warehouse Note](#data-warehouse-note)
+  - [Concepts](#concepts)
+    - [Types of Data Warehouse](#types-of-data-warehouse)
+    - [Pros and Cons](#pros-and-cons)
+    - [Integrating Heterogeneous Databases](#integrating-heterogeneous-databases)
+    - [Metadata](#metadata)
+    - [Surrogate Key](#surrogate-key)
+    - [Fact Tables VS Dimension Tables](#fact-tables-vs-dimension-tables)
+    - [Schemas](#schemas)
+      - [Snowflake vs. Star Schema](#snowflake-vs-star-schema)
+  - [Architecture](#architecture)
+  - [Modeling](#modeling)
+  - [Design](#design)
+    - [Top-Down Approach](#top-down-approach)
+    - [Bottom-Up Approach](#bottom-up-approach)
+  - [Implementation](#implementation)
+  - [OLAP](#olap)
+    - [OLTP vs. OLAP](#oltp-vs-olap)
+      - [OLTP](#oltp)
+      - [OLAP](#olap-1)
+  - [Data Marts](#data-marts)
+  - [Data Lakes](#data-lakes)
+    - [Data Warehouse VS Data Lake](#data-warehouse-vs-data-lake)
+
+---
+
 ## Concepts
 
 A data warehouse is a subject-oriented, integrated, time-variant, and nonvolatile collection of data in support of management's decision-making process.  
@@ -92,18 +118,68 @@ The snowflake schema is similar to the star schema. However, in the snowflake sc
 
 ![data-warehouse-architecture.png](img/data-warehouse-architecture.png)
 
+![three-tier-data-warehouse-architecture.png](img/three-tier-data-warehouse-architecture.png)
+
+![three-tier-data-warehouse-architecture-2.png](img/three-tier-data-warehouse-architecture-2.png)
+
+[Building a Data Warehouse: Basic Architectural principles](https://towardsdatascience.com/building-a-data-warehouse-basic-architectural-principles-66bd7059ffd0)
+
+[Data Warehouse Architecture](https://www.javatpoint.com/data-warehouse-architecture)
+
+[Three-Tier Data Warehouse Architecture](https://www.javatpoint.com/three-tier-data-warehouse-architecture)
+
+---
+
+## Modeling
+
+![structure-of-data-inside-data-warehouse.png](img/structure-of-data-inside-data-warehouse.png)
+
+![data-warehouse-modeling-life-cycle.png](img/data-warehouse-modeling-life-cycle.png)
+
+[Data Warehouse Modeling](https://www.javatpoint.com/data-warehouse-modeling)
+
+---
+
+## Design
+
+[Data Warehouse Design](https://www.javatpoint.com/data-warehouse-design)
+
+### Top-Down Approach
+
+![top-down-approach.png](img/top-down-approach.png)
+
+- Snowflake schema
+- Inmon
+- data-driven 
+- data warehouse first, then data marts
+
+### Bottom-Up Approach
+
+![bottom-up-approach.png](img/bottom-up-approach.png)
+
+- start schema
+- Kimball
+- business-driven 
+- data marts first, then data warehouse
+
+---
+
+## Implementation
+
+[Data Warehouse Implementation](https://www.javatpoint.com/data-warehouse-implementation)
+
 ---
 
 ## OLAP
 
 ### OLTP vs. OLAP
 
-**OLTP**
+#### OLTP
 
 - OLTP (Online Transaction Processing) is where information systems facilitate and manage transaction-oriented applications, typically for data entry and retrieval transaction processing rather than for the purpose of business intelligence or reporting.  
 - In OLTP database there is detailed and current data, and schema used to store transactional databases is the entity model (usually 3NF).
 
-**OLAP**
+#### OLAP
 
 - OLAP (Online Analytical Processing) is a technology that organizes large business databases and supports complex analysis. It can be used to perform ad hoc multi-dimensional analytical queries without negatively affecting transactional systems. 
 - OLAP is characterized by relatively low volume of transactions. Queries are often very complex and involve aggregations. 
