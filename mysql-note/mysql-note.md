@@ -1,6 +1,46 @@
 # MySQL Note
 
-[TOC]
+- [MySQL Note](#mysql-note)
+  - [Programming](#programming)
+    - [Basics](#basics)
+      - [Show](#show)
+      - [Create](#create)
+      - [Alter](#alter)
+      - [Drop](#drop)
+      - [Insert Into](#insert-into)
+      - [Select ... From](#select--from)
+        - [Limit & Offset](#limit--offset)
+        - [Join](#join)
+        - [Order By](#order-by)
+        - [Case ... When ... Then ... Else](#case--when--then--else)
+      - [Update ... Set](#update--set)
+      - [Delete From](#delete-from)
+      - [Select Into](#select-into)
+    - [Build-in Functions](#build-in-functions)
+      - [Regexp](#regexp)
+      - [Right(str, len)](#rightstr-len)
+      - [Concat()](#concat)
+    - [Transactions](#transactions)
+    - [Stored Procedures](#stored-procedures)
+    - [Variables](#variables)
+    - [Index](#index)
+    - [Handle Duplicates](#handle-duplicates)
+      - [Prevent Duplicates](#prevent-duplicates)
+      - [Insert Duplicates](#insert-duplicates)
+      - [Remove Duplicates](#remove-duplicates)
+  - [SQL Knowledge Refresher](#sql-knowledge-refresher)
+    - [Normalization](#normalization)
+    - [N'](#n)
+    - [nVarchar vs. varchar](#nvarchar-vs-varchar)
+    - [Select Rows with Null Values](#select-rows-with-null-values)
+    - [CREATE TABLE IF NOT EXISTS](#create-table-if-not-exists)
+    - [IF OBJECT_ID('...') IS NOT NULL](#if-object_id-is-not-null)
+    - [Views](#views)
+    - [Stored Procedures](#stored-procedures-1)
+    - [MS SQL Server Build-in Functions](#ms-sql-server-build-in-functions)
+    - [Differences between Stored Procedures and Functions](#differences-between-stored-procedures-and-functions)
+    - [Backing-up or Restoring a Database with SQL Code](#backing-up-or-restoring-a-database-with-sql-code)
+    - [SQL Programming](#sql-programming)
 
 ---
 
@@ -375,5 +415,256 @@ Solution 2: add an INDEX or a PRIMARY KEY to the original table.
 ```mysql
 -- The IGNORE keyword tells MySQL to discard duplicates silently without generating an error.
 ALTER IGNORE TABLE person_tbl ADD PRIMARY KEY (last_name, first_name);
+```
+
+---
+
+## SQL Knowledge Refresher 
+
+Making data types and character lengths more consistent can assist other developers using this code.
+
+### Normalization 
+
+Database normalization is the process of removing repeated information. 
+
+---
+
+### N'
+
+It declares the string as nVarchar data type, rather than varchar. (NCHAR, NVARCHAR or NTEXT value)
+
+```mssql
+EXEC HumanResources.uspGetEmployeesTest2 @LastName = N'Ackerman', @FirstName = N'Pilar'
+;  
+GO 
+```
+
+------
+
+### nVarchar vs. varchar
+
+|              | *nVarchar*                             | *varchar*                 |
+| ------------ | -------------------------------------- | ------------------------- |
+| Data Type    | Store UNICODE data, multilingual data. | Store ASCII data.         |
+| Memory Usage | Use 2 bytes per character.             | Use 1 byte per character. |
+
+Newer databases use nVarchar instead of varchar.
+
+---
+
+### Select Rows with Null Values 
+
+```mssql
+SELECT column_names
+FROM table_name
+WHERE column_name IS NULL;
+
+SELECT column_names
+FROM table_name
+WHERE column_name IS NOT NULL;
+```
+
+---
+
+### CREATE TABLE IF NOT EXISTS
+
+```mysql
+-- mysql code
+CREATE TABLE IF NOT EXISTS table_name
+(
+  task_id INT(11) NOT NULL AUTO_INCREMENT,
+  subject VARCHAR(45) DEFAULT NULL,
+  start_date DATE DEFAULT NULL,
+  end_date DATE DEFAULT NULL,
+  description VARCHAR(200) DEFAULT NULL,
+  PRIMARY KEY (task_id)
+) ENGINE=InnoDB;
+```
+
+---
+
+### IF OBJECT_ID('...') IS NOT NULL
+
+```mssql
+IF OBJECT_ID ( 'HumanResources.uspGetEmployees', 'P' ) IS NOT NULL   
+    DROP PROCEDURE HumanResources.uspGetEmployees;  
+GO  
+CREATE PROCEDURE HumanResources.uspGetEmployees   
+    @LastName nvarchar(50),   
+    @FirstName nvarchar(50)   
+AS   
+
+    SET NOCOUNT ON;  
+    SELECT FirstName, LastName, JobTitle, Department  
+    FROM HumanResources.vEmployeeDepartment  
+    WHERE FirstName = @FirstName AND LastName = @LastName;  
+GO
+```
+
+---
+
+### Views
+
+SQL Views are essentially a named select statement stored in a database. 
+
+```mssql
+-- Listing 1-6. Creating an ETL View
+Use TempDB;
+go
+CREATE VIEW vETLSelectSourceDataForDimTitles
+AS
+ SELECT 
+   [TitleId] = [title_id] 
+ , [TitleName] = CAST([title] as nVarchar(100)) 
+ , [TitleType] = CASE CAST([type] as nVarchar(100)) 
+    When 'business' Then 'Business'
+    When 'mod_cook' Then 'Modern Cooking'						     
+    When 'popular_comp' Then 'Popular Computing'					 
+    When 'psychology' Then 'Psychology'						 
+    When 'trad_cook' Then 'Traditional Cooking'	
+    When 'UNDECIDED' Then 'Undecided'							     
+   End
+FROM [pubs].[dbo].[titles];
+go
+
+-- Listing 1-7. Using the View
+SELECT 
+  [TitleId]
+, [TitleName]
+, [TitleType]
+FROM vETLSelectSourceDataForDimTitles;
+go
+```
+
+---
+
+### Stored Procedures
+
+```mssql
+-- Listing 1-10. Creating an ETL Procedure
+CREATE PROCEDURE pETLInsDataToDimTitles
+AS
+ DELETE FROM [TempDB].[dbo].[DimTitles];
+ INSERT INTO [TempDB].[dbo].[DimTitles]
+ SELECT 
+   [TitleId]
+ , [TitleName]
+ , [TitleType]
+ FROM vETLSelectSourceDataForDimTitles;
+go
+EXECUTE pETLInsDataToDimTitles;
+go
+SELECT * FROM [TempDB].[dbo].[DimTitles]
+go
+```
+
+---
+
+Why you should use views and stored procedures? 
+
+![reason-to-use-view-or-stored-procedure.png](img/reason-to-use-view-or-stored-procedure.png)
+
+---
+
+### MS SQL Server Build-in Functions
+
+<https://www.w3schools.com/sql/sql_ref_sqlserver.asp>
+
+---
+
+### Differences between Stored Procedures and Functions
+
+- Stored Procedures are pre-compile objects which are compiled for first time and its compiled format is saved which executes (compiled code) whenever it is called. But Function is compiled and executed every time when it is called.  
+- Function must return a value but in Stored Procedure it is optional (Procedure can return zero or null values).
+- Functions can have only input parameters for it whereas Procedures can have input/output parameters.
+- Functions can be called from Procedure whereas Procedures cannot be called from Function.
+- Procedure allows SELECT as well as DML(INSERT/UPDATE/DELETE) statement in it whereas Function allows only SELECT statement in it.
+- Procedures can not be utilized in a SELECT statement whereas Function can be embedded in a SELECT statement.
+- Stored Procedures cannot be used in the SQL statements anywhere in the WHERE/HAVING/SELECT section whereas Function can be.
+- Functions that return tables can be treated as another rowset. This can be used in JOINs with other tables.
+- Inline Function can be thought of as views that take parameters and can be used in JOINs and other Rowset operations.
+- Exception can be handled by try-catch block in a Procedure whereas try-catch block cannot be used in a Function.
+- We can go for Transaction Management in Procedure whereas we cannot go in Function.
+
+---
+
+### Backing-up or Restoring a Database with SQL Code
+
+![backing-up-or-restoring-a-database-with-sql-code.png](img/backing-up-or-restoring-a-database-with-sql-code.png)
+
+---
+
+### SQL Programming
+
+Employee table: 
+
+| rowId | empNo | empName | sex  | dob  | salary | deptId |
+| ----- | ----- | ------- | ---- | ---- | ------ | ------ |
+|       |       |         |      |      |        |        |
+
+```sql
+-- Return employee record with max salary. 
+select * from employee where salary = (select max(salary) from employee)
+
+-- Find the second highest salary of Employee. 
+select max(salary) from Employee where salary not in (select max(salary) from Employee); 
+
+-- Find max salary from each department.  
+select deptId, max(salary) as maxSalary from Employee group by deptId; 
+
+-- Find the number of employees according to gender whose dob is between __ to __. 
+select sex, count(*) as numOfEmp from Employee where dob between '2018-02-01'and '2018-07-01'group by sex; 
+
+-- Find name of employees whose name starts with 'M'.
+select empName from Employee where empName like 'M%' 
+
+-- Find all employee records containing the word "Mike".
+select empName from Employee where Upper(empName) like 'MIKE';
+
+-- Find duplicate rows in a database. Then delete them.
+select rowId from Employee a where rowId = (select max(rowId) from Employee b where a.empNo = b.empNo); 
+
+delete from Employee where rowId not in (select rowId from Employee a where rowId = (select max(rowId) from Employee b where a.empNo = b.empNo)); 
+
+-- Display the current date. 
+select GETDATE(); 
+select CONVERT(date, GETDATE()); 
+select year(GETDATE()); 
+
+-- Check if date is in the given format or not.
+select ISDATE('07/30/2018') AS "MM/DD/YY"; 
+
+-- Find the year from date. 
+select year(GETDATE()) as Year; 
+```
+
+Employee and Department table:
+
+```sql
+-- Return employee name, highest salary and department name. 
+select e.empName, e.salary, d.deptName from Employee e inner join Department d on (e.deptId = d.deptId) where salary in (select max(salary) from employee)
+
+-- Return employee name, highest salary and department name for each department. 
+select e.empName, e.salary, d.deptName from Employee e inner join Department d on (e.deptId = d.deptId) where salary in (select max(salary) from employee group by deptId)
+```
+
+Create a new, empty table using the schema of another.  
+
+```sql
+SELECT * INTO newtable 
+FROM oldtable 
+WHERE 1 = 0; -- As this is false, data from oldtable will not be inserted into newtable. Only schema will be transferred.
+```
+
+**Having Clause**
+
+The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions. 
+
+```sql
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
 ```
 
