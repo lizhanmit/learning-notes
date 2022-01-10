@@ -75,6 +75,9 @@
   - [Lambda](#lambda)
     - [Overview](#overview-6)
     - [Lambda Integration](#lambda-integration)
+    - [Costs](#costs)
+    - [Promises](#promises)
+    - [Anti-Patterns](#anti-patterns)
 
 ---
 
@@ -537,3 +540,24 @@ Lambda is still running on servers under the hood, but they are not servers that
 ![lambda-triggers.png](img/lambda-triggers.png)
 
 When integrating Lambda with Kinesis streams, under the hood, Lambda is actually pulls the Kinesis streams periodically and collects information from it in a batch manner. Stream is not pushing data into Lambda.
+
+![lambda-and-elasticsearch-service.png](img/lambda-and-elasticsearch-service.png)
+
+![lambda-and-data-pipeline.png](img/lambda-and-data-pipeline.png)
+
+![lambda-and-redshift.png](img/lambda-and-redshift.png)
+
+![lambda-and-kinesis.png](img/lambda-and-kinesis.png)
+
+### Costs
+
+![lambda-cost-model.png](img/lambda-cost-model.png)
+
+### Promises 
+
+![lambda-promises.png](img/lambda-promises.png)
+
+### Anti-Patterns
+
+![lambda-anti-patterns.png](img/lambda-anti-patterns.png)
+
