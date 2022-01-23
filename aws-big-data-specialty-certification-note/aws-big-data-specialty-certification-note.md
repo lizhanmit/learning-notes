@@ -78,6 +78,18 @@
     - [Costs](#costs)
     - [Promises](#promises)
     - [Anti-Patterns](#anti-patterns)
+  - [Glue](#glue)
+    - [**Exam Preparation**](#exam-preparation-5)
+    - [Overview](#overview-7)
+    - [Glue Crawler / Data Catalog](#glue-crawler--data-catalog)
+    - [Glue and S3 Partitions](#glue-and-s3-partitions)
+    - [Glue and Hive](#glue-and-hive)
+    - [Glue ETL](#glue-etl)
+      - [Transformations](#transformations)
+    - [Glue Development Endpoints](#glue-development-endpoints)
+    - [Running Glue Jobs](#running-glue-jobs)
+    - [Costs](#costs-1)
+    - [Anti-Patterns](#anti-patterns-1)
 
 ---
 
@@ -560,4 +572,72 @@ When integrating Lambda with Kinesis streams, under the hood, Lambda is actually
 ### Anti-Patterns
 
 ![lambda-anti-patterns.png](img/lambda-anti-patterns.png)
+
+---
+
+## Glue
+
+### **Exam Preparation** 
+
+**Glue is a huge deal, major role on the exam, very important.**
+
+Something you might see in the exam: What is the optimal way to organize your data that is being stored on S3 such that Glue can extract that and present it as partitions that make sense for what you are going to do with it?
+
+Very important to understand Glue ETL in depth and what it can do.
+
+### Overview
+
+Table definitions and ETL
+
+It is used to serve as a central metadata repository for data lake.
+
+The purpose of Glue is to extract structure from unstructured data, then enables SQL or SQL like tools to query it with schema. (It provides the glue between unstructured data on S3 and Amazon services like Redshift and Athena, and services running on EMR cluster.)
+
+![glue.png](img/glue.png)
+
+### Glue Crawler / Data Catalog
+
+![glue-crawler-or-data-catalog.png](img/glue-crawler-or-data-catalog.png)
+
+### Glue and S3 Partitions
+
+The way you organize your data will affect how efficient Glue can work and how efficiently your systems can query this unstructured data.
+
+![glue-and-s3-partitions.png](img/glue-and-s3-partitions.png)
+
+### Glue and Hive
+
+Glue Data Catalog can serve as a Hive metastore. You can also import a Hive metastore into Glue.
+
+### Glue ETL
+
+**Very important to understand for the exam.**
+
+![glue-etl.png](img/glue-etl.png)
+
+![glue-etl-2.png](img/glue-etl-2.png)
+
+#### Transformations
+
+![glue-etl-transformations.png](img/glue-etl-transformations.png)
+
+### Glue Development Endpoints
+
+![glue-development-endpoints.png](img/glue-development-endpoints.png)
+
+### Running Glue Jobs
+
+![running-glue-jobs.png](img/running-glue-jobs.png)
+
+### Costs
+
+![glue-cost-model.png](img/glue-cost-model.png)
+
+### Anti-Patterns
+
+![glue-anti-patterns.png](img/glue-anti-patterns.png)
+
+![no-longer-an-anti-pattern-streaming.png](img/no-longer-an-anti-pattern-streaming.png)
+
+
 
