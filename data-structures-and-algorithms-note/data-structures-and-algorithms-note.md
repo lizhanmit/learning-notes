@@ -89,6 +89,7 @@
       - [Brute-force (BF) Algorithm](#brute-force-bf-algorithm)
       - [Boyer-Moore (BM) Algorithm](#boyer-moore-bm-algorithm)
       - [Knuth-Morris-Pratt (KMP) Algorithm](#knuth-morris-pratt-kmp-algorithm)
+  - [Coding Interview Tips](#coding-interview-tips)
   - [Appendices](#appendices)
 
 ---
@@ -1431,6 +1432,12 @@ A major inefficiency of BF and BM algorithm: For a certain alignment of the patt
 comparisons after restarting with the next incremental placement of the pattern.
 
 Time complexity: O(n + m)
+
+---
+
+## Coding Interview Tips
+
+- How to get the value of a char: use it to subtract '0'.
 
 ---
 
