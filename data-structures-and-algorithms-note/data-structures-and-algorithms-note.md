@@ -576,6 +576,8 @@ The value of the parent node is less than or equal to either of its children.
 
 ### Hash Table
 
+(See note in book《数据结构与算法（Java 描述）》p.193-p.205)
+
 ![hash-table.png](img/hash-table.png)
 
 ![hash-table-complexity.png](img/hash-table-complexity.png)
@@ -653,8 +655,7 @@ Ways to solve collision:
 Disadvantage of separate chaining: 
 
 - Requires the use of an auxiliary data structure to hold entries.
-- Not good if space is at a premium (e.g. writing a program for a small hand-
-held device).
+- Not good if space is at a premium (e.g. writing a program for a small hand-held device).
 
 #### Load Factors
 
