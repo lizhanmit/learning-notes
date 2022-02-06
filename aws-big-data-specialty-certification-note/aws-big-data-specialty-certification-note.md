@@ -90,6 +90,15 @@
     - [Running Glue Jobs](#running-glue-jobs)
     - [Costs](#costs-1)
     - [Anti-Patterns](#anti-patterns-1)
+    - [Glue Studio](#glue-studio)
+    - [Glue DataBrew](#glue-databrew)
+      - [Pricing](#pricing)
+    - [Glue Elastic Views](#glue-elastic-views)
+  - [AWS Lake Formation](#aws-lake-formation)
+      - [Pricing](#pricing-1)
+      - [Process for Building a Data Lake](#process-for-building-a-data-lake)
+      - [Troubleshooting](#troubleshooting)
+  - [EMR (Elastic MapReduce)](#emr-elastic-mapreduce)
 
 ---
 
@@ -638,6 +647,58 @@ Glue Data Catalog can serve as a Hive metastore. You can also import a Hive meta
 ![glue-anti-patterns.png](img/glue-anti-patterns.png)
 
 ![no-longer-an-anti-pattern-streaming.png](img/no-longer-an-anti-pattern-streaming.png)
+
+### Glue Studio 
+
+(new feature)
+
+![glue-studio.png](img/glue-studio.png)
+
+### Glue DataBrew
+
+(new feature)
+
+Clean and normalize data up to 80% faster.
+
+![glue-databrew.png](img/glue-databrew.png)
+
+#### Pricing
+
+The interactive sessions are billed $1 per session (30 mins).
+
+DataBrew jobs are billed per minute - $0.48 per node hour.
+
+### Glue Elastic Views
+
+(new feature, too new, do not worry about it being on the exam)
+
+![glue-elastic-views.png](img/glue-elastic-views.png)
+
+---
+
+## AWS Lake Formation
+
+![lake-formation.png](img/lake-formation.png)
+
+![lake-formation-2.png](img/lake-formation-2.png)
+
+#### Pricing
+
+![lake-formation-pricing.png](img/lake-formation-pricing.png)
+
+#### Process for Building a Data Lake
+
+![lake-formation-build-a-data-lake.png](img/lake-formation-build-a-data-lake.png)
+
+#### Troubleshooting
+
+![lake-formation-troubleshooting.png](img/lake-formation-troubleshooting.png)
+
+---
+
+## EMR (Elastic MapReduce) 
+
+
 
 
 
