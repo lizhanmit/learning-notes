@@ -68,6 +68,7 @@
     - [Char](#char)
     - [Compare Double Type](#compare-double-type)
     - [Error Handling Options](#error-handling-options)
+  - [Interview](#interview)
 
 ---
 
@@ -1391,3 +1392,9 @@ You cannot use `d1 == d2` to compare two double type values because of precision
 ### Error Handling Options
 
 ![three-error-handling-options-comparison.png](img/three-error-handling-options-comparison.png)
+
+---
+
+## Interview 
+
+[300 Core Java Interview Questions](https://www.javatpoint.com/corejava-interview-questions)
