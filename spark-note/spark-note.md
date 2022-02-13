@@ -341,7 +341,7 @@ Generally, `join` operation is wide dependency, but it acts as narrow if it come
 
 ![join-as-narrow-or-wide-dependency.png](img/join-as-narrow-or-wide-dependency.png)
 
-You an show the list of dependencies of a RDD via `dependencies()` method. Spark will return: 
+You can show the list of dependencies of a RDD via `dependencies()` method. Spark will return: 
 
 - Narrow dependency objects: 
   - OneToOneDependency
@@ -352,14 +352,12 @@ You an show the list of dependencies of a RDD via `dependencies()` method. Spark
 
 Optimize for dependencies:  
 
-- Do as many narrow dependencies together before hitting a wide dependency.  
-- Try to group wide dependency transformations together, possibly inside a single function and do it once. 
+- **Do as many narrow dependencies together before hitting a wide dependency.**  
+- **Try to group wide dependency transformations together, possibly inside a single function and do it once.** 
   
 #### Stage Division
 
 A new stage will be created when it comes across wide dependencies.
-
-![stage-division-according-to-dependencies.png](img/stage-division-according-to-dependencies.png)
 
 ---
 
@@ -403,11 +401,14 @@ If you partition at too fine a granularity, it can result in many small files (*
 
 #### Default Partition Number
 
-Configure default partition number through set the parameter `spark.default.parallelism`.
-
 - Local model: Number of CPU of local machine. If `local[N]` has been set, default partition number is N.
 - Mesos: 8.
 - Standalone or Yarn: Max value between number of CPU cores in the cluster and 2.
+
+Configure default partition number: 
+
+- for RDD through setting the parameter `spark.default.parallelism`.
+- for Spark SQL through setting the parameter `spark.sql.shuffle.partitions`.
 
 #### Manually Configure Partition
 
@@ -1517,7 +1518,7 @@ Pros:
 - Resources are elastic.
 - Low-cost, georeplicated storage is included.
   - All major cloud providers include managed Hadoop clusters for their customers, which provide HDFS for storage as well as Apache Spark. This is actually **NOT** a great way to run Spark in the cloud.
-  - Instead,** better to decouple computing and storage**. Use global storage systems that are decoupled from a specific cluster, such as Amazon S3, Azure Blob Storage, or Google Cloud Storage. You will be able to pay for computing resources only when needed, scale them up dynamically, and mix different hardware types.
+  - Instead, **better to decouple computing and storage**. Use global storage systems that are decoupled from a specific cluster, such as Amazon S3, Azure Blob Storage, or Google Cloud Storage. You will be able to pay for computing resources only when needed, scale them up dynamically, and mix different hardware types.
   - Do not need to migrating an on-premises installation to virtual machines, instead you can run Spark natively against cloud storage.
   - Several companies provide "cloud-native" Spark-based services, e.g. Databricks. 
 
