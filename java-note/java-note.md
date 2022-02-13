@@ -14,11 +14,11 @@
     - [Enum with Abstract Methods](#enum-with-abstract-methods)
   - [Exception Handling](#exception-handling)
     - [Deciding Between Unchecked and Checked](#deciding-between-unchecked-and-checked)
-  - [Reflection（反射）](#reflection反射)
-    - [Constructor 类](#constructor-类)
-    - [Field 类](#field-类)
-    - [Method 类](#method-类)
-    - [Array 类](#array-类)
+  - [Reflection](#reflection)
+    - [Constructor Class](#constructor-class)
+    - [Field Class](#field-class)
+    - [Method Class](#method-class)
+    - [Array Class](#array-class)
     - [Manage Config File](#manage-config-file)
     - [Introspection & JavaBean](#introspection--javabean)
     - [BeanUtils & JavaBean](#beanutils--javabean)
@@ -95,7 +95,7 @@ Code execution order in class after JVM loading:
 
 Non-static block is used to organize common code in multiple constructors. 
 
-Java的“类加载”是一个类从被加载到虚拟机内存中开始，到卸载出虚拟机内存为止的整个生命周期中的一个过程，包括加载，验证，准备，解析，初始化五个阶段。而“加载”指的是类加载的第一个阶段。类中的静态块会在整个类加载过程中的初始化阶段执行，而不是在类加载过程中的加载阶段执行。
+There are 5 stages when loading a class file into JVM - load, verify, prepare, resolve, and initialize. Static block is executed during initialization stage in the class loader subsystem.  
 
 ---
 
@@ -200,8 +200,6 @@ public enum Weekday {
 }
 ```
 
----
-
 ### Enum with Abstract Methods
 
 ```java
@@ -256,7 +254,7 @@ Use unchecked exceptions for:
 
 ---
 
-## Reflection（反射）
+## Reflection
 
 Why to use reflection:
 
@@ -266,7 +264,7 @@ Why to use reflection:
 
 Reflection will decrease the performance of program.
 
-如何得到字节码对应的实例对象：
+How to get the instance of Class type:
 
 - `<Class_name>.class`, e.g. `Date.class`
 - `<object>.getClass()`, e.g. `new Date().getClass()`
@@ -282,6 +280,7 @@ System.out.println(cls1 == cls2);  // true
 System.out.println(cls2 == cls3);  // true
 
 System.out.println(cls1.isPrimitive());  // false
+
 System.out.println(int.class.isPrimitive());  // true
 System.out.println(int.class == Integer.class);  // false
 System.out.println(int.class == Integer.TYPE);  // true
@@ -289,9 +288,7 @@ System.out.println(int[].class.isPrimitive());  // false
 System.out.println(int[].class.isArray());  // true
 ```
 
----
-
-### Constructor 类
+### Constructor Class
 
 ```java
 // create an object by using Constructor Class with reflection
@@ -308,9 +305,7 @@ System.out.println(str1.charAt(2));  // output should be "c"
 String str2 = (String)Class.forName("java.lang.String").newInstance();
 ```
 
----
-
-### Field 类
+### Field Class
 
 ```java
 public class ReflectionPoint() {
@@ -367,9 +362,7 @@ public class Main() {
 }
 ```
 
----
-
-### Method 类
+### Method Class
 
 - `public Method[] getDeclaredMethods()`: Get public, protected, default, private methods, but not including extended ones.
 - `public Method[] getMethods()`: Get public methods including extended public ones.
@@ -388,9 +381,7 @@ public static void main(String[] args) {
 
 If the 1st parameter of `invoke()` is `null`, then the method is a static method.
 
----
-
-### Array 类
+### Array Class
 
 ```java
 public static void main(String[] args) {
@@ -1316,7 +1307,7 @@ Free list: The method to keep contiguous "holes" of available free memory in a l
 
 Fragmentation: The separation of unused memory into separate holes.
 
-- **Internal fragmentation** occurs when a portion of an allocated memory block is unused. For example, a program may request an array of size 1000, but only use the first 100 cells of this array. **A runtime environment can not do much to reduce internal fragmentation.**
+- **Internal fragmentation** occurs when a portion of an allocated memory block is unused. For example, a program may request an array of size 1000, but only use the first 100 cells of this array. **A runtime environment cannot do much to reduce internal fragmentation.**
 - **External fragmentation** occurs when there is a significant amount of unused memory between several contiguous blocks of allocated memory. **The runtime environment should allocate memory in a way to try to reduce external fragmentation.**
 
 #### Memory Allocation Algorithms
