@@ -119,9 +119,17 @@ An interface that only contains a single abstract method is called a functional 
 
 ## Collections
 
+[How to Learn Java Collections – A Complete Guide](https://www.geeksforgeeks.org/how-to-learn-java-collections-a-complete-guide/)
+
+[Collections in Java](https://www.geeksforgeeks.org/collections-in-java-2/)
+
 [两万字长文读懂 Java 集合！](https://blog.csdn.net/csdnnews/article/details/107888522)
 
-![collections.gif](img/collections.gif)
+![collections-hierarchy.png](img/collections-hierarchy.png)
+
+![map-hierarchy.png](img/map-hierarchy.png)
+
+![collections-hierarchy.gif](img/collections-hierarchy.gif)
 
 ![map-inheritance.jpg](img/map-inheritance.jpg)
 
