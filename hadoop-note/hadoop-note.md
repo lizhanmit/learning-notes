@@ -155,15 +155,44 @@ Due to defect of MapReduce 1.0, top limit of number of nodes is 4000 in enterpri
 
 #### Read Data
 
+![hdfs-read-data-2.png](img/hdfs-read-data-2.png)
+
+Steps: 
+
+1. HDFS client calls `open()` method of `DistributedFileSystem`. If the client does not have permission to read the file or the file does not exist, NameNode throws `IOException`.
+2. `DistributedFileSystem` makes an RPC call to the NameNode to get blocks of files. NameNode returns a list of DataNodes for each block, which are sorted based on the proximity of the HDFS client.
+3. The `open()` method returns `FSDataInputStream` to the client to read data. 
+4. `DFSInputStream` connects to the DataNode using the DataNode addresses, which it received in the first block. Data is returned to the client in the form of a stream. (DataNode reads the file and sends the data to the client using TCP sockets.) When data from the block is read successfully, `DFSInputStream` will close the connection with the DataNode and then take the nearest DataNode for the next block of the file. DataNode may fail or return an error to `DFSInputStream`. In this case, `DFSInpurStream` makes an entry of failed DataNodes so that it does not connect to these DataNodes for the next blocks and then connects to the next closest DataNode that contains a replica for the block. `DFSInputStream` also verifies the checksum of the block and if it does not match and finds that the block is corrupted, it reports it to NameNode and then selects the next closest DataNode that contains a replica of the block to read data.
+5. Once the client has finished reading data from all the blocks, it closes the connection using `close()` on the stream.
+
+![hdfs-read-data.png](img/hdfs-read-data.png)
+
 Hadoop provides an API to get the cluster ID of a DataNode. Client can call this API to get ID of the cluster that it belongs to.
 
 How to determine which replication of data block to read:
 
 When the client is reading data, it gets the list of places (DataNodes) where different replications of data block are stored from the NameNode. You can get ID of the cluster that the client and these DataNodes belong to by calling the API. If finding the cluster ID for one replication of data block is the same as the one for client, then read this replication in the first place. Otherwise, read the replication randomly.
 
-![hdfs-read-data-2.png](img/hdfs-read-data-2.png)
-
 #### Write Data
+
+![hdfs-write-data-2.png](img/hdfs-write-data-2.png)
+
+Steps: 
+
+1. HDFS client calls `create()` method of `DistributedFileSystem`. 
+2. `DistributedFileSystem` makes an RPC call to NameNode by creating a new file. NameNode checks whether the file exists or not. If it already exists, it will throw `IOException`. If not exists, NameNode then uses `FSPermission` to check whether the user has permission to write. If not, throw `IOException`.
+3. The return type of `create()` is `FSDataOutputStream`. If it is successful, then client calls write method to write data.
+4. `DFSOutputStream` splits data into packets of block size. Data is written to an internal data queue called `DFSPacket`.
+5. `DataStreamer` asks NameNode for new DataNodes to store packets and their replicas.
+6. DataNodes returned by NameNode form a pipeline.
+7. `DataStreamer` writes a packet to the first DataNode in the pipeline.
+8. The first DataNode stores the packet and forwards it to the second DataNode in the pipeline. This process is repeated until the last DataNode in the pipeline stores the packet. 
+9. `DFSOutputStream` also maintains an acknowledgement queue (Linked List) of packets for which acknowledgement is not received from the DataNode. If the data node in the pipeline
+fails, the acknowledgement queue is used to restart the operation.
+10. Once the packet is copied by the DataNode in the pipeline, the DataNode sends an acknowledgement.
+11. Once the HDFS client finishes writing data, it closes the stream by calling `close()` on the stream, and waits for an
+acknowledgement.
+12. After its final acknowledgement is received, the client sends a completion signal to the NameNode.
 
 ![hdfs-write-data.png](img/hdfs-write-data.png)
 
