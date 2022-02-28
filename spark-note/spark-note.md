@@ -117,6 +117,7 @@
       - [Mesos](#mesos)
     - [Secure Deployment Configurations](#secure-deployment-configurations)
     - [Cluster Networking Configurations](#cluster-networking-configurations)
+  - [Spark Memory Management Model](#spark-memory-management-model)
   - [Monitoring and Debugging](#monitoring-and-debugging)
     - [Spark Logs](#spark-logs)
     - [Spark UI](#spark-ui)
@@ -330,12 +331,14 @@ Two types of transformations:
   - `map`
   - `union`
   - `sample`
-- Wide dependencies: The relationship between RDDs is 1 : many or many : many. It requires the data to be partitioned in a particular way depending on the transformation type. Transformation need data from other partitions. Data moves between partitions - shuffle. Examples:
+- Wide dependencies: The relationship between RDDs is 1 : many or many : many. It requires the data to be partitioned in a particular way depending on the transformation type. Transformations need data from other partitions. Data moves between partitions - shuffle. Examples:
   - `intersection`
   - `groupByKey`
   - `distinct`
   - `cartesian`
   - `sortByKey`
+
+> Narrow dependencies, where each partition of the parent RDD is used by at most one partition of the child RDD, wide dependencies, where multiple child partitions may depend on it.
 
 Generally, `join` operation is wide dependency, but it acts as narrow if it comes after `groupByKey`, which is known as "join with inputs co-partitioned".
 
@@ -1579,6 +1582,12 @@ Fine-grained mode: deprecated.
 ### Cluster Networking Configurations
 
 (Refer to Spark official website.)
+
+---
+
+## Spark Memory Management Model
+
+[Deep Understanding of Spark Memory Management Model](https://www.tutorialdocs.com/article/spark-memory-management.html#:~:text=Deep%20Understanding%20of%20Spark%20Memory%20Management%20Model%201,JVM.%20...%203%20Memory%20allocation.%20...%204%20Reference)
 
 ---
 
