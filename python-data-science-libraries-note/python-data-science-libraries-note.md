@@ -34,6 +34,8 @@
 
 ## NumPy
 
+[Brush up](https://numpy.org/doc/stable/user/quickstart.html)
+
 - ndarray
 - Given two lists, use NumPy to do element-wise calculations. 
 - Do not need to iterate the list. You can operate all elements based on array.
@@ -53,6 +55,10 @@ subset_array_name = array_name[array_name > 10]
 ---
 
 ## Pandas 
+
+[Brush up](https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html) 
+
+[Cheat sheet](https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf)
 
 ### Basic Concepts
 
