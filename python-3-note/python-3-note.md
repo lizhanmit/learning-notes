@@ -49,6 +49,11 @@
     - [Serialization](#serialization)
     - [Closures](#closures)
     - [Decorators](#decorators-1)
+  - [Appendix](#appendix)
+
+---
+
+[Python review](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-review-note.ipynb)
 
 ---
 
@@ -954,5 +959,7 @@ first_letter(['Not', 'A', 'String'])
 ```
 
 ---
+
+## Appendix
 
 ![python3-in-one-pic.jpg](img/python3-in-one-pic.jpg)
