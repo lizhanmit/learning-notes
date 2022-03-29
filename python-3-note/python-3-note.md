@@ -49,6 +49,9 @@
     - [Serialization](#serialization)
     - [Closures](#closures)
     - [Decorators](#decorators-1)
+  - [Interview Questions](#interview-questions)
+    - [Shallow Copy V.S. Deep Copy](#shallow-copy-vs-deep-copy)
+    - [Vectorization](#vectorization)
   - [Appendix](#appendix)
 
 ---
@@ -769,6 +772,8 @@ if __name__ == '__main__':
 
 ### Iterators
 
+Most container objects can be looped over using a `for` statement. Behind the scenes, the `for` statement calls `iter()` on the container object. The function returns an iterator object that defines the method `__next__()` which accesses elements in the container one at a time. When there are no more elements, `__next__()` raises a StopIteration exception which tells the `for` loop to terminate.
+
 Technically speaking, Python iterator object must implement two special methods, `__iter__()` and `__next__()`, collectively called the iterator protocol.
 
 The `iter()` function (which in turn calls the `__iter__()` method) returns an iterator from them.
@@ -957,6 +962,39 @@ def first_letter(word):
 print(first_letter('Hello World'))
 first_letter(['Not', 'A', 'String'])
 ```
+
+---
+
+## Interview Questions
+
+### Shallow Copy V.S. Deep Copy
+
+- Shallow copy: Any changes made to a copy of object reflect in the original object.
+- Deep copy: Any changes made to a copy of object do not reflect in the original object.
+
+The difference between shallow and deep copying is only relevant for **compound objects** (objects that contain other objects, like lists or class instances):
+
+- A shallow copy constructs a new compound object and then (to the extent possible) inserts references into it of the objects found in the original.
+- A deep copy constructs a new compound object and then, recursively, inserts copies into it of the objects found in the original.
+
+```python
+import copy
+
+# initializing list 1 
+li1 = [1, 2, [3,5], 4]
+  
+# using copy() for shallow copy  
+li2 = copy.copy(li1) 
+  
+# using deepcopy() for deep copy  
+li3 = copy.deepcopy(li1) 
+```
+
+### Vectorization 
+
+Vectorization is used to speed up the Python code without using loop. Using such a function can help in minimizing the running time of code efficiently.
+
+There are various operations performed over vector such as dot product (scalar product), outer product, and element wise multiplication. If you use classic loop implementation, running time would be very long. However, you use standard functions with vectorization feature in numpy, it would be much faster. 
 
 ---
 
