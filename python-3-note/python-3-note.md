@@ -37,10 +37,8 @@
     - [Magic Methods](#magic-methods)
       - [`__repr(self)__`](#__reprself__)
       - [`__str(self)__`](#__strself__)
-    - [Decorators](#decorators)
-      - [`@property`](#property)
   - [Miscellaneous](#miscellaneous)
-    - [Iterators](#iterators)
+    - [Iterable V.S. Iterator](#iterable-vs-iterator)
     - [Generator](#generator)
     - [Modules and Packages](#modules-and-packages)
     - [Exception Handling](#exception-handling)
@@ -48,10 +46,14 @@
     - [JSON](#json)
     - [Serialization](#serialization)
     - [Closures](#closures)
-    - [Decorators](#decorators-1)
+    - [Decorators](#decorators)
+      - [`@property`](#property)
   - [Interview Questions](#interview-questions)
     - [Shallow Copy V.S. Deep Copy](#shallow-copy-vs-deep-copy)
     - [Vectorization](#vectorization)
+    - [Mutable V.S. Immutable](#mutable-vs-immutable)
+      - [Mutable](#mutable)
+      - [Immutable](#immutable)
   - [Appendix](#appendix)
 
 ---
@@ -648,131 +650,19 @@ When using `print(<object>)`, if both `__repr(self)__` and `__str(self)__` are o
 
 Generally, we only override `__repr(self)__`.
 
-### Decorators
-
-#### `@property` 
-
-Use `@property` at the top of a method to make it can be used as a property / attribute of the class when being invoked.  
-
-```python
-class Employee:
-
-    # class variable
-    raise_amount = 1.04
-
-    # constructor
-    def __init__(self, first_name, last_name, pay):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.pay = pay
-        self.email = self.first_name.lower() + '.' + self.last_name.lower() + '@company.com'
-
-    # regular method
-    def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
-
-    # class method
-    @classmethod
-    def from_string(cls, emp_str):
-        first_name, last_name, pay = emp_str.split('-')
-        return cls(first_name, last_name, pay)
-
-    # static method
-    @staticmethod
-    def is_workday(day):
-        if day.weekday() == 5 or day.weekday() == 6:
-            return False
-        return True
-
-    def __repr__(self):
-        return 'Employee({}, {}, {})'.format(self.first_name, self.last_name, self.pay)
-
-    def __str__(self):
-        return '{} - {}'.format(self.full_name(), self.email)
-
-class Developer(Employee):
-
-    raise_amount = 1.10
-
-    def __init__(self, first_name, last_name, pay, prog_lang):
-        super().__init__(first_name, last_name, pay)
-        self.prog_lang = prog_lang
-
-
-class Manager(Employee):
-    def __init__(self, first_name, last_name, pay, employees=None):
-        super().__init__(first_name, last_name, pay)
-        if employees is None:
-            self.employees = []
-        else:
-            self.employees = employees
-
-    def add_emp(self, emp):
-        if emp not in self.employees:
-            self.employees.append(emp)
-
-    def remove_emp(self, emp):
-        if emp in self.employees:
-            self.employees.remove(emp)
-
-    def print_emps(self):
-        for emp in self.employees:
-            print('--> ', emp.full_name())
-
-
-
-# main function
-if __name__ == '__main__':
-    emp_1 = Employee('San', 'Zhang', 10000)
-    print(emp_1.email)
-    print(emp_1.full_name())
-    print(emp_1.raise_amount)  # 1.04
-    print(Employee.raise_amount)  # 1.04
-    emp_1.raise_amount = 1.05  # this line only modifies "raise_amount" of the instance emp_1, it will not influence the value of the class variable
-    print(emp_1.raise_amount)  # 1.05
-    print(Employee.raise_amount)  # 1.04, not be modified
-
-    print('------')
-    emp_str_1 = 'Si-Li-20000'
-    new_emp_1 = Employee.from_string(emp_str_1)  # class method should be invoked by using class name
-    print(new_emp_1.email)
-
-    print('------')
-    import datetime
-    my_date1 = datetime.date(2018, 10, 28)
-    print(Employee.is_workday(my_date1))  # static method should be invoked by using class name
-    my_date2 = datetime.date(2018, 10, 29)
-    print(Employee.is_workday(my_date2))
-
-    print('------')
-    dev_1 = Developer('Wu', 'Wang', 30000, 'Python')
-    print(dev_1.prog_lang)
-    dev_2 = Developer('Liu', 'Zhao', 40000, 'Java')
-
-    print('------')
-    mgr_1 = Manager('Qi', 'Zhou', 100000, [dev_1])
-    print(mgr_1.email)
-    print(mgr_1.raise_amount)
-    mgr_1.print_emps()
-    mgr_1.add_emp(dev_2)
-    mgr_1.print_emps()
-
-    print(isinstance(mgr_1, Employee))
-    print(issubclass(Manager, Employee))
-
-    print('------ magic methods ------')
-    print(repr(emp_1))
-    print(str(emp_1))
-    print(emp_1)  # will invoke __str()__ method here if both __repr()__ and __str()__ are overridden
-```
-
 ---
 
 ## Miscellaneous 
 
-### Iterators
+### Iterable V.S. Iterator
 
-Most container objects can be looped over using a `for` statement. Behind the scenes, the `for` statement calls `iter()` on the container object. The function returns an iterator object that defines the method `__next__()` which accesses elements in the container one at a time. When there are no more elements, `__next__()` raises a StopIteration exception which tells the `for` loop to terminate.
+Iterable is an object, which can iterated over. It generates an Iterator when being passed to `iter()` method.
+
+Iterator is an object, which is used to iterate over an iterable object using `__next__()` method.
+
+Every iterator is also an iterable, but not every iterable is an iterator. For example, a list is iterable but it is not an iterator.
+
+Most container objects can be looped over using a `for` statement. Behind the scenes, the `for` statement calls `iter()` on the container object. The function returns an iterator object that defines the method `__next__()` which accesses elements in the container one at a time. When there are no more elements, `__next__()` raises a `StopIteration` exception which tells the `for` loop to terminate.
 
 Technically speaking, Python iterator object must implement two special methods, `__iter__()` and `__next__()`, collectively called the iterator protocol.
 
@@ -929,6 +819,17 @@ print(multiplywith5(9))
 
 ### Decorators
 
+- It allows programmers to modify the behavior of functions or classes.
+- It allow us to wrap another function in order to extend the behavior of it, without permanently modifying it.
+- In Decorators, functions are taken as the argument into another function and then called inside the wrapper function.
+
+Use cases:
+
+- Logging
+- Authorization 
+- Function execution time measurement
+- ...  
+
 - Decorators allow you to make simple modifications to callable objects like functions, methods, or classes.
 - By using decorators, you can reuse a function and do some modifications based on it instead of modifying the original function. Or you can apply a function to other functions, such as do logging, input validation and output formatting. 
 - Decorator is a function itself, which can be applied to another function B. Function B is passed into the decorator as a param. 
@@ -963,6 +864,122 @@ print(first_letter('Hello World'))
 first_letter(['Not', 'A', 'String'])
 ```
 
+#### `@property` 
+
+Use `@property` at the top of a method to make it can be used as a property / attribute of the class when being invoked.  
+
+```python
+class Employee:
+
+    # class variable
+    raise_amount = 1.04
+
+    # constructor
+    def __init__(self, first_name, last_name, pay):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.pay = pay
+        self.email = self.first_name.lower() + '.' + self.last_name.lower() + '@company.com'
+
+    # regular method
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
+    # class method
+    @classmethod
+    def from_string(cls, emp_str):
+        first_name, last_name, pay = emp_str.split('-')
+        return cls(first_name, last_name, pay)
+
+    # static method
+    @staticmethod
+    def is_workday(day):
+        if day.weekday() == 5 or day.weekday() == 6:
+            return False
+        return True
+
+    def __repr__(self):
+        return 'Employee({}, {}, {})'.format(self.first_name, self.last_name, self.pay)
+
+    def __str__(self):
+        return '{} - {}'.format(self.full_name(), self.email)
+
+class Developer(Employee):
+
+    raise_amount = 1.10
+
+    def __init__(self, first_name, last_name, pay, prog_lang):
+        super().__init__(first_name, last_name, pay)
+        self.prog_lang = prog_lang
+
+
+class Manager(Employee):
+    def __init__(self, first_name, last_name, pay, employees=None):
+        super().__init__(first_name, last_name, pay)
+        if employees is None:
+            self.employees = []
+        else:
+            self.employees = employees
+
+    def add_emp(self, emp):
+        if emp not in self.employees:
+            self.employees.append(emp)
+
+    def remove_emp(self, emp):
+        if emp in self.employees:
+            self.employees.remove(emp)
+
+    def print_emps(self):
+        for emp in self.employees:
+            print('--> ', emp.full_name())
+
+
+
+# main function
+if __name__ == '__main__':
+    emp_1 = Employee('San', 'Zhang', 10000)
+    print(emp_1.email)
+    print(emp_1.full_name())
+    print(emp_1.raise_amount)  # 1.04
+    print(Employee.raise_amount)  # 1.04
+    emp_1.raise_amount = 1.05  # this line only modifies "raise_amount" of the instance emp_1, it will not influence the value of the class variable
+    print(emp_1.raise_amount)  # 1.05
+    print(Employee.raise_amount)  # 1.04, not be modified
+
+    print('------')
+    emp_str_1 = 'Si-Li-20000'
+    new_emp_1 = Employee.from_string(emp_str_1)  # class method should be invoked by using class name
+    print(new_emp_1.email)
+
+    print('------')
+    import datetime
+    my_date1 = datetime.date(2018, 10, 28)
+    print(Employee.is_workday(my_date1))  # static method should be invoked by using class name
+    my_date2 = datetime.date(2018, 10, 29)
+    print(Employee.is_workday(my_date2))
+
+    print('------')
+    dev_1 = Developer('Wu', 'Wang', 30000, 'Python')
+    print(dev_1.prog_lang)
+    dev_2 = Developer('Liu', 'Zhao', 40000, 'Java')
+
+    print('------')
+    mgr_1 = Manager('Qi', 'Zhou', 100000, [dev_1])
+    print(mgr_1.email)
+    print(mgr_1.raise_amount)
+    mgr_1.print_emps()
+    mgr_1.add_emp(dev_2)
+    mgr_1.print_emps()
+
+    print(isinstance(mgr_1, Employee))
+    print(issubclass(Manager, Employee))
+
+    print('------ magic methods ------')
+    print(repr(emp_1))
+    print(str(emp_1))
+    print(emp_1)  # will invoke __str()__ method here if both __repr()__ and __str()__ are overridden
+```
+
 ---
 
 ## Interview Questions
@@ -995,6 +1012,25 @@ li3 = copy.deepcopy(li1)
 Vectorization is used to speed up the Python code without using loop. Using such a function can help in minimizing the running time of code efficiently.
 
 There are various operations performed over vector such as dot product (scalar product), outer product, and element wise multiplication. If you use classic loop implementation, running time would be very long. However, you use standard functions with vectorization feature in numpy, it would be much faster. 
+
+### Mutable V.S. Immutable 
+
+#### Mutable
+
+Mutable objects can change their state or contents.
+
+Mutable objects: `list`, `dict`, `set`, and custom classes.
+
+
+#### Immutable
+
+Immutable objects cannot change their state or contents.
+
+Immutable objects are quicker to access.
+
+Immutable objects: `int`, `float`, `bool`, `string`, `unicode`, `tuple`. They cannot be changed after they are created.
+
+The `tuple` itself is immutable but contain items that are mutable.
 
 ---
 
