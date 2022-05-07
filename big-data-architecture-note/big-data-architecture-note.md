@@ -1,7 +1,11 @@
 # Big Data Architecture Note
 
 - [Big Data Architecture Note](#big-data-architecture-note)
-  - [Big Data Logical Architecture](#big-data-logical-architecture)
+  - [Holistic View of Architectures and Pipelines](#holistic-view-of-architectures-and-pipelines)
+    - [Big Data Logical Architecture](#big-data-logical-architecture)
+    - [Key Big Data Architectures](#key-big-data-architectures)
+      - [Lambda Architecture](#lambda-architecture)
+      - [Kappa Architecture](#kappa-architecture)
   - [Real-Time Applications](#real-time-applications)
     - [Social Media Sentiment Analysis](#social-media-sentiment-analysis)
       - [Problem](#problem)
@@ -38,11 +42,25 @@
 
 [(Online course: Big Data for Architects)](https://learning.oreilly.com/videos/big-data-for/9781801075596/)
 
-## Big Data Logical Architecture
+## Holistic View of Architectures and Pipelines
 
+### Big Data Logical Architecture
 
+![big-data-logical-architecture.png](img/big-data-logical-architecture.png)
 
+Key points: 
 
+- Impala does not reply on Yarn. 
+
+### Key Big Data Architectures
+
+#### Lambda Architecture
+
+![lambda-architecture.png](img/lambda-architecture.png)
+
+#### Kappa Architecture
+
+![kappa-architecture.png](img/kappa-architecture.png)
 
 ---
 
