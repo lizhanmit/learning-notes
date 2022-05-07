@@ -1,4 +1,52 @@
-# Architecting Big Data Applications Note
+# Big Data Architecture Note
+
+- [Big Data Architecture Note](#big-data-architecture-note)
+  - [Big Data Logical Architecture](#big-data-logical-architecture)
+  - [Real-Time Applications](#real-time-applications)
+    - [Social Media Sentiment Analysis](#social-media-sentiment-analysis)
+      - [Problem](#problem)
+      - [Solution](#solution)
+      - [Technologies](#technologies)
+        - [Stream Processing](#stream-processing)
+        - [Streaming Message Queues](#streaming-message-queues)
+        - [Real-Time Subscribers](#real-time-subscribers)
+        - [Sentiment Analysis Engine](#sentiment-analysis-engine)
+        - [Message Database](#message-database)
+      - [Best Practice of Real-Time Streaming](#best-practice-of-real-time-streaming)
+    - [Payment Fraud Detection](#payment-fraud-detection)
+      - [Problem](#problem-1)
+      - [Solution](#solution-1)
+      - [Technologies](#technologies-1)
+        - [Machine Learning](#machine-learning)
+      - [Best Practices of Predictive Analytics](#best-practices-of-predictive-analytics)
+    - [E-Commerce Product Recommendations](#e-commerce-product-recommendations)
+      - [Problem](#problem-2)
+      - [Solution](#solution-2)
+      - [Technologies](#technologies-2)
+        - [Recommendation Service](#recommendation-service)
+        - [In-Memory Database](#in-memory-database)
+      - [Best Practices of Parallel Processing](#best-practices-of-parallel-processing)
+    - [Mobile Couponing](#mobile-couponing)
+      - [Problem](#problem-3)
+      - [Solution](#solution-3)
+      - [Technologies](#technologies-3)
+        - [User Preferences & Location Services Databases](#user-preferences--location-services-databases)
+        - [Mobile Gateway](#mobile-gateway)
+      - [Best Practices of Pipeline Management](#best-practices-of-pipeline-management)
+
+---
+
+[(Online course: Big Data for Architects)](https://learning.oreilly.com/videos/big-data-for/9781801075596/)
+
+## Big Data Logical Architecture
+
+
+
+
+
+---
+
+[(Online course: Architecting Big Data Applications: Real-Time Application Engineering)](https://www.linkedin.com/learning/architecting-big-data-applications-real-time-application-engineering)
 
 ## Real-Time Applications
 
@@ -20,8 +68,6 @@ Strategies
 - Service components in the architecture should be **stateless**.
 - If state needs to be stored, use database, in memory data grids or clusters.
 - Every request in a real-time pipeline has a time to live, after which, it goes stale or out of context. Monitor it and drop the request if it exceeds.
-
----
 
 ### Social Media Sentiment Analysis
 
@@ -87,8 +133,6 @@ The above three have equivalent capabilities.
 - Redundacny to support failover.
 - Should be horizontally scalable.
 
----
-
 ### Payment Fraud Detection
 
 #### Problem
@@ -124,8 +168,6 @@ Goals:
 - Keep the prediction process as asynchronous as possible.
 - Measure and benchmark prediction times.
 - Benchmark user response times during synchronous predictions.
-
----
 
 ### E-Commerce Product Recommendations
 
@@ -172,8 +214,6 @@ Goals:
 - Spend time learning and designing partition management.
 - Data processing should be done in map operations as much as possible to ensure parallelism.
 - Reduced operations should be kept to a minimum and should be in the last stage.
-
----
 
 ### Mobile Couponing
 
