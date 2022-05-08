@@ -1011,7 +1011,7 @@ li3 = copy.deepcopy(li1)
 
 Vectorization is used to speed up the Python code without using loop. Using such a function can help in minimizing the running time of code efficiently.
 
-There are various operations performed over vector such as dot product (scalar product), outer product, and element wise multiplication. If you use classic loop implementation, running time would be very long. However, you use standard functions with vectorization feature in numpy, it would be much faster. 
+There are various operations performed over vector such as dot product (scalar product), outer product, and element wise multiplication. If you use classic loop implementation, running time would be very long. However, you use standard functions with vectorization feature in Numpy, it would be much faster. 
 
 ### Mutable V.S. Immutable 
 
@@ -1021,6 +1021,7 @@ Mutable objects can change their state or contents.
 
 Mutable objects: `list`, `dict`, `set`, and custom classes.
 
+`Set` itself is mutable. The elements inside of `set` must be immutable.
 
 #### Immutable
 
@@ -1030,7 +1031,7 @@ Immutable objects are quicker to access.
 
 Immutable objects: `int`, `float`, `bool`, `string`, `unicode`, `tuple`. They cannot be changed after they are created.
 
-The `tuple` itself is immutable but contain items that are mutable.
+`Tuple` itself is immutable. It cannot be changed after creation. You cannot add or remove elements. The elements inside of `tuple` can be mutable, e.g lists.
 
 ---
 
