@@ -325,13 +325,13 @@ To print all elements on the driver, you may use collect all RDDs to the driver 
 
 Two types of transformations: 
 
-- Narrow dependencies: The relationship between RDDs is 1 : 1 or many : 1. Data does not move between partitions. Examples:
+- Narrow dependencies: Data does not move between partitions. Examples:
   - `filter`
   - `flatMap`
   - `map`
   - `union`
   - `sample`
-- Wide dependencies: The relationship between RDDs is 1 : many or many : many. It requires the data to be partitioned in a particular way depending on the transformation type. Transformations need data from other partitions. Data moves between partitions - shuffle. Examples:
+- Wide dependencies: It requires the data to be partitioned in a particular way depending on the transformation type. Transformations need data from other partitions. Data moves between partitions - shuffle. Examples:
   - `intersection`
   - `groupByKey`
   - `distinct`
