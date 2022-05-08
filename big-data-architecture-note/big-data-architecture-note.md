@@ -6,6 +6,11 @@
     - [Key Big Data Architectures](#key-big-data-architectures)
       - [Lambda Architecture](#lambda-architecture)
       - [Kappa Architecture](#kappa-architecture)
+    - [Typical Big Data Batch Pipeline](#typical-big-data-batch-pipeline)
+    - [Typical Big Data Streaming Pipeline](#typical-big-data-streaming-pipeline)
+      - [Examples](#examples)
+  - [Key Data Processing Frameworks](#key-data-processing-frameworks)
+    - [Spark VS Flink](#spark-vs-flink)
   - [Real-Time Applications](#real-time-applications)
     - [Social Media Sentiment Analysis](#social-media-sentiment-analysis)
       - [Problem](#problem)
@@ -56,11 +61,43 @@ Key points:
 
 #### Lambda Architecture
 
+Lambda architecture is a popular technique where records are processed by a batch system and streaming system in parallel. The results are then combined during query time to provide a complete answer. 
+
+The key **downside** to this architecture is the development and operational overhead of managing two different systems. 
+
 ![lambda-architecture.png](img/lambda-architecture.png)
 
 #### Kappa Architecture
 
 ![kappa-architecture.png](img/kappa-architecture.png)
+
+### Typical Big Data Batch Pipeline
+
+![typical-big-data-batch-pipeline.png](img/typical-big-data-batch-pipeline.png)
+
+### Typical Big Data Streaming Pipeline
+
+![typical-big-data-streaming-pipeline.png](img/typical-big-data-streaming-pipeline.png)
+
+![typical-big-data-streaming-pipeline-2.png](img/typical-big-data-streaming-pipeline-2.png)
+
+When there are many data sources, data integration can be a separate process. 
+
+Kafka can be used for long-term storage with fault tolerance. 
+
+#### Examples
+
+![streaming-pipeline-example.png](img/streaming-pipeline-example.png)
+
+![streaming-pipeline-example-2.png](img/streaming-pipeline-example-2.png)
+
+## Key Data Processing Frameworks
+
+### Spark VS Flink
+
+![spark-vs-flink.png](img/spark-vs-flink.png)
+
+CEP: Complex Event Processing
 
 ---
 
