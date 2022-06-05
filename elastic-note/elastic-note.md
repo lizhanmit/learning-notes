@@ -2,6 +2,7 @@
 
 - [Elastic Note](#elastic-note)
   - [ELK](#elk)
+    - [Use Cases](#use-cases)
   - [Elasticsearch](#elasticsearch)
     - [Overview](#overview)
     - [Indexes and Documents](#indexes-and-documents)
@@ -29,6 +30,14 @@ ELK stack provides centralized logging in order to identify problems with server
 While dealing with very large amounts of data, you may need Kafka, RabbitMQ for buffering and resilience. For security, Nginx can be used.
 
 ![elastic-architecture-2.png](img/elastic-architecture-2.png)
+
+### Use Cases
+
+[Uses of Elasticsearch, and Things to Learn](https://www.elastic.co/blog/found-uses-of-elasticsearch)
+
+[Top 5 Elasticsearch Use Cases](https://www.objectrocket.com/blog/elasticsearch/top-elasticsearch-use-cases/)
+
+[Elasticsearch: What it is, How it works, and what it’s used for](https://www.knowi.com/blog/what-is-elastic-search/)
 
 ---
 
