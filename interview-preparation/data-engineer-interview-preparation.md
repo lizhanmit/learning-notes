@@ -2,6 +2,47 @@
 
 [大数据面试题知识点分析](https://blog.csdn.net/qq_26803795/article/category/7412168)
 
+---
+
+- [Data Engineer Interview Preparation](#data-engineer-interview-preparation)
+  - [Hadoop](#hadoop)
+    - [简述一下hdfs的数据压缩算法，工作中用的是那种算法，为什么？](#简述一下hdfs的数据压缩算法工作中用的是那种算法为什么)
+    - [NameNode和DataNode的通信原理](#namenode和datanode的通信原理)
+  - [Hive](#hive)
+    - [hive的计算是通过什么实现的？](#hive的计算是通过什么实现的)
+    - [hive 支持 not in 吗?](#hive-支持-not-in-吗)
+    - [Hive 有哪些方式保存元数据，各有哪些优缺点？](#hive-有哪些方式保存元数据各有哪些优缺点)
+    - [hive 如何权限控制？](#hive-如何权限控制)
+    - [hive 中的压缩格式 RCFile、 TextFile、 SequenceFile 各有什么区别？](#hive-中的压缩格式-rcfile-textfile-sequencefile-各有什么区别)
+  - [HBase](#hbase)
+    - [hive VS hbase](#hive-vs-hbase)
+    - [谈谈HBASE底层的理解](#谈谈hbase底层的理解)
+    - [hbase 读写数据的原理](#hbase-读写数据的原理)
+      - [客户端读取信息流程](#客户端读取信息流程)
+      - [存储数据流程](#存储数据流程)
+    - [HBase 过滤器](#hbase-过滤器)
+    - [Hbase 过滤器实现原理](#hbase-过滤器实现原理)
+    - [Hbase热点写问题](#hbase热点写问题)
+    - [如果用HBase 直接将时间戳作为行健，在写入单个 region 时候会发生热点问题，为什么？](#如果用hbase-直接将时间戳作为行健在写入单个-region-时候会发生热点问题为什么)
+    - [如何提高 HBase 客户端的读写性能](#如何提高-hbase-客户端的读写性能)
+    - [HBase 接收数据，如果短时间导入数量过多的话就会被锁, 该怎么办？](#hbase-接收数据如果短时间导入数量过多的话就会被锁-该怎么办)
+    - [hbase 宕机如何处理](#hbase-宕机如何处理)
+    - [怎样将mysql的数据导入到hbase中？](#怎样将mysql的数据导入到hbase中)
+    - [hbase的快速查找建立在哪些因素的基础上？](#hbase的快速查找建立在哪些因素的基础上)
+    - [HBase 的瓶颈](#hbase-的瓶颈)
+  - [Kafka](#kafka)
+    - [kafka如何保证数据不丢失](#kafka如何保证数据不丢失)
+      - [生产者数据不丢失](#生产者数据不丢失)
+        - [同步方式下配置](#同步方式下配置)
+        - [异步方式下配置](#异步方式下配置)
+      - [消费者数据不丢失](#消费者数据不丢失)
+  - [Data Lake](#data-lake)
+  - [Data Skew](#data-skew)
+  - [大数查找](#大数查找)
+    - [100亿数据找出最大的1000个数字（top K问题）](#100亿数据找出最大的1000个数字top-k问题)
+
+---
+
 ## Hadoop
 
 ### 简述一下hdfs的数据压缩算法，工作中用的是那种算法，为什么？
