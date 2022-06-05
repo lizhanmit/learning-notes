@@ -74,13 +74,21 @@
 
 ---
 
+## Cloud
+
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [AWS Big Data Specialty Certification](https://github.com/lizhanmit/learning-notes/blob/master/aws-big-data-specialty-certification-note/aws-big-data-specialty-certification-note.md)
-- [CI CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
+- [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
+
+---
+
+## Misc
+
+- [CI/CD](https://github.com/lizhanmit/learning-notes/blob/master/ci-cd-note/ci-cd-note.md)
 - [Computer Science](https://github.com/lizhanmit/learning-notes/blob/master/computer-science-note/computer-science-note.md)
 - [Data Structures and Algorithms](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note.md)
 - [Data Structures and Algorithms (ZH)](https://github.com/lizhanmit/learning-notes/blob/master/data-structures-and-algorithms-note/data-structures-and-algorithms-note-zh.md)
-- [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
+
 - [Git](https://github.com/lizhanmit/learning-notes/blob/master/git-note/git-note.md)
 - [Maven](https://github.com/lizhanmit/learning-notes/blob/master/maven-note/maven-note.md)
 - [MongoDB](https://github.com/lizhanmit/learning-notes/blob/master/mongodb-note/mongodb-note.md)
@@ -88,6 +96,7 @@
 - [Python 3](https://github.com/lizhanmit/learning-notes/blob/master/python-3-note/python-3-note.md)
 - [Reactive Programming](https://github.com/lizhanmit/learning-notes/blob/master/reactive-programming-note/reactive-programming-note.md)
 - [Scala](https://github.com/lizhanmit/scala-tutorial)
+- [Software Development](https://github.com/lizhanmit/learning-notes/blob/master/software-development-note/software-development-note.md)
 - [SonarQube](https://github.com/lizhanmit/learning-notes/blob/master/sonarQube-note/sonarQube-note.md)
 - [Testing](https://github.com/lizhanmit/learning-notes/blob/master/testing-note/testing-note.md)
 - [Unix](https://github.com/lizhanmit/learning-notes/blob/master/unix-note/unix-note.md)
@@ -106,3 +115,4 @@
 
 - [Data Engineer Interview Preparation](https://github.com/lizhanmit/learning-notes/blob/master/interview-preparation/data-engineer-interview-preparation.md)
 - [Data Structures and Algorithms Interview Preparation](https://github.com/lizhanmit/data-structures-and-algorithms)
+- [System Design Interview Preparation](https://github.com/lizhanmit/learning-notes/blob/master/interview-preparation/system-design-interview-preparation.md)
