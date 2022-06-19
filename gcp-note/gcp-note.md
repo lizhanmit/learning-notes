@@ -1,8 +1,45 @@
 # GCP Note
 
+- [GCP Note](#gcp-note)
+  - [GCP Resource Hierarchy](#gcp-resource-hierarchy)
+  - [Compute Engine](#compute-engine)
+  - [GCP Storage](#gcp-storage)
+    - [Cloud Storage](#cloud-storage)
+      - [Four Classes](#four-classes)
+    - [Cloud SQL](#cloud-sql)
+    - [Cloud Spanner](#cloud-spanner)
+    - [Big Table](#big-table)
+    - [Cloud Data Store](#cloud-data-store)
+    - [Comparison](#comparison)
+  - [Kubernetes](#kubernetes)
+    - [Containers](#containers)
+    - [Kubernetes Pod](#kubernetes-pod)
+    - [Kubernetes Cluster](#kubernetes-cluster)
+    - [Architecture](#architecture)
+  - [App Engine](#app-engine)
+    - [Standard Environment & Flexible Environment](#standard-environment--flexible-environment)
+  - [API Management](#api-management)
+    - [Cloud Endpoints](#cloud-endpoints)
+    - [Apigee Edge](#apigee-edge)
+  - [Cloud Functions](#cloud-functions)
+  - [Deployment Manager](#deployment-manager)
+  - [Monitoring](#monitoring)
+    - [Stackdriver](#stackdriver)
+  - [Cloud Big Data Platform](#cloud-big-data-platform)
+    - [Cloud Dataproc](#cloud-dataproc)
+    - [Cloud Dataflow](#cloud-dataflow)
+    - [BigQuery](#bigquery)
+    - [Cloud Pub/Sub](#cloud-pubsub)
+    - [Could Datalab](#could-datalab)
+  - [Cloud Machine Learning Platform](#cloud-machine-learning-platform)
+
+---
+
 [What is Google Cloud Platform (GCP)? – Introduction to GCP Services & GCP Account](https://www.edureka.co/blog/what-is-google-cloud-platform/)
 
 [Apache Spark Tutorial with GCP - YouTube](https://www.youtube.com/playlist?list=PLlL9SaZVnVgi_OQf3uLjJKNVivBLLfavf)
+
+---
 
 ## GCP Resource Hierarchy
 
