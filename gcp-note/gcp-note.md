@@ -32,6 +32,9 @@
     - [Cloud Pub/Sub](#cloud-pubsub)
     - [Could Datalab](#could-datalab)
   - [Cloud Machine Learning Platform](#cloud-machine-learning-platform)
+  - [BigQuery](#bigquery-1)
+    - [Coding](#coding)
+      - [In Cloud Shell](#in-cloud-shell)
 
 ---
 
@@ -265,3 +268,152 @@ infrastructure as code
   - Cloud Translate API
   - Cloud Video Intelligence API# GCP Note
 
+---
+
+## BigQuery 
+
+A dataset is a group of resources, such as tables and views.
+
+A dataset name can be up to 1,024 characters long, and consist of A-Z, a-z, 0-9, and the underscore, but it cannot start with a number or underscore, or have spaces.
+
+### Coding 
+
+#### In Cloud Shell
+
+Describe a table with project name: 
+
+```
+bq show <project:public dataset.table>
+```
+
+e.g. 
+
+```
+bq show bigquery-public-data:samples.shakespeare
+```
+
+Describe a table without project name: 
+
+```
+bq show <dataset_name.table_name>
+```
+ 
+e.g. 
+
+```
+bq show babynames.names2010
+```
+
+Run a query: 
+
+```
+bq query "[SQL_STATEMENT]"
+```
+
+Escape any quotation marks inside the `[SQL_STATEMENT]` with a `\` mark, or use `'[SQL_STATEMENT]'` instead of `"`. For instance, 
+
+```sql
+bq query --use_legacy_sql=false \
+'SELECT
+   word,
+   SUM(word_count) AS count
+ FROM
+   `bigquery-public-data`.samples.shakespeare
+ WHERE
+   word LIKE "%raisin%"
+ GROUP BY
+   word'
+```
+
+`--use_legacy_sql=false` makes standard SQL the default query syntax.
+
+List any existing datasets in your project: 
+
+```
+bq ls
+``` 
+
+List any existing datasets in a specific project: 
+
+```
+bq ls <project_name>:
+```
+
+e.g. 
+
+```
+bq ls bigquery-public-data:
+```
+
+Create a new dataset: 
+
+```
+bq mk <dataset_name>
+```
+
+e.g. 
+
+```
+bq mk babynames
+```
+
+Add the a zip file to your project: 
+
+```
+curl -LO <file URL>
+```
+
+e.g. 
+
+```
+curl -LO http://www.ssa.gov/OACT/babynames/names.zip
+```
+
+Unzip a file: 
+
+```
+unzip <zip_file_name>
+```
+
+e.g. 
+
+```
+unzip names.zip
+```
+
+Create or update a table and load data: 
+
+```
+bq load <dataset_name.table_name source>
+<column_name:column_type>
+```
+
+For instance, 
+
+```
+bq load babynames.names2010 yob2010.txt name:string,gender:string,count:integer
+```
+
+List tables or views in your dataset: 
+
+```
+bq ls <dataset_name>
+```
+
+e.g. 
+
+```
+bq ls babynames
+```
+
+Delete all tables in a dataset: 
+
+```
+bq rm -r <dataset_name>
+```
+
+e.g.
+
+```
+bq rm -r babynames
+```
