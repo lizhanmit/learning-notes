@@ -240,7 +240,7 @@ infrastructure as code
 ### Cloud Pub/Sub
 
 - supports many-to-many asynchronous messaging
-- push (subscribers get notified when new messages arrive) / pull (check for new messages at intervals)subscriptions 
+- push (subscribers get notified when new messages arrive) / pull (check for new messages at intervals) subscriptions 
 - "at least once" delivery at low latency, which means small chance some messages might be delivered more than once
 - one million messages per second and beyond
 - foundation for Dataflow streaming
@@ -249,7 +249,7 @@ infrastructure as code
 
 - notebook (Python env)
 - interactive tool for data exploration
-- built on Jupter
+- built on Jupyter
 - runs in a Compute Engine VM
 
 ---
