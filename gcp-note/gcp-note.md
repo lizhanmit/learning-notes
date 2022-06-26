@@ -1,8 +1,12 @@
 # GCP Note
 
 - [GCP Note](#gcp-note)
+  - [Regions and Zones](#regions-and-zones)
   - [GCP Resource Hierarchy](#gcp-resource-hierarchy)
   - [Compute Engine](#compute-engine)
+  - [Cloud Shell](#cloud-shell)
+    - [`gcloud`](#gcloud)
+      - [Coding](#coding)
   - [GCP Storage](#gcp-storage)
     - [Cloud Storage](#cloud-storage)
       - [Four Classes](#four-classes)
@@ -32,10 +36,9 @@
     - [Cloud Pub/Sub](#cloud-pubsub)
     - [Cloud Datalab](#cloud-datalab)
   - [Cloud Machine Learning Platform](#cloud-machine-learning-platform)
-  - [Cloud Shell](#cloud-shell)
   - [Data Studio](#data-studio)
   - [BigQuery](#bigquery-1)
-    - [Coding](#coding)
+    - [Coding](#coding-1)
       - [In Cloud Shell](#in-cloud-shell)
 
 ---
@@ -43,6 +46,20 @@
 [What is Google Cloud Platform (GCP)? – Introduction to GCP Services & GCP Account](https://www.edureka.co/blog/what-is-google-cloud-platform/)
 
 [Apache Spark Tutorial with GCP - YouTube](https://www.youtube.com/playlist?list=PLlL9SaZVnVgi_OQf3uLjJKNVivBLLfavf)
+
+---
+
+## Regions and Zones
+
+A region is a specific geographical location where you can run your resources. Each region has one or more zones. 
+
+![regions-and-zones.png](img/regions-and-zones.png)
+
+Resources that live in a zone are referred to as zonal resources. 
+
+Virtual machine Instances and persistent disks live in a zone. To attach a persistent disk to a virtual machine instance, both resources must be in the same zone. 
+
+Similarly, if you want to assign a static IP address to an instance, the instance must be in the same region as the static IP.
 
 ---
 
@@ -62,7 +79,11 @@ Organization nodes are optional, but if you want to create folders, having one i
 
 ---
 
-## Compute Engine
+## Compute Engine 
+
+Google Compute Engine (GCE)
+
+Certain Compute Engine resources live in regions or zones.
 
 - offers managed VMs
 - per second billing
@@ -73,6 +94,110 @@ Storage type:
 
 - local SSD: Use this when your application needs high performance scratch space. But does not last past when VM terminates. 
 - standard persistent disks: by default
+
+You can create a VM instance in Compute Engine through gcloud command line tool or Cloud Console. 
+
+---
+
+## Cloud Shell
+
+Cloud Shell is a Debian-based virtual machine that is loaded with development tools. It offers a persistent 5GB home directory and runs on the Google Cloud. Cloud Shell provides command-line access to your Google Cloud resources.
+
+### `gcloud`
+
+`gcloud` is the command-line tool for Google Cloud. It comes pre-installed on Cloud Shell and supports tab-completion.
+
+`sa_107021519685252337470@gcelab2`: 
+
+- The reference before the `@` indicates the account being used.
+- After the `@` sign indicates the host machine being accessed.
+
+
+#### Coding
+
+List the active account name: 
+
+```
+gcloud auth list
+```
+
+List the project ID:
+
+```
+gcloud config list project
+```
+
+List of configurations in your environment:
+
+```
+gcloud config list
+```
+
+See all properties and their settings:
+
+```
+gcloud config list --all
+```
+
+List your components:
+
+```
+gcloud components list
+```
+
+List the compute instance available in the project:
+
+```
+gcloud compute instances list
+```
+
+List the gcelab2 virtual machine:
+
+```
+gcloud compute instances list --filter="name=('gcelab2')"
+```
+
+List the Firewall rules in the project:
+
+```
+gcloud compute firewall-rules list
+```
+
+List the Firewall rules for the default network:
+
+```
+gcloud compute firewall-rules list --filter="network='default'"
+```
+
+List the Firewall rules for the default network where the allow rule matches an ICMP rule:
+
+```
+gcloud compute firewall-rules list --filter="NETWORK:'default' AND ALLOW:'icmp'"
+```
+
+To connect to your VM "gcelab2" with SSH:
+
+```
+gcloud compute ssh gcelab2 --zone $ZONE
+```
+
+View the available logs on the system:
+
+```
+gcloud logging logs list 
+```
+
+Read the logs related to the resource type of "gce_instance":
+
+```
+gcloud logging read "resource.type=gce_instance" --limit 5
+```
+
+Read the logs for a specific virtual machine:
+
+```
+gcloud logging read "resource.type=gce_instance AND labels.instance_name='gcelab2'" --limit 5
+```
 
 ---
 
@@ -269,14 +394,6 @@ infrastructure as code
   - Cloud Natural Language API
   - Cloud Translate API
   - Cloud Video Intelligence API# GCP Note
-
----
-
-## Cloud Shell
-
-Cloud Shell is a virtual machine that is loaded with development tools. It offers a persistent 5GB home directory and runs on the Google Cloud. Cloud Shell provides command-line access to your Google Cloud resources.
-
-`gcloud` is the command-line tool for Google Cloud. It comes pre-installed on Cloud Shell and supports tab-completion.
 
 ---
 
