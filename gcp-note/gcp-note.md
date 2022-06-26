@@ -30,8 +30,10 @@
     - [Cloud Dataflow](#cloud-dataflow)
     - [BigQuery](#bigquery)
     - [Cloud Pub/Sub](#cloud-pubsub)
-    - [Could Datalab](#could-datalab)
+    - [Cloud Datalab](#cloud-datalab)
   - [Cloud Machine Learning Platform](#cloud-machine-learning-platform)
+  - [Cloud Shell](#cloud-shell)
+  - [Data Studio](#data-studio)
   - [BigQuery](#bigquery-1)
     - [Coding](#coding)
       - [In Cloud Shell](#in-cloud-shell)
@@ -79,7 +81,7 @@ Storage type:
 ### Cloud Storage
 
 - object storage
-- different with file storage, block storage
+- different from file storage, block storage
 - Each object has an unique key in form of URL.
 - The objects are immutable. (versioning) (You can turn on / off versioning.)
 - Cloud Storage files are organized into buckets.
@@ -248,7 +250,7 @@ infrastructure as code
 - one million messages per second and beyond
 - foundation for Dataflow streaming
 
-### Could Datalab
+### Cloud Datalab
 
 - notebook (Python env)
 - interactive tool for data exploration
@@ -270,7 +272,23 @@ infrastructure as code
 
 ---
 
+## Cloud Shell
+
+Cloud Shell is a virtual machine that is loaded with development tools. It offers a persistent 5GB home directory and runs on the Google Cloud. Cloud Shell provides command-line access to your Google Cloud resources.
+
+`gcloud` is the command-line tool for Google Cloud. It comes pre-installed on Cloud Shell and supports tab-completion.
+
+---
+
+## Data Studio
+
+Data Studio is a free, modern business intelligence product that lets you create dynamic, visually compelling reports and dashboards. 
+
+---
+
 ## BigQuery 
+
+In BigQuery, projects contain datasets, and datasets contain tables.
 
 A dataset is a group of resources, such as tables and views.
 
