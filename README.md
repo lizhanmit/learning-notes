@@ -10,6 +10,7 @@
 - [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
 - [Data Science](https://github.com/lizhanmit/learning-notes/blob/master/data-science-note/data-science-note.md)
 - [Data Stream Development with Apache Spark, Kafka, and Spring Boot](https://github.com/lizhanmit/learning-notes/blob/master/data-stream-development-with-apache-spark-kafka-and-spring-boot-note/data-stream-development-with-apache-spark-kafka-and-spring-boot-note.md)
+- [Data Virtualization](https://github.com/lizhanmit/learning-notes/blob/master/data-virtualization-note/data-virtualization-note.md)
 - [Data Warehouse](https://github.com/lizhanmit/learning-notes/blob/master/data-warehouse-note/data-warehouse-note.md)
 - [Elastic](https://github.com/lizhanmit/learning-notes/blob/master/elastic-note/elastic-note.md)
 - [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
