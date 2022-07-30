@@ -77,6 +77,7 @@
 
 ## Cloud
 
+- [Cloud Computing Patterns](https://www.cloudcomputingpatterns.org/)
 - [AWS](https://github.com/lizhanmit/learning-notes/blob/master/aws-note/aws-note.md)
 - [AWS Big Data Specialty Certification](https://github.com/lizhanmit/learning-notes/blob/master/aws-big-data-specialty-certification-note/aws-big-data-specialty-certification-note.md)
 - [GCP](https://github.com/lizhanmit/learning-notes/blob/master/gcp-note/gcp-note.md)
