@@ -157,6 +157,8 @@ When Kafka might **NOT** be the right fit:
 
 ### Message Delivery Semantics
 
+[Demystifying Apache Kafka Message Delivery Semantics: At-most-once & At-least-once & Exactly-once](https://keen.io/blog/demystifying-apache-kafka-message-delivery-semantics-at-most-once-at-least-once-exactly-once/)
+
 Three ways to deliver messages:
 
 - At least once (**by default**): The messages are never lost. 
