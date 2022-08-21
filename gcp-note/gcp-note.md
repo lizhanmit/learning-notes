@@ -405,6 +405,8 @@ Data Studio is a free, modern business intelligence product that lets you create
 
 ## BigQuery 
 
+![bigquery.png](img/bigquery.png)
+
 In BigQuery, projects contain datasets, and datasets contain tables.
 
 A dataset is a group of resources, such as tables and views.
