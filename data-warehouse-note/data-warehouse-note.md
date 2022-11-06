@@ -23,6 +23,7 @@
   - [Data Marts](#data-marts)
   - [Data Lakes](#data-lakes)
     - [Data Warehouse VS Data Lake](#data-warehouse-vs-data-lake)
+  - [Data Lakehouse](#data-lakehouse)
 
 ---
 
@@ -219,3 +220,13 @@ Previously, data warehouses are enough for data analytics and BI. But now, with 
 ### Data Warehouse VS Data Lake
 
 ![data-warehouse-vs-data-lake.png](img/data-warehouse-vs-data-lake.png)
+
+---
+
+## Data Lakehouse
+
+[Data Lakehouse](https://www.databricks.com/glossary/data-lakehouse)
+
+[A Brief Overview of the Data Lakehouse](https://www.striim.com/blog/a-brief-overview-of-the-data-lakehouse/)
+
+[Data Warehouse vs. Data Lake vs. Data Lakehouse: An Overview of Three Cloud Data Storage Patterns](https://www.striim.com/blog/data-warehouse-vs-data-lake-vs-data-lakehouse-an-overview/)
