@@ -59,6 +59,10 @@
 
 ---
 
+[System Design: Why is Kafka fast?](https://www.bilibili.com/video/BV1T34y1H7XP/?spm_id_from=333.999.0.0)
+
+---
+
 ## Messaging Systems 
 
 ### Design Patterns 
