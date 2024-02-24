@@ -83,6 +83,8 @@ Organization nodes are optional, but if you want to create folders, having one i
 
 Google Compute Engine (GCE)
 
+![compute-engine.png](img/compute-engine.png)
+
 Certain Compute Engine resources live in regions or zones.
 
 - offers managed VMs
