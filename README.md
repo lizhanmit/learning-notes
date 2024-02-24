@@ -16,6 +16,7 @@
 - [ETL](https://github.com/lizhanmit/learning-notes/blob/master/etl-note/etl-note.md)
 - [Flume](https://github.com/lizhanmit/learning-notes/blob/master/flume-note/flume-note.md)
 - [Flume and Kafka Integration](https://github.com/lizhanmit/learning-notes/blob/master/flume-kafka-integration-note/flume-kafka-integration-note.md)
+- [Generative AI](https://github.com/lizhanmit/learning-notes/blob/master/generative-ai-note/generative-ai-note.md)
 - [Hadoop](https://github.com/lizhanmit/learning-notes/blob/master/hadoop-note/hadoop-note.md)
 - [HBase](https://github.com/lizhanmit/learning-notes/blob/master/hbase-note/hbase-note.md)
 - [Hive](https://github.com/lizhanmit/learning-notes/blob/master/hive-note/hive-note.md)
