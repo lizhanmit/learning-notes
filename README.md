@@ -56,6 +56,7 @@
     - [Page View](https://github.com/lizhanmit/mooc-web-log-real-time-data-analysis#page-view)
     - [Page View Contributed by Search Engines](https://github.com/lizhanmit/mooc-web-log-real-time-data-analysis#page-view-contributed-by-search-engines)
   - [Data Visualization](https://github.com/lizhanmit/mooc-web-log-real-time-data-analysis#data-visualization)
+- [Web Scraping](https://github.com/lizhanmit/learning-notes/blob/master/web-scraping-note/web-scraping-note.md)
 - [ZooKeeper](https://github.com/lizhanmit/learning-notes/blob/master/zooKeeper-note/zooKeeper-note.md)
 
 ### Articles
