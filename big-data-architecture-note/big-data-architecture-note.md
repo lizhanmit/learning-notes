@@ -11,6 +11,14 @@
       - [Examples](#examples)
   - [Key Data Processing Frameworks](#key-data-processing-frameworks)
     - [Spark VS Flink](#spark-vs-flink)
+  - [Rule of Thumb](#rule-of-thumb)
+  - [Types of Data Architecture](#types-of-data-architecture)
+  - [Data Serving Layer](#data-serving-layer)
+  - [Case Study](#case-study)
+    - [Log Monitoring](#log-monitoring)
+    - [IoT Sensor Data](#iot-sensor-data)
+    - [Media and Behavioral Analytics](#media-and-behavioral-analytics)
+    - [HR Tech and Recruitment](#hr-tech-and-recruitment)
   - [Real-Time Applications](#real-time-applications)
     - [Social Media Sentiment Analysis](#social-media-sentiment-analysis)
       - [Problem](#problem)
@@ -39,13 +47,13 @@
       - [Problem](#problem-3)
       - [Solution](#solution-3)
       - [Technologies](#technologies-3)
-        - [User Preferences & Location Services Databases](#user-preferences--location-services-databases)
+        - [User Preferences \& Location Services Databases](#user-preferences--location-services-databases)
         - [Mobile Gateway](#mobile-gateway)
       - [Best Practices of Pipeline Management](#best-practices-of-pipeline-management)
 
 ---
 
-[(Online course: Big Data for Architects)](https://learning.oreilly.com/videos/big-data-for/9781801075596/)
+[(Oreilly Learning course: Big Data for Architects)](https://learning.oreilly.com/videos/big-data-for/9781801075596/)
 
 ## Holistic View of Architectures and Pipelines
 
@@ -101,7 +109,155 @@ CEP: Complex Event Processing
 
 ---
 
-[(Online course: Architecting Big Data Applications: Real-Time Application Engineering)](https://www.linkedin.com/learning/architecting-big-data-applications-real-time-application-engineering)
+[(Udemy course: Every (big) data architecture is the same)](https://www.udemy.com/course/every-data-architecture-is-the-same/)
+
+## Rule of Thumb
+
+As a rule of thumb, try to minimize choices of everything (or the amount of components in the architecture such as databases, processing tools, jobs etc.) as much as possible. But do not overdo it.
+
+A good data architect is one that standardizes as much as possible but does not lose pragmatism. 
+
+## Types of Data Architecture 
+
+- BI-like towards OLAP/Data Warehouse
+- Data lake in big data science
+- Lambda architecture: Batch and stream processing use different toolings.
+- Kappa architecture: Batch and stream processing use the same tooling.
+- Data mesh: Domain-driven, without moving source, ETL or storage to a centralized place. Highly focused on OLAP/Data Warehouse-type of applications.
+  - Core principles: 
+    - Data infrastructure as a service
+    - Decentralized data storage and processing. Every domain is responsible for their own logic.
+    - Treat decentralized data hubs/domains as a microservice on its own.
+    - Connect data hubs with each other in whatever way necessary. (This creates the actual mesh.)
+
+## Data Serving Layer 
+
+Two scenarios of serving data:
+
+- Explorational: Applications that are not business critical. 
+  - Dashboarding 
+  - Monitoring 
+  - Sale figures
+- Operational: Applications that are business critical. 
+  - Recommendation
+  - Fraud detection 
+  - Real-time bidding when buying and selling stocks
+
+Tools: 
+
+- Traditional BI tools, e.g. Power BI, Tableau, Qlik Viewer.
+- Big data-capable tools, e.g. Kibana.
+
+Considerations: 
+
+- IAM (Who can access what data)
+- Security
+- Auditability
+
+## Case Study
+
+### Log Monitoring
+
+Background: 
+
+- Large consumer electronic and devices brand. 
+- Devices and IT systems all generate logs.
+- Logs are low-level in different shapes and formats, internal and external systems.
+
+Goal: Set up a central data hub that filters, analyzes and makes these logs available for monitoring and alerting. 
+
+Constraints: 
+
+- Infrastructure on AWS.
+- Use managed services as many as possible.
+- Most log sources cannot be modified.
+- Data is not well-known so exploration is needed.
+- Splunk is the operational tool used by business.
+
+Data architecture design: 
+
+- Different tools can be used for source data ingestion from various source systems such as API Gateway, Lambda pull, Splunk HK and so forth. 
+- Data is ingested into Kinesis Firehose firstly. 
+- Then get data from Kinesis Firehose and save to data lake. At the same time, tag data with source system and timestamp.
+  - S3: Raw data. 
+  - DynamoDB: Integrated storage.
+- Use Spark to build integrated ETL data pipeline to process raw data and save to integrated storage.
+- Move data from integrated storage to Athena where data analysts and scientists can do analysis. Another S3 is also provided to them as playground for uploading data themselves. 
+- Spark integrated ETL saves data to Kinesis Data Streams, which is regarded as data serving layer. 
+- Kinesis Data Streams can be integrated with Splunk HEC which allows business users to consume data, or other AI/ML vendor tools.
+
+### IoT Sensor Data
+
+Background: 
+
+- Ship engine builder company.
+- IoT collectors on vessels.
+- Connectivity of source systems is problematic.
+- Deadbanded data.
+
+Goal: Onboard and collect data of all sensors into a data lake. Implement use cases on top of the data.
+
+Constraints: 
+
+- Infrastructure on AWS, in early days, not all managed services were mature enough.
+- Teams were split into data engineers and scientists.
+- Deploying updates to data collectors was problematic as they live on ferrying ships.
+
+Data architecture design: 
+
+- Use Kinesis or Snowball for data ingestion. 
+- Data is ingested into Kinesis Data Streams firstly. Not able to use Kinesis Firehose as it was unavailable at that time. 
+- Then get data from Kinesis Data Streams and save to data lake. At the same time, tag data with source system and timestamp.
+  - S3: Raw data. 
+  - DynamoDB: Integrated storage.
+- Use Spark to build integrated ETL data pipeline to process raw data and save to integrated storage.
+- Get data from integrated storage to build use cases such as uptime tracking, anomaly detection, and predictive maintenance. Then save output data to use case specific storage. 
+- At data serving layer, alerting and monitoring applications consume use case data. In addition, Qlik View enables business users to get insights into sensors based on integrated storage.
+
+### Media and Behavioral Analytics
+
+Background: 
+
+- Large media brand.
+- Products are magazines, TV, online news and offline events.
+- Existing data infrastructure is obsolete. 
+- Main business model: advertising. 
+
+Goal: Replace the obsolete data infrastructure with a future-proof one in limited time, with limited budget and team.
+
+Constraints: 
+
+- Infrastructure on AWS.
+- GDPR needs attention because of personal data involved.
+- Online and offline data needs to be combined. 
+- Integration with the existing systems (Xandr, DMPs (Data Management Platforms), CMS (Content Management Systems), etc.).
+- No team yet, need to hire.
+
+Data architecture design: 
+
+- Use API Gateway to ingest data from CMS. In daily dump manner, ingest data of visitors of offline events, magazines and subscription information from SAS. Build a pixel server to collect pixel data on website (user behaviors). 
+- For data from CMS, build Spark Streaming real-time NLP enrichment pipeline to process it, and then save result in Postgres RDS in data lake. 
+- For data from pixel server, ingest into Kinesis. Use Spark Streaming to do real-time user profiling analysis, and then save result of new profiles or changes to the existing profiles in MongoDB in data lake. Use Spark Streaming to do real-time content statistics analysis, and then save result in Postgres RDS in data lake. Between the pixel server and MongoDB, there is a cache that can be used bidirectionally - collecting data from and recommending content to end users. 
+- For data from SAS, it is ingested into S3 in data lake. 
+- Use Spark to build integrated ETL data pipeline to process data from S3, MongoDB and Postgres RDS, and then save back into MongoDB in data lake. 
+- In data serving layer, some of the outputs are saved into in DMP for advertising. Others are saved into Athena and Qlik View for monitoring by business users about like how often people read specific articles to give editors an idea how good their articles are performing compared with others, or how many advertisements have been sold.
+
+### HR Tech and Recruitment 
+
+Background: 
+
+
+- 
+
+Goal:
+
+Constraints: 
+
+Data architecture design: 
+
+---
+
+[(LinkedIn Learning course: Architecting Big Data Applications: Real-Time Application Engineering)](https://www.linkedin.com/learning/architecting-big-data-applications-real-time-application-engineering)
 
 ## Real-Time Applications
 
