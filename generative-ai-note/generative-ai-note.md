@@ -1,9 +1,5 @@
 # Generative AI Note
 
-- (LinkedIn Learning course: Prompt Engineering: How to Talk to the AIs)
-- (LinkedIn Learning course: What Is Generative AI?)
-- (LinkedIn Learning course: Generative AI: Introduction to Large Language Models)
-
 - [Generative AI Note](#generative-ai-note)
   - [Basic Concepts](#basic-concepts)
     - [Use Cases](#use-cases)
@@ -24,6 +20,12 @@
       - [Identify Incorrect Information](#identify-incorrect-information)
       - [Separation Token](#separation-token)
     - [Tips and Tricks](#tips-and-tricks)
+  - [AI Agents](#ai-agents)
+    - [Key Components Involved in Building AI Agents](#key-components-involved-in-building-ai-agents)
+    - [Types of AI Agents](#types-of-ai-agents)
+      - [Key Characteristics of AI Agents](#key-characteristics-of-ai-agents)
+      - [Types](#types)
+  - [References](#references)
 
 ---
 
@@ -397,6 +399,61 @@ LLMs like GPT only read forward. Giving the instruction before the example can i
 
 Modern AI can speak almost any language. 
 
+---
+
+## AI Agents
+
+### Key Components Involved in Building AI Agents
+
+- Environment: The external world (digital or physical/real-world) that the AI agent perceives and interacts with.
+- Sensors: How the agent collects data about its surroundings.
+  - Examples: 
+    - Scraping the web
+    - Accessing APIs
+    - Interpreting images from cameras
+    - Capturing audio through microphones
+    - Analyzing data from IoT devices
+- Model: Helps the agent interpret its perceptions and guide its understanding. 
+  - Examples:
+    - Simple ML algorithms
+    - Complex Neural Networks
+    - LLMs
+- Decision-making logic: Determines how the agent selects appropriate actions. 
+  - Examples:
+    - Structured rules
+    - Algorithms 
+  - Practical LLM implementations: A thin external logic layer is useful for extracting structured actions and ensuring the LLM's actions are safe and legal. 
+- Actuators: The mechanisms through which the agent executes actions and affects its environment.
+- Feedback mechanisms: Allow the agent to evaluate whether it has successfully achieved its intended goals.
+
+### Types of AI Agents
+
+#### Key Characteristics of AI Agents
+
+- Profiles and persona 
+  - Agent's background (e.g., marketer, software engineer)
+  - Area of specialization (e.g., SEO specialist)
+  - Communication style 
+  - Tone of voice 
+- Memory and knowledge 
+- Reasoning
+- Actions
+- Learning capabilities 
+
+Not all agent types must have all above five characteristics to qualify as agents. Having 4 or 5 is typical of more sophisticated agents.
+
+#### Types
+
+- Simple reflex agent
+
+---
+
+## References
+
+- LinkedIn Learning course: Prompt Engineering: How to Talk to the AIs
+- LinkedIn Learning course: What Is Generative AI?
+- LinkedIn Learning course: Generative AI: Introduction to Large Language Models
+- Udemy course: Intro to AI Agents and Agentic AI
 
 
 
