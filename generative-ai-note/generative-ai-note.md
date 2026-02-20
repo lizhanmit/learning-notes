@@ -24,7 +24,9 @@
     - [Key Components Involved in Building AI Agents](#key-components-involved-in-building-ai-agents)
     - [Types of AI Agents](#types-of-ai-agents)
       - [Key Characteristics of AI Agents](#key-characteristics-of-ai-agents)
-      - [Types](#types)
+      - [Types of Agents](#types-of-agents)
+    - [Learning Abilities of AI Agents](#learning-abilities-of-ai-agents)
+    - [AI Agent Architecture Patterns](#ai-agent-architecture-patterns)
   - [References](#references)
 
 ---
@@ -442,9 +444,78 @@ Modern AI can speak almost any language.
 
 Not all agent types must have all above five characteristics to qualify as agents. Having 4 or 5 is typical of more sophisticated agents.
 
-#### Types
+#### Types of Agents
 
-- Simple reflex agent
+- Simple reflex agents: Fundamental tools that react directly based on immediate perception. 
+  - Perceive the environment. 
+  - No internal memory or sophisticated models. 
+  - No internal reasoning. 
+  - Do not learn or adapt. 
+  - Follow pre-defined hard-coded rules.
+  - Example: Thermostats. 
+  - Not AI agents.
+- Model-based reflex agents
+  - Perceive the environment. 
+  - Use memory to maintain an internal representation of the environment. 
+  - Construct a model of the world around them which is usually static or updated through fixed rules rather than adaptive learning algorithms. 
+  - Do not learn or adapt.
+  - Example: Robot vacuum cleaners. 
+  - A simple form of AI agents.
+- Goal-based agents: Search for action sequences that achieve their goal and plan these actions.
+  - Often overlook certain subtleties focusing exclusively on optimizing for goal completion. 
+  - Example: Google Map.
+- Utility-based agents: Consider multiple factors to evaluate utility. 
+  - The decision logic is focused on utility evaluation. 
+  - Aim to evaluate actions based on potential returns. 
+  - Example: Find and invest in financial securities.
+![utility-based-agents-example.png](./img/utility-based-agents-example.png)  
+- Learning agents
+  - Have the ability to learn.
+  - Learning element enhances the model over time based on feedback.
+  - Self-refining: Adapt and improve their capabilities over time.
+
+### Learning Abilities of AI Agents
+
+How AI Agents learn: 
+
+- Learning from other agents, namely, agent-to-agent learning.
+- Connecting to external sources of info, such as external data sets, web searches and APIs to external systems.
+- Human feedback.
+
+Human-in-the-Loop (HITL): Emphasizes the continuous involvement of human in the training, monitoring, and refinement of AI systems. 
+
+- Pros: Highly valuable. 
+- Cons: 
+  - Time-consuming: takes a significant amount of time to learn from humans. 
+  - Costly. 
+
+Example: Customer support chatbot. 
+
+1. Development stage:
+     1. Human developers select and curate the training data. 
+     2. Design the chatbot's algorithms and architecture. 
+     3. Set ethical guidelines and constraints. 
+     4. Define the chatbot's specific objectives, e.g., improving customer satisfaction.
+        - Human developers identify and set measurable metrics such as customer satisfaction scores.
+2. Deployment stage:
+     1. Deploy the chatbot. 
+     2. Integrate the chatbot into operational workflows. 
+     3. Shape chatbot's behaviors through clear instructions and operational adjustments. 
+         - Human developers actively update the chatbot's knowledge base with new company policies and business-specific practices. 
+3. Production stage:
+     1. Human developers continuously monitor chatbot performance. 
+     2. Correct inaccuracies. 
+     3. Refine responses through direct feedback from end users. 
+     4. End users indirectly influence the chatbot by posing queries, reacting positively or negatively, signaling areas for improvement. 
+
+### AI Agent Architecture Patterns
+
+LLMs != AI workflows != AI agents
+
+Key frameworks used to build AI agents: 
+
+- ReAct
+- ReWOO (Reasoning WithOut Observation)
 
 ---
 
