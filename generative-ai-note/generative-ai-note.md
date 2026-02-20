@@ -27,6 +27,10 @@
       - [Types of Agents](#types-of-agents)
     - [Learning Abilities of AI Agents](#learning-abilities-of-ai-agents)
     - [AI Agent Architecture Patterns](#ai-agent-architecture-patterns)
+      - [LLMs != AI workflows != AI agents](#llms--ai-workflows--ai-agents)
+      - [Key Frameworks Used to Build AI Agents](#key-frameworks-used-to-build-ai-agents)
+      - [Single-agents vs. Multi-agents](#single-agents-vs-multi-agents)
+    - [Implementing AI Agents in Practice](#implementing-ai-agents-in-practice)
   - [References](#references)
 
 ---
@@ -510,12 +514,81 @@ Example: Customer support chatbot.
 
 ### AI Agent Architecture Patterns
 
-LLMs != AI workflows != AI agents
+#### LLMs != AI workflows != AI agents
 
-Key frameworks used to build AI agents: 
+LLMs: 
 
-- ReAct
-- ReWOO (Reasoning WithOut Observation)
+- Respond only when prompted by users. They do not act on their own or take initiative.
+- User -> prompt instructions -> LLMs -> output
+
+AI workflows:
+
+- Workflows are triggered when users initiate actions.
+- Logic is designed by humans. The AI does what it is told to do.
+- AI workflows are rigid. They follow pre-defined paths. 
+- Example: 
+    1. A translator app receives email.
+    2. Sends email to LLM.
+    3. Receives translated email.  
+  - Do not automatically mean the LLM will act whenever a new email arrives. 
+
+AI agents:
+
+- Address the proactivity and flexibility limitations. 
+- Do not need human intervention to start working. 
+- They can figure out the best course of action on their own. 
+- Example: 
+    1. The AI agent connects to Internet, the user's calendar and email. 
+    2. When there is a new email in the inbox, the AI agent independently reads and understands the message and context of the email. 
+    3. Proactively checks calendar to find suitable times and locations.  
+    4. Checks the weather forecast on the Internet to decide whether to propose outdoor or indoor venues for the meeting.
+    5. Sends the response directly to the other party and share the final meeting details.
+    6. If the user indicates that he/she does not like a particular venue, the AI agent will update its memory and will not propose it the next time it has to schedule a meeting. (Learn and adapt)
+
+#### Key Frameworks Used to Build AI Agents 
+
+- ReAct (Reasoning and acting): AI agents reason for the optimal course of action and then act accordingly. 
+  1. Reason through each step. 
+  2. Process the available info.
+  3. Determine the optimal course of action. 
+  4. Execute the operation. 
+  - Could become sidetracked leading to unnecessary delays and distractions.  
+  - Example:
+![react-example.png](./img/react-example.png)
+- ReWOO (Reasoning WithOut Observation): Plan all necessary steps in advance. 
+  - Plan the entire sequence of steps from start to finish before taking any action. 
+  - Do not pause to gather new info during the execution phase. 
+  - Will not adjust actions based on new info.
+  - Stick strictly to the original plan and ignore distractions.  
+  - Less flexible when dealing with minor changes to the original plan. 
+
+#### Single-agents vs. Multi-agents
+
+- Single-agent systems: 
+  - Powerful. 
+  - Each new tool integrated into the agent significantly expands its capabilities.
+  - Simply the evaluation and maintenance of the system.  
+- Multi-agent systems:
+  - Increased complexity in terms of development. 
+  - Need to orchestrate their tasks inside the overall project workflow.
+  - Need to clarify tasks by separating responsibilities.  
+  - Use tool-calling on the backend to: 
+    - obtain up-to-date info
+    - optimize workflows
+    - create subtasks autonomously to achieve complex goals
+  - Ways to organize the work of multiple agents: 
+    - Manager structure 
+![multi-agents-manager-structure.png](./img/multi-agents-manager-structure.png)
+    - Decentralized structure
+![multi-agents-decentralized-structure.png](./img/multi-agents-decentralized-structure.png)
+
+It is **typically recommended** to start with a single agent and maximize its capabilities. Usually, a single agent with tools is enough. 
+
+For complex workflows, if the single agent struggles with complicated instructions or repeatedly picks the wrong tools, it is a good idea to break tasks down further by adding more specialized agents. 
+
+### Implementing AI Agents in Practice
+
+
 
 ---
 
