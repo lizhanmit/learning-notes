@@ -27,10 +27,15 @@
       - [Types of Agents](#types-of-agents)
     - [Learning Abilities of AI Agents](#learning-abilities-of-ai-agents)
     - [AI Agent Architecture Patterns](#ai-agent-architecture-patterns)
-      - [LLMs != AI workflows != AI agents](#llms--ai-workflows--ai-agents)
+      - [LLMs != AI Workflows != AI Agents](#llms--ai-workflows--ai-agents)
       - [Key Frameworks Used to Build AI Agents](#key-frameworks-used-to-build-ai-agents)
       - [Single-agents vs. Multi-agents](#single-agents-vs-multi-agents)
     - [Implementing AI Agents in Practice](#implementing-ai-agents-in-practice)
+      - [Implementation Steps](#implementation-steps)
+      - [Selecting a LLM](#selecting-a-llm)
+      - [External Tools the AI Agent Can Use](#external-tools-the-ai-agent-can-use)
+      - [Agent Instructions](#agent-instructions)
+      - [Prompt Engineering Techniques](#prompt-engineering-techniques)
   - [References](#references)
 
 ---
@@ -514,7 +519,7 @@ Example: Customer support chatbot.
 
 ### AI Agent Architecture Patterns
 
-#### LLMs != AI workflows != AI agents
+#### LLMs != AI Workflows != AI Agents
 
 LLMs: 
 
@@ -588,7 +593,51 @@ For complex workflows, if the single agent struggles with complicated instructio
 
 ### Implementing AI Agents in Practice
 
+#### Implementation Steps
 
+1. Define clear objectives. Understand well what you want to achieve with AI agents.
+2. Understand what data will be required. 
+3. Choose a suitable agent structure - which type of agents to use. 
+4. Provide access to the internal info to the agent.
+5. Focus on UX. 
+6. Deploy in production and monitor performance. 
+
+#### Selecting a LLM
+
+- Consider using a variety of models before deciding on the optimal one. 
+- Not every use case requires the most advanced model. 
+- A **best practice** is to develop the agent prototype with the most capable model and establish a performance baseline. Then, once the performance goals are achieved, you can experiment with other models and check if their output is sufficiently good compared to the baseline performance. 
+- Balance factors like accuracy, speed, cost, and scalability. 
+
+#### External Tools the AI Agent Can Use 
+
+- Data tools: Help agents find and get the info they need. 
+- Action tools: Allow agents to perform specific tasks and take actions. 
+
+#### Agent Instructions
+
+- Clear instructions reduces ambiguity resulting in higher quality output. 
+- Craft the system prompt as effectively as possible. 
+- **Best practices** for agent instructions from OpenAI: 
+  - Use existing documents to create LLM-friendly routines. 
+  - Prompt agents to break down tasks. 
+  - Define clear actions, ensuring instructions to the agent are concise and unambiguous.
+    - Example: 
+      - Vague instruction: "Help the customers with their order issues."
+      - Actionable and explicit instruction: "If a customer reports his/her order has not arrived, ask immediately for their order ID and check the delivery status. If delayed, offer to resend or provide a refund."
+  - Make an effort to consider and capture edge cases. 
+
+#### Prompt Engineering Techniques 
+
+- Zero-shot prompting: Ask an LLM to perform a task without giving it any examples. The model relies on its pre-existing knowledge. 
+- One-shot prompting: Provide instructions to the LLM along with one example. 
+- Few-shot prompting: Provide instructions to the LLM along with a small number of examples (2~10). 
+
+Anything beyond few-shot prompting is considered as fine-tuning - training the model extensively rather than replying solely on prompting. 
+
+Effectiveness depends on the prompting strategy and fine-tuning. 
+
+Chain-of-Thought (CoT):
 
 ---
 
