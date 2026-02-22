@@ -36,6 +36,11 @@
       - [External Tools the AI Agent Can Use](#external-tools-the-ai-agent-can-use)
       - [Agent Instructions](#agent-instructions)
       - [Prompt Engineering Techniques](#prompt-engineering-techniques)
+      - [Guardrails](#guardrails)
+      - [Human Intervention](#human-intervention)
+      - [Evaluating AI Agents](#evaluating-ai-agents)
+    - [Building Agentic Automation with n8n](#building-agentic-automation-with-n8n)
+    - [Infrastructure for AI Agents](#infrastructure-for-ai-agents)
   - [References](#references)
 
 ---
@@ -635,9 +640,73 @@ For complex workflows, if the single agent struggles with complicated instructio
 
 Anything beyond few-shot prompting is considered as fine-tuning - training the model extensively rather than replying solely on prompting. 
 
-Effectiveness depends on the prompting strategy and fine-tuning. 
+The effectiveness of AI agents depends heavily on the prompting strategy and fine-tuning. 
 
-Chain-of-Thought (CoT):
+Chain-of-Thought (CoT): Ask AI models to explain their reasoning and list the intermediate steps used to arrive at a conclusion. 
+
+- Agents perform better when they articulate their reasoning step, particularly in complex tasks. 
+- Chain-of-thought reasoning increases transparency. 
+
+#### Guardrails 
+
+Challenges when deploying AI agents: 
+
+- Info security 
+- Brand alignment 
+- Accuracy (hallucination)
+
+Key heuristics **recommended** by OpenAI: 
+
+1. Prioritize data privacy and content safety. 
+2. Add new guardrails based on real-world edge cases and failures. 
+3. Balance security with user experience, continuously refining guardrails as your agent evolves. 
+
+#### Human Intervention 
+
+Human's intuition and common sense can help identify the AI agents' failures, edge cases, and areas for improvement.  
+
+Human intervention mechanism: Involving humans as soon as the agent is not certain if it is providing the best possible answer. 
+
+#### Evaluating AI Agents
+
+Evaluation criteria: 
+
+- Accuracy 
+- Speed 
+- Coherence 
+- Cost
+- Safety
+- UX (reveals issues that metrics alone often overlook)
+
+Context is king. Examples: 
+
+- Customer support agent: coherence and safety are the priority. 
+- Autonomous trading agent: accuracy and speed are the priority.
+
+Metrics alone will catch every issue. Real-world feedback and user experience are just as essential for creating an effective and trustworthy AI agent. 
+
+### Building Agentic Automation with n8n
+
+[n8n](https://n8n.io/) is an AI workflow automation platform. 
+
+Four node types in n8n: 
+
+- Triggers
+- Action nodes
+- Logic nodes
+- AI agent nodes
+
+Example of use case requirement: 
+
+![n8n-example-requirement.png](./img/n8n-example-requirement.png)
+
+Solution: 
+
+![n8n-example-solution.png](./img/n8n-example-solution.png)
+
+### Infrastructure for AI Agents 
+
+
 
 ---
 
