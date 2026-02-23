@@ -41,6 +41,12 @@
       - [Evaluating AI Agents](#evaluating-ai-agents)
     - [Building Agentic Automation with n8n](#building-agentic-automation-with-n8n)
     - [Infrastructure for AI Agents](#infrastructure-for-ai-agents)
+      - [APIs](#apis)
+      - [Cloud Services](#cloud-services)
+      - [Data and Knowledge Integration](#data-and-knowledge-integration)
+      - [Agent Development Frameworks](#agent-development-frameworks)
+      - [Agent Deployment](#agent-deployment)
+    - [AI Agents in Business](#ai-agents-in-business)
   - [References](#references)
 
 ---
@@ -706,7 +712,106 @@ Solution:
 
 ### Infrastructure for AI Agents 
 
+#### APIs
 
+Connect external LLMs to AI agents via APIs.
+
+Steps: 
+
+1. Choose an LLM provider, such as OpenAI, Google, Anthropic and so on. Consider  factors like speed, accuracy, and cost when making the decision.
+2. Integrate API key.
+
+#### Cloud Services
+
+AI agents require significant computing resources. The more advanced the agent becomes, and the more tasks it handles, the greater its computing demands will be. 
+
+Make vs. buy (Cloud service providers)
+
+- Servers
+- CPUs
+- Storage
+- GPUs
+
+#### Data and Knowledge Integration 
+
+Knowledge empowers AI agents: 
+
+- Databases: AI agents learn about the business. 
+- Enterprise systems: AI agents learn about the company's operations. 
+- Knowledge bases: AI agents learn about the company policies, brand guidelines, etc.
+- Internet: AI agents gain massive public info.
+
+#### Agent Development Frameworks
+
+Modern AI agent projects are rarely built from scratch. Instead, assemble pre-designed Lego bricks. 
+
+- LangChain: If you are going to learn just one library, this should be it. 
+  - Building blocks: 
+    - Chains: Create agentic workflows.
+    - AI agents: Adjust actions based on new info. 
+  - LangGraph: When a single linear chain is not enough. 
+  - Beginner-friendly. 
+  - Can be used to build basic and advanced applications, such as FAQ bot and collaborating sub-agents. 
+- Microsoft AutoGen: Focus on multi-agent conversations. 
+  - Advanced. 
+  - Not very user-friendly.
+  - Ideal for agent specialization and collaboration. 
+- crewai
+  - Organize groups of agents. 
+  - Streamlined API. 
+  - No-code Studio interface. 
+  - Perfect for descriptive collaboration in a storytelling style. 
+- Google ADK (Agent Development Kit)
+  - Google's internal practices for complex, collaborative agent systems. 
+  - Enterprise-grade.
+- Flowise 
+  - Democratize the ability to build agents. 
+  - Low-code-no-code.
+  - Deploy as REST endpoint or embedded chat widget. 
+  - Perfect for beginners. 
+
+#### Agent Deployment 
+
+- Chat interface 
+- Dedicated space within a platform  
+- Backend process
+
+Deployment tools by Amazon: 
+
+- AWS Lambda
+- Bedrock
+- SageMaker 
+- Lex 
+
+### AI Agents in Business 
+
+![employee-vs-ai-agent-cost.png](./img/employee-vs-ai-agent-cost.png)
+
+Key values of AI agents: 
+
+- Cost
+  - Headcount efficiency 
+  - Reduce overall HR costs
+  - Leverage economies of scale 
+  - Less costly errors 
+- Revenue
+  - Employees focus on value-added activities 
+  - Improved customer support (7 x 24)
+  - Improved employee insights 
+
+The less thinking, soft skills and creative demands a role requires, the higher chances that it will be replaced by AI agents. 
+
+Humans need to learn how to partner with AI and focus on high-value work.
+
+- Meetings
+- Personal connections 
+- Creativity 
+- Ideation 
+- Innovative problem-solving 
+
+Human intuition will be in high demand. 
+
+Regularly compare AI agent and human decision making. Human oversight ensures AI continuously improves and aligns with real-world nuances. 
 
 ---
 
