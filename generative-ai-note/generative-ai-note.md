@@ -47,6 +47,14 @@
       - [Agent Development Frameworks](#agent-development-frameworks)
       - [Agent Deployment](#agent-deployment)
     - [AI Agents in Business](#ai-agents-in-business)
+  - [Introduction to AI-assisted Coding](#introduction-to-ai-assisted-coding)
+    - [AI-assisted Coding](#ai-assisted-coding)
+      - [Vibe Coding](#vibe-coding)
+      - [Security Vulnerabilities](#security-vulnerabilities)
+      - [Effective Human in the Loop](#effective-human-in-the-loop)
+    - [AI Coding Landscape](#ai-coding-landscape)
+      - [The Modern Coder's Toolkit](#the-modern-coders-toolkit)
+      - [Choose You AI Coding Partner](#choose-you-ai-coding-partner)
   - [References](#references)
 
 ---
@@ -815,12 +823,86 @@ Regularly compare AI agent and human decision making. Human oversight ensures AI
 
 ---
 
+## Introduction to AI-assisted Coding
+
+### AI-assisted Coding
+
+AI-assisted coding in practice:
+
+- Writing code
+- Refactoring
+- Debugging
+- Documentation
+
+#### Vibe Coding
+
+Vibe coding is when you treat Al like a magic box, you throw in a prompt, get some code back, copy-paste it into your project, and hope it works.
+
+- No real understanding of the code
+- No testing
+- No consideration of edge cases
+- No consideration of security implications
+
+Applicable:
+
+- Experimenting with an idea
+- PoC
+- Learning and exploration
+
+Not applicable:
+
+- Not professional software development
+
+#### Security Vulnerabilities
+
+- SQL ingestion flaws
+- Hardcoded credentials
+- Insecure authentication
+- Dependencies with vulnerabilities
+
+AI-assisted coding can hallucinate solutions that do not work, generate code that creates technical debt, and introduce security vulnerabilities.
+
+#### Effective Human in the Loop
+
+- Understand the code
+- Skills to spot problems
+- Test everything
+- Maintain context
+- Stay accountable
+
+### AI Coding Landscape
+
+#### The Modern Coder's Toolkit
+
+- IDE-integrated assistants, e.g., GitHub Copilot
+  - Does not disrupt your workflow.
+  - Excels at inline coding. 
+- AI-first IDE, e.g., Cursor, Windsurf 
+  - Built with AI. AI integration goes much deeper. 
+  - Highlight code and ask questions. 
+  - Have conversations about codebase. 
+  - Deeper pair programming. 
+- Web-based IDE, e.g., Bolt, Lovable 
+  - See app render in real-time, interact with it, make changes, and iterate quickly. 
+  - Designed for speed and accessibility. 
+- Terminal-based tools, e.g., Claude Code
+  - Built for developers who prefer command-line workflows. 
+- General purpose chat interfaces, e.g., ChatGPT, Claude, Gemini
+
+#### Choose You AI Coding Partner
+
+![choose-ai-coding-partner.png](./img/choose-ai-coding-partner.png)
+
+Different tools excel at different things. There is no single best tool. There is only the best tool for your current situation. 
+
+---
+
 ## References
 
 - LinkedIn Learning course: Prompt Engineering: How to Talk to the AIs
 - LinkedIn Learning course: What Is Generative AI?
 - LinkedIn Learning course: Generative AI: Introduction to Large Language Models
 - Udemy course: Intro to AI Agents and Agentic AI
-
+- Pluralsight: Introduction to AI-assisted Coding
 
 
