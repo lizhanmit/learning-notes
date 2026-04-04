@@ -1,6 +1,7 @@
 # IT Learning Notes
 
 - [IT Learning Notes](#it-learning-notes)
+  - [Architecture](#architecture)
   - [Big Data](#big-data)
     - [Articles](#articles)
   - [Databases](#databases)
@@ -13,6 +14,12 @@
   - [Misc](#misc)
   - [Non-Tech](#non-tech)
   - [Interview Preparation](#interview-preparation)
+
+---
+
+## Architecture 
+
+- [Clean Architecture](https://github.com/lizhanmit/learning-notes/blob/master/clean-architecture-note/clean-architecture-note.md)
 
 ---
 
