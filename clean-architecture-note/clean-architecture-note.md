@@ -51,3 +51,26 @@ Ultimate goal of an architect:
 
 ## Domain-centric Architecture 
 
+![database-centric-vs-domain-centric-architecture.png](./img/database-centric-vs-domain-centric-architecture.png)
+
+> "The first concern of the architect is to make sure that the house is usable. It is not to ensure that the house is made of brick." - Uncle Bob
+
+Pros: 
+
+- Focus on domain 
+- Less coupling 
+- Allow for Domain Driven Design 
+
+Cons: 
+
+- Change is difficult 
+- Require more thought
+- Initial higher cost 
+
+Three types of domain-centric architecture: 
+
+![hexagonal-architecture.png](./img/hexagonal-architecture.png)
+
+![onion-architecture.png](./img/onion-architecture.png)
+
+![the-clean-architecture.png](./img/the-clean-architecture.png)
