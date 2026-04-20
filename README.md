@@ -31,6 +31,7 @@
 - [Big Data Basics](https://github.com/lizhanmit/learning-notes/blob/master/big-data-basics-note/big-data-basics-note.md)
 - [Big Data Environment Setup](https://github.com/lizhanmit/learning-notes/blob/master/big-data-environment-setup-note/big-data-environment-setup-note.md)
 - [Data Analysis](https://github.com/lizhanmit/learning-notes/blob/master/data-analysis-note/data-analysis-note.md)
+- [Data Modeling](https://github.com/lizhanmit/learning-notes/blob/master/data-modeling-note/data-modeling-note.md)
 - [Data Science](https://github.com/lizhanmit/learning-notes/blob/master/data-science-note/data-science-note.md)
 - [Data Stream Development with Apache Spark, Kafka, and Spring Boot](https://github.com/lizhanmit/learning-notes/blob/master/data-stream-development-with-apache-spark-kafka-and-spring-boot-note/data-stream-development-with-apache-spark-kafka-and-spring-boot-note.md)
 - [Data Virtualization](https://github.com/lizhanmit/learning-notes/blob/master/data-virtualization-note/data-virtualization-note.md)
