@@ -1,5 +1,7 @@
 # Data Modeling Note
 
+Pluralsight course: [Conceptual and Logical Data Modeling](https://www.pluralsight.com/courses/conceptual-logical-data-modeling)
+
 - [Data Modeling Note](#data-modeling-note)
   - [Conceptual Data Modeling](#conceptual-data-modeling)
   - [Logical Data Modeling](#logical-data-modeling)
