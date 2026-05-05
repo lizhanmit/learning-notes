@@ -19,6 +19,7 @@
     - [IoT Sensor Data](#iot-sensor-data)
     - [Media and Behavioral Analytics](#media-and-behavioral-analytics)
     - [HR Tech and Recruitment](#hr-tech-and-recruitment)
+  - [Abstraction of Blueprint](#abstraction-of-blueprint)
   - [Real-Time Applications](#real-time-applications)
     - [Social Media Sentiment Analysis](#social-media-sentiment-analysis)
       - [Problem](#problem)
@@ -246,14 +247,39 @@ Data architecture design:
 
 Background: 
 
+- SaaS by UnderstandLing.
+- NLP-heavy.
+- To match profiling of candidates and vacancies.
+- At least invasive as possible. 
+- The service is B2B and B2C. 
 
-- 
-
-Goal:
+Goal: Build a little-invasive SaaS that better help candidates find the jobs they love, not by skill but by personality. 
 
 Constraints: 
 
+- Startup company, need to be cost effective. Cloud is too experience. Use bare metal servers instead as required knowledge is there. 
+- Start with own core competency - matching. Later, introduce full recruitment lifecycle, e.g., sourcing and onboarding. 
+- Comply with law and legislation. For instance, not allowed to hire based on gender or age in EU.
+- Process 2 billion events per day.
+
 Data architecture design: 
+
+- Web API and mobile app backend are written in Scala. Mobile app is written in React. AI and Machine learning applications are written in Python.
+- Use MongoDB as backend database while MySQL as metadata store for web app and API.
+
+![hr-tech-and-recruitment-architecture.jpg](img/hr-tech-and-recruitment-architecture.jpg)
+
+## Abstraction of Blueprint
+
+Can be used to fit any use cases.
+
+- Storm can be changed to Spark Streaming if millisecond-level latency is not required. 
+- "Author enrichment" is used to add author of events.
+- Home-grown interactive BI tool built by web app with D3. 
+- Proved SLA: 50 milliseconds 95%.
+
+
+
 
 ---
 
