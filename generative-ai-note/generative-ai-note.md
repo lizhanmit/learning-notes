@@ -55,6 +55,7 @@
     - [AI Coding Landscape](#ai-coding-landscape)
       - [The Modern Coder's Toolkit](#the-modern-coders-toolkit)
       - [Choose You AI Coding Partner](#choose-you-ai-coding-partner)
+  - [IBM Technology | AI Fundamentals](#ibm-technology--ai-fundamentals)
   - [References](#references)
 
 ---
@@ -897,6 +898,34 @@ Different tools excel at different things. There is no single best tool. There i
 
 ---
 
+## IBM Technology | AI Fundamentals
+
+Approaches to reducing GenAI hallucination problem: 
+
+- RAG
+- Mixture of Experts (MoE)
+- Chaining of models
+
+Limits of AI these days (2025~2026): 
+
+- Artificial General Intelligence (AGI)
+- Artificial Super Intelligence (ASI)
+- Sustainability: Use models that are the right size, not just the biggest model.
+- Self-awareness 
+- Understanding 
+- Judgement 
+- Common sense
+- Goal-setting: Micro vs. macro goal 
+- Sensation 
+- Deep emotions 
+
+| Human | AI |
+|-|-|
+| What? Why? | How? Do! |
+
+
+---
+
 ## References
 
 - LinkedIn Learning course: Prompt Engineering: How to Talk to the AIs
@@ -904,5 +933,6 @@ Different tools excel at different things. There is no single best tool. There i
 - LinkedIn Learning course: Generative AI: Introduction to Large Language Models
 - Udemy course: Intro to AI Agents and Agentic AI
 - Pluralsight: Introduction to AI-assisted Coding
+- IBM Technology | AI Fundamentals
 
 
