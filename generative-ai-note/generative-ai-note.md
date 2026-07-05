@@ -56,6 +56,10 @@
       - [The Modern Coder's Toolkit](#the-modern-coders-toolkit)
       - [Choose You AI Coding Partner](#choose-you-ai-coding-partner)
   - [IBM Technology | AI Fundamentals](#ibm-technology--ai-fundamentals)
+    - [Limits of AI](#limits-of-ai)
+    - [AI Stack](#ai-stack)
+    - [RAG vs. Agentic AI](#rag-vs-agentic-ai)
+    - [AI Periodic Table](#ai-periodic-table)
   - [References](#references)
 
 ---
@@ -900,6 +904,8 @@ Different tools excel at different things. There is no single best tool. There i
 
 ## IBM Technology | AI Fundamentals
 
+### Limits of AI
+
 Approaches to reducing GenAI hallucination problem: 
 
 - RAG
@@ -922,6 +928,64 @@ Limits of AI these days (2025~2026):
 | Human | AI |
 |-|-|
 | What? Why? | How? Do! |
+
+### AI Stack 
+
+From lower to higher layer: 
+
+- Infrastructure layer
+  - LLMs generally require AI-specific hardware, specifically GPUs. 
+  - Deployment ways of the hardware: 
+    - On-premises 
+    - Cloud 
+    - Local laptop
+- Model layer
+  - Open vs. proprietary 
+  - Size: large vs. small
+  - Specialization
+    - Reasoning
+    - Tool calling 
+    - Generating code 
+    - Different language strengths
+    - ...  
+- Data layer
+  - Data sources
+  - Pipelines used to process data
+  - Vector databases, RAG
+- Orchestration layer
+  - Think -> execute -> review
+  - MCP
+- Application layer
+  - Interfaces
+    - Text in text out
+    - Image
+    - Audio 
+    - Numerical 
+    - Revisions
+    - Citations 
+  - Integrations 
+    - Inputs to the application
+    - Outputs from the application 
+
+### RAG vs. Agentic AI 
+
+AI agent loop diagram: 
+
+![ai-agent-loop.png](./img/ai-agent-loop.png)
+
+RAG pipeline diagram:
+
+![rag-pipeline.png](./img/rag-pipeline.png)
+
+
+### AI Periodic Table
+
+|       | Group1 Reactive               | Group2 Retrieval              | Group3 Orchestration | Group4 Validation               | Group5 Models            |
+|--------------------|---------------------------|---------------------------|------------|------------------------|----------------------|
+| **Row1 Primitives** | Pr<br>Prompts             | Em<br>Embeddings          | —          | —                      | Lg<br>LLM            |
+| **Row2 Compositions** | Fc<br>Function call       | Vx<br>Vector              | Rg<br>RAG  | Gr<br>Guardrails       | Mm<br>Multi-modal     |
+| **Row3 Deployment** | Ag<br>Agent               | Ft<br>Fine tune            | Fw<br>Framework | Rt<br>Red-team       | Sm<br>Small model         |
+| **Row4 Emerging**   | Ma<br>Multi-agent         | Sy<br>Synthetic data          | —          | In<br>Interpretation       | Th<br>Thinking       |
 
 
 ---
